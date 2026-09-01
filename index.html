@@ -40,7 +40,7 @@
     >
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap"
         rel="stylesheet"
     >
 
@@ -98,6 +98,13 @@
                 aria-hidden="true"
             ></div>
 
+            <!-- LUXURY GOLD DUST / STARDUST CANVAS -->
+            <canvas
+                id="heroParticles"
+                class="hero-particles"
+                aria-hidden="true"
+            ></canvas>
+
 
             <!-- HERO SOUND BUTTON -->
 
@@ -108,12 +115,20 @@
                 aria-label="Unmute video"
             >
 
-                <span id="iconMuted">
-                    🔇
+                <span id="iconMuted" class="sound-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <line x1="23" y1="9" x2="17" y2="15"></line>
+                        <line x1="17" y1="9" x2="23" y2="15"></line>
+                    </svg>
                 </span>
 
-                <span id="iconUnmuted">
-                    🔊
+                <span id="iconUnmuted" class="sound-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                    </svg>
                 </span>
 
             </button>
@@ -154,17 +169,41 @@
 
 
                 <!-- =================================================
-                     GEMRAY
+                     GEMRAY (WITH PRECISELY ANCHORED SPARK)
 
                      FONT:
                      Cinzel Decorative
                      ================================================= -->
 
-                <div
-                    id="brandName"
-                    class="brand-name"
-                >
-                    GEMRAY
+                <div class="brand-name-wrapper">
+                    <div
+                        id="brandName"
+                        class="brand-name"
+                    >
+                        GEMRAY
+                    </div>
+
+                    <!-- METALLIC GLINT LAYER (Pure light reflection, never hides or reveals text) -->
+                    <div
+                        id="brandGlint"
+                        class="brand-glint"
+                        aria-hidden="true"
+                    >
+                        GEMRAY
+                    </div>
+
+                    <!-- CINEMATIC 4-POINT LENS FLARE SPARK -->
+                    <span
+                        id="logoSpark"
+                        class="logo-spark"
+                        aria-hidden="true"
+                    >
+                        <span class="spark-core"></span>
+                        <span class="spark-flare-h"></span>
+                        <span class="spark-flare-v"></span>
+                        <span class="spark-flare-d1"></span>
+                        <span class="spark-flare-d2"></span>
+                    </span>
                 </div>
 
 
@@ -184,19 +223,6 @@
 
 
                 <!-- =================================================
-                     CINEMATIC SPARK
-
-                     Controlled by JavaScript.
-                     ================================================= -->
-
-                <span
-                    id="logoSpark"
-                    class="logo-spark"
-                    aria-hidden="true"
-                ></span>
-
-
-                <!-- =================================================
                      TAGLINE
 
                      FONT:
@@ -207,7 +233,7 @@
                     id="brandTagline"
                     class="brand-tagline"
                 >
-                    Your love, our frame
+                    Your Love, Our Frame
                 </div>
 
 
@@ -249,7 +275,7 @@
             <!-- SECTION INTRO -->
 
             <div
-                class="section-heading"
+                class="section-heading stories-heading"
             >
 
                 <span
@@ -257,15 +283,6 @@
                 >
                     Real Stories
                 </span>
-
-                <h2>
-                    Love, captured honestly.
-                </h2>
-
-                <p>
-                    Every celebration has a story.
-                    We preserve the moments that make it yours.
-                </p>
 
             </div>
 
@@ -289,14 +306,14 @@
                         class="story-video-wrapper"
                     >
 
-                        <iframe
+                        <video
                             class="story-video"
-                            src="https://www.youtube.com/embed/F4NpFBNJBtA?rel=0&modestbranding=1"
-                            title="Wedding Story"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                        ></iframe>
+                            src="vid/bg.mp4"
+                            poster="photos/photo1.jpg"
+                            controls
+                            playsinline
+                            preload="metadata"
+                        ></video>
 
                     </div>
 
@@ -331,14 +348,14 @@
                         class="story-video-wrapper"
                     >
 
-                        <iframe
+                        <video
                             class="story-video"
-                            src="https://www.youtube.com/embed/7K_xBMFBFsY?rel=0&modestbranding=1"
-                            title="Couple Interview"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                        ></iframe>
+                            src="vid/bg.mp4"
+                            poster="photos/photo5.jpg"
+                            controls
+                            playsinline
+                            preload="metadata"
+                        ></video>
 
                     </div>
 
@@ -381,6 +398,10 @@
 
              ================================================= -->
 
+        <!-- =================================================
+             03. MEET BHUSHAN (PHOTOGRAPHER)
+             ================================================= -->
+
         <section
             id="photographer"
             class="photographer-intro-section"
@@ -399,7 +420,8 @@
                 <video
                     id="photographerVideoDesktop"
                     class="photographer-video horizontal-video"
-                    src="vid/photographer-intro.mp4"
+                    src="vid/bg.mp4"
+                    poster="photos/IMG_2764.PNG"
                     muted
                     playsinline
                     preload="metadata"
@@ -420,21 +442,32 @@
                     class="photographer-intro-content"
                 >
 
-                    <span
-                        class="section-eyebrow"
-                    >
-                        The Photographer
-                    </span>
-
                     <h2>
-                        Behind the frame.
+                        MEET BHUSHAN
                     </h2>
 
-                    <p>
-                        The person behind the stories,
-                        emotions and photographs
-                        you will remember forever.
+                    <span
+                        class="section-eyebrow photographer-role"
+                    >
+                        Wedding Filmmaker & Photographer
+                    </span>
+
+                    <p class="photographer-quote">
+                        <em>“I don’t want to shoot every wedding. I want to work with couples who feel the same way I do.”</em>
                     </p>
+
+                    <p>
+                        I’m looking for couples who want something personal, different and real.
+                        If you connect with my vision, we’ll create something that feels truly yours.
+                    </p>
+
+                    <div class="photographer-location">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Based in Maharashtra &bull; Available Worldwide</span>
+                    </div>
 
                 </div>
 
@@ -449,15 +482,23 @@
                 >
 
                     <span
-                        class="photographer-muted-icon"
+                        class="photographer-muted-icon sound-icon"
                     >
-                        🔇
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
                     </span>
 
                     <span
-                        class="photographer-unmuted-icon"
+                        class="photographer-unmuted-icon sound-icon"
                     >
-                        🔊
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
                     </span>
 
                 </button>
@@ -481,7 +522,8 @@
                 <video
                     id="photographerVideoMobile"
                     class="photographer-video vertical-video"
-                    src="vid/My movie 005.mp4"
+                    src="vid/bg.mp4"
+                    poster="photos/IMG_2764.PNG"
                     muted
                     playsinline
                     preload="metadata"
@@ -502,15 +544,32 @@
                     class="photographer-intro-content"
                 >
 
+                    <h2>
+                        MEET BHUSHAN
+                    </h2>
+
                     <span
-                        class="section-eyebrow"
+                        class="section-eyebrow photographer-role"
                     >
-                        The Photographer
+                        Wedding Filmmaker & Photographer
                     </span>
 
-                    <h2>
-                        Behind the frame.
-                    </h2>
+                    <p class="photographer-quote">
+                        <em>“I don’t want to shoot every wedding. I want to work with couples who feel the same way I do.”</em>
+                    </p>
+
+                    <p>
+                        I’m looking for couples who want something personal, different and real.
+                        If you connect with my vision, we’ll create something that feels truly yours.
+                    </p>
+
+                    <div class="photographer-location">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Based in Maharashtra &bull; Available Worldwide</span>
+                    </div>
 
                 </div>
 
@@ -525,15 +584,23 @@
                 >
 
                     <span
-                        class="photographer-muted-icon"
+                        class="photographer-muted-icon sound-icon"
                     >
-                        🔇
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
                     </span>
 
                     <span
-                        class="photographer-unmuted-icon"
+                        class="photographer-unmuted-icon sound-icon"
                     >
-                        🔊
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
                     </span>
 
                 </button>
@@ -547,119 +614,7 @@
 
 
         <!-- =================================================
-             04. ABOUT PHOTOGRAPHER
-             ================================================= -->
-
-        <section
-            id="about"
-            class="about-section"
-        >
-
-
-            <div
-                class="about-container"
-            >
-
-
-                <!-- PHOTOGRAPHER IMAGE -->
-
-                <div
-                    class="about-image"
-                >
-
-                    <img
-                        src="photos/photographer.jpg"
-                        alt="Gemray Studio photographer"
-                        loading="lazy"
-                    >
-
-                </div>
-
-
-                <!-- ABOUT TEXT -->
-
-                <div
-                    class="about-content"
-                >
-
-                    <span
-                        class="section-eyebrow"
-                    >
-                        Gemray Studio
-                    </span>
-
-                    <h2>
-                        More than photographs.
-                    </h2>
-
-                    <p>
-                        We believe the most meaningful wedding
-                        photographs are the ones that bring you
-                        back to how the moment felt.
-                    </p>
-
-                    <p>
-                        From quiet glances to unforgettable
-                        celebrations, we capture your story
-                        with an honest and cinematic approach.
-                    </p>
-
-                    <div
-                        class="about-signature"
-                    >
-                        Bhushan Lawane
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             05. QUOTE SECTION
-             ================================================= -->
-
-        <section
-            id="quote"
-            class="quote-section"
-        >
-
-
-            <div
-                class="quote-content"
-            >
-
-                <span
-                    class="section-eyebrow"
-                >
-                    Our Philosophy
-                </span>
-
-                <blockquote>
-                    "The photographs you keep are the
-                    moments you never want to forget."
-                </blockquote>
-
-                <span
-                    class="quote-mark"
-                >
-                    Gemray Studio
-                </span>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             06. PORTFOLIO PREVIEW
+             04. PORTFOLIO PREVIEW
              ================================================= -->
 
         <section
@@ -709,387 +664,7 @@
 
 
         <!-- =================================================
-             07. GALLERY
-             ================================================= -->
-
-        <section
-            id="gallery"
-            class="gallery-section"
-        >
-
-
-            <div
-                class="section-heading"
-            >
-
-                <span
-                    class="section-eyebrow"
-                >
-                    The Gallery
-                </span>
-
-                <h2>
-                    Moments in frame.
-                </h2>
-
-            </div>
-
-
-            <!-- GALLERY FILTER -->
-
-            <div
-                class="gallery-tabs"
-                role="tablist"
-            >
-
-                <button
-                    class="tab active"
-                    data-filter="all"
-                    type="button"
-                >
-                    All
-                </button>
-
-                <button
-                    class="tab"
-                    data-filter="wedding"
-                    type="button"
-                >
-                    Wedding
-                </button>
-
-                <button
-                    class="tab"
-                    data-filter="prewedding"
-                    type="button"
-                >
-                    Pre-Wedding
-                </button>
-
-                <button
-                    class="tab"
-                    data-filter="engagement"
-                    type="button"
-                >
-                    Engagement
-                </button>
-
-            </div>
-
-
-            <!-- GALLERY GRID -->
-
-            <div
-                class="gallery-grid"
-            >
-
-
-                <article
-                    class="g-item"
-                    data-cat="wedding"
-                >
-
-                    <img
-                        src="photos/photo1.jpg"
-                        alt="Wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="prewedding"
-                >
-
-                    <img
-                        src="photos/photo2.jpg"
-                        alt="Pre-wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="engagement"
-                >
-
-                    <img
-                        src="photos/photo3.jpg"
-                        alt="Engagement photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="wedding"
-                >
-
-                    <img
-                        src="photos/photo4.jpg"
-                        alt="Wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="wedding"
-                >
-
-                    <img
-                        src="photos/photo5.jpg"
-                        alt="Wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="prewedding"
-                >
-
-                    <img
-                        src="photos/photo6.jpg"
-                        alt="Pre-wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="engagement"
-                >
-
-                    <img
-                        src="photos/photo7.jpg"
-                        alt="Engagement photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="wedding"
-                >
-
-                    <img
-                        src="photos/photo8.jpg"
-                        alt="Wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-                <article
-                    class="g-item"
-                    data-cat="wedding"
-                >
-
-                    <img
-                        src="photos/photo9.jpg"
-                        alt="Wedding photography"
-                        loading="lazy"
-                    >
-
-                </article>
-
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             08. SERVICES
-             ================================================= -->
-
-        <section
-            id="services"
-            class="services-section"
-        >
-
-
-            <div
-                class="section-heading"
-            >
-
-                <span
-                    class="section-eyebrow"
-                >
-                    What We Do
-                </span>
-
-                <h2>
-                    Our Services
-                </h2>
-
-            </div>
-
-
-            <div
-                class="services-grid"
-            >
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        01
-                    </span>
-
-                    <h3>
-                        Wedding Photography
-                    </h3>
-
-                    <p>
-                        Authentic moments and timeless
-                        photographs from your wedding day.
-                    </p>
-
-                </article>
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        02
-                    </span>
-
-                    <h3>
-                        Wedding Cinematography
-                    </h3>
-
-                    <p>
-                        Cinematic films crafted around
-                        the emotion and energy of your day.
-                    </p>
-
-                </article>
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        03
-                    </span>
-
-                    <h3>
-                        Pre-Wedding
-                    </h3>
-
-                    <p>
-                        Beautifully directed sessions
-                        that tell your story before the wedding.
-                    </p>
-
-                </article>
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        04
-                    </span>
-
-                    <h3>
-                        Engagement
-                    </h3>
-
-                    <p>
-                        Intimate photographs celebrating
-                        the beginning of your journey together.
-                    </p>
-
-                </article>
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        05
-                    </span>
-
-                    <h3>
-                        Destination Weddings
-                    </h3>
-
-                    <p>
-                        Your story, wherever your celebration
-                        takes you.
-                    </p>
-
-                </article>
-
-
-                <article
-                    class="service-card"
-                >
-
-                    <span
-                        class="service-number"
-                    >
-                        06
-                    </span>
-
-                    <h3>
-                        Wedding Films
-                    </h3>
-
-                    <p>
-                        Emotional films created to preserve
-                        the atmosphere of your celebration.
-                    </p>
-
-                </article>
-
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             09. CONTACT
+             05. CONTACT
              ================================================= -->
 
         <section
@@ -1229,23 +804,23 @@
                                 Select a service
                             </option>
 
-                            <option value="wedding">
+                            <option value="Wedding Photography">
                                 Wedding Photography
                             </option>
 
-                            <option value="cinematography">
+                            <option value="Wedding Cinematography">
                                 Wedding Cinematography
                             </option>
 
-                            <option value="prewedding">
+                            <option value="Pre-Wedding">
                                 Pre-Wedding
                             </option>
 
-                            <option value="engagement">
+                            <option value="Engagement">
                                 Engagement
                             </option>
 
-                            <option value="destination">
+                            <option value="Destination Wedding">
                                 Destination Wedding
                             </option>
 
@@ -1326,6 +901,16 @@
                     class="footer-logo"
                 >
 
+                <div class="footer-brand-name-wrapper">
+                    <div class="footer-brand-name">
+                        GEMRAY
+                    </div>
+                </div>
+
+                <div class="footer-brand-studio">
+                    STUDIO
+                </div>
+
                 <p
                     class="footer-tagline"
                 >
@@ -1356,18 +941,6 @@
 
                 <a href="portfolio.html">
                     Portfolio
-                </a>
-
-                <a href="#about">
-                    About
-                </a>
-
-                <a href="#gallery">
-                    Gallery
-                </a>
-
-                <a href="#services">
-                    Services
                 </a>
 
                 <a href="#contact">
@@ -1416,25 +989,27 @@
 
 
         <!-- =================================================
-             FLOATING BOOK YOUR FREE DEMO BUTTON
-
-             ALWAYS VISIBLE
-             RIGHT BOTTOM
-             WHATSAPP
+             FLOATING BOOK YOUR FREE CONSULTATION CALL BUTTON
              ================================================= -->
 
         <a
-            href="https://wa.me/message/AZ6IJJFY67CKG1"
+            href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%20free%20consultation%20call%20regarding%20wedding%20photography%20and%20cinematography%20services.%20Please%20let%20me%20know%20a%20convenient%20time%20to%20connect!%20%F0%9F%92%8D%F0%9F%93%B8"
             class="floating-demo-button"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Book your free demo on WhatsApp"
+            aria-label="Book your free consultation call on WhatsApp"
         >
+
+            <span class="floating-demo-sparkle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                </svg>
+            </span>
 
             <span
                 class="floating-demo-text"
             >
-                Book Your Free Demo
+                Book Your Free Consultation Call
             </span>
 
             <span
