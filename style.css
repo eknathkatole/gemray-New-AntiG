@@ -463,12 +463,8 @@ section {
 
 .hero-logo-image {
 
-    width:
-        clamp(
-            180px,
-            24vw,
-            360px
-        );
+    width: 580px;
+
 
     height:
         auto;
