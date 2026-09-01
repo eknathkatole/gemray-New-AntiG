@@ -306,7 +306,7 @@ section {
 
 
 /* =========================================================
-   HERO VIDEO
+   HERO BACKGROUND VIDEO
    ========================================================= */
 
 .hero-video {
@@ -335,6 +335,17 @@ section {
     background:
         var(--green-dark);
 
+    opacity:
+        0;
+
+    animation:
+        heroVideoFade 2s ease forwards 0.1s;
+
+}
+
+@keyframes heroVideoFade {
+    0% { opacity: 0; transform: scale(1.04); }
+    100% { opacity: 1; transform: scale(1); }
 }
 
 
@@ -361,13 +372,13 @@ section {
         linear-gradient(
             180deg,
 
-            rgba(0, 0, 0, .30),
+            rgba(0, 0, 0, .35),
 
-            rgba(11, 61, 50, .08) 35%,
+            rgba(11, 61, 50, .12) 35%,
 
-            rgba(0, 0, 0, .18) 65%,
+            rgba(0, 0, 0, .22) 65%,
 
-            rgba(0, 0, 0, .58)
+            rgba(0, 0, 0, .65)
         );
 
 }
@@ -388,26 +399,47 @@ section {
 
         radial-gradient(
             ellipse at center,
-            transparent 30%,
-            rgba(0, 0, 0, .38)
+            transparent 25%,
+            rgba(0, 0, 0, .45) 100%
         );
 
 }
 
 
 /* =========================================================
-   05. HERO BRAND
+   HERO GOLD PARTICLES CANVAS
+   ========================================================= */
 
-   IMPORTANT:
+.hero-particles {
 
-   This is ONE composition.
+    position:
+        absolute;
 
-   logo
-   GEMRAY
-   STUDIO
-   tagline
+    inset:
+        0;
 
-   Everything is centered together.
+    width:
+        100%;
+
+    height:
+        100%;
+
+    z-index:
+        3;
+
+    pointer-events:
+        none;
+
+    opacity:
+        0.85;
+
+}
+
+
+/* =========================================================
+   05. HERO BRAND COMPOSITION
+
+   Anchored center with graceful entrance
    ========================================================= */
 
 .hero-brand {
@@ -416,7 +448,7 @@ section {
         absolute;
 
     top:
-        50%;
+        42%;
 
     left:
         50%;
@@ -448,23 +480,34 @@ section {
     gap:
         2px;
 
+    pointer-events:
+        none;
+
+    animation:
+        heroBrandEntrance 1.6s cubic-bezier(.16, 1, .3, 1) both;
+
+}
+
+@keyframes heroBrandEntrance {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -46%) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 
 /* =========================================================
    06. LOGO PNG
-
-   PATH:
-
-   photos/logo.png
-
-   Size intentionally enlarged.
    ========================================================= */
 
 .hero-logo-image {
 
-    width: 580px;
-
+    width:
+        min(520px, 70vw);
 
     height:
         auto;
@@ -472,28 +515,69 @@ section {
     object-fit:
         contain;
 
-    margin:
+    margin-top:
         0;
 
     margin-bottom:
-        -120px;
+        clamp(-185px, -19vw, -145px);
 
     filter:
+        drop-shadow(0 6px 18px rgba(0, 0, 0, .55))
+        drop-shadow(0 0 25px rgba(212, 175, 90, .15));
 
-        drop-shadow(
-            0 5px 15px
-            rgba(0, 0, 0, .50)
-        );
+    pointer-events:
+        auto;
 
+    transition:
+        transform 0.6s cubic-bezier(.16, 1, .3, 1);
+
+    animation:
+        heroLogoReveal 1.6s cubic-bezier(.16, 1, .3, 1) 0.2s both;
+
+}
+
+.hero-logo-image:hover {
+
+    transform:
+        scale(1.02);
+
+}
+
+@keyframes heroLogoReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 
 /* =========================================================
-   07. GEMRAY
-
-   FONT:
-   Cinzel Decorative
+   07. GEMRAY & ANCHORED SPARK WRAPPER
    ========================================================= */
+
+.brand-name-wrapper {
+
+    position:
+        relative;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    pointer-events:
+        auto;
+
+}
+
 
 .brand-name {
 
@@ -506,9 +590,9 @@ section {
 
     font-size:
         clamp(
-            2.5rem,
-            5.8vw,
-            6rem
+            3.2rem,
+            6.2vw,
+            7rem
         );
 
     font-weight:
@@ -523,38 +607,33 @@ section {
     white-space:
         nowrap;
 
+    cursor:
+        default;
 
-    /* GOLD METAL */
+
+    /* CALM, PERMANENT LUXURY POLISHED GOLD (NEVER DISAPPEARS OR RESETS) */
 
     background:
 
         linear-gradient(
             105deg,
 
-            #9a7134 0%,
+            #a57934 0%,
 
-            #c49a4a 17%,
+            #cfa34e 16%,
 
-            #efd58e 30%,
+            #f1d892 32%,
 
-            #fff0b5 38%,
+            #fff2b8 42%,
 
-            #c49747 49%,
+            #cca04d 56%,
 
-            #e7c878 63%,
+            #ebce80 72%,
 
-            #a87835 80%,
+            #af7f34 86%,
 
-            #edcf85 100%
+            #eed086 100%
         );
-
-
-    background-size:
-        220% 100%;
-
-
-    background-position:
-        0% 50%;
 
 
     -webkit-background-clip:
@@ -571,20 +650,173 @@ section {
     filter:
 
         drop-shadow(
-            0 2px 3px
-            rgba(0, 0, 0, .75)
+            0 2px 4px
+            rgba(0, 0, 0, .80)
         )
 
         drop-shadow(
-            0 0 7px
-            rgba(212, 175, 90, .13)
+            0 0 10px
+            rgba(212, 175, 90, .20)
         );
 
 }
 
 
 /* =========================================================
-   08. STUDIO
+   08. METALLIC GLINT OVERLAY (LEFT -> RIGHT LIGHT SWEEP)
+   ========================================================= */
+
+.brand-glint {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        clamp(
+            3.2rem,
+            6.2vw,
+            7rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        .95;
+
+    letter-spacing:
+        .02em;
+
+    white-space:
+        nowrap;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+    z-index:
+        2;
+
+
+    /* NARROW BRIGHT METALLIC LIGHT REFLECTION */
+
+    background:
+
+        linear-gradient(
+            105deg,
+
+            transparent 0%,
+
+            transparent 38%,
+
+            rgba(255, 255, 255, 0.20) 44%,
+
+            rgba(255, 255, 255, 0.95) 49%,
+
+            rgba(255, 248, 210, 1.0) 51%,
+
+            rgba(255, 255, 255, 0.95) 53%,
+
+            rgba(255, 255, 255, 0.20) 58%,
+
+            transparent 64%,
+
+            transparent 100%
+        );
+
+
+    background-size:
+        280% 100%;
+
+    background-position:
+        140% 0;
+
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+
+    -webkit-text-fill-color:
+        transparent;
+
+    opacity:
+        0;
+
+}
+
+
+/* GLINT SWEEP ANIMATION (LEFT TO RIGHT ON DEMAND) */
+
+.hero-brand.gold-sweep .brand-glint {
+
+    animation:
+        metallicGlint
+        3.2s
+        linear
+        forwards;
+
+}
+
+
+@keyframes metallicGlint {
+
+    0% {
+
+        opacity:
+            0;
+
+        background-position:
+            140% 0;
+
+    }
+
+
+    10% {
+
+        opacity:
+            1;
+
+    }
+
+
+    80% {
+
+        opacity:
+            1;
+
+        background-position:
+            -20% 0;
+
+    }
+
+
+    100% {
+
+        opacity:
+            0;
+
+        background-position:
+            -35% 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   09. STUDIO
    ========================================================= */
 
 .brand-studio {
@@ -610,7 +842,7 @@ section {
         1;
 
     letter-spacing:
-        .62em;
+        .72em;
 
     padding-left:
         .62em;
@@ -618,8 +850,11 @@ section {
     white-space:
         nowrap;
 
+    pointer-events:
+        auto;
 
-    /* GOLD */
+
+    /* CALM POLISHED GOLD */
 
     background:
 
@@ -640,14 +875,6 @@ section {
         );
 
 
-    background-size:
-        220% 100%;
-
-
-    background-position:
-        0% 50%;
-
-
     -webkit-background-clip:
         text;
 
@@ -662,106 +889,8 @@ section {
 
 
 /* =========================================================
-   09. GOLD REFLECTION
-   ========================================================= */
-
-.hero-brand.gold-sweep
-.brand-name,
-
-.hero-brand.gold-sweep
-.brand-studio {
-
-    animation:
-        goldReflection
-        2.2s
-        cubic-bezier(.25, .1, .25, 1)
-        forwards;
-
-}
-
-
-@keyframes goldReflection {
-
-    0% {
-
-        background-position:
-            0% 50%;
-
-        filter:
-
-            drop-shadow(
-                0 2px 3px
-                rgba(0, 0, 0, .75)
-            )
-
-            drop-shadow(
-                0 0 5px
-                rgba(212, 175, 90, .10)
-            );
-
-    }
-
-
-    25% {
-
-        background-position:
-            28% 50%;
-
-    }
-
-
-    50% {
-
-        background-position:
-            58% 50%;
-
-        filter:
-
-            drop-shadow(
-                0 2px 3px
-                rgba(0, 0, 0, .75)
-            )
-
-            drop-shadow(
-                0 0 18px
-                rgba(241, 213, 139, .40)
-            );
-
-    }
-
-
-    75% {
-
-        background-position:
-            82% 50%;
-
-    }
-
-
-    100% {
-
-        background-position:
-            100% 50%;
-
-        filter:
-
-            drop-shadow(
-                0 2px 3px
-                rgba(0, 0, 0, .75)
-            )
-
-            drop-shadow(
-                0 0 7px
-                rgba(212, 175, 90, .13)
-            );
-
-    }
-
-}
-
-
-/* =========================================================
-   10. CINEMATIC SPARK
+   10. CINEMATIC 4-POINT LENS FLARE SPARK
+   Anchored directly at the top-right serif of 'Y' in GEMRAY
    ========================================================= */
 
 .logo-spark {
@@ -769,30 +898,20 @@ section {
     position:
         absolute;
 
-    /*
-        Positioned near the final Y
-        of GEMRAY.
-    */
+    top:
+        10%;
 
     right:
-        clamp(
-            4px,
-            1vw,
-            15px
-        );
+        0;
 
-    top:
-        clamp(
-            38px,
-            4vw,
-            90px
-        );
+    transform:
+        translate(30%, -30%) scale(0.1);
 
     width:
-        7px;
+        12px;
 
     height:
-        7px;
+        12px;
 
     opacity:
         0;
@@ -800,119 +919,191 @@ section {
     pointer-events:
         none;
 
+    z-index:
+        10;
+
 }
 
 
-/* MAIN LIGHT */
-
-.logo-spark::before {
-
-    content:
-        "";
+.spark-core {
 
     position:
         absolute;
 
-    left:
-        50%;
-
     top:
         50%;
 
-    width:
-        7px;
-
-    height:
-        7px;
+    left:
+        50%;
 
     transform:
         translate(-50%, -50%);
 
+    width:
+        8px;
+
+    height:
+        8px;
+
     border-radius:
         50%;
 
-
     background:
-
         radial-gradient(
             circle,
-
             #ffffff 0%,
-
-            #fff8d8 25%,
-
-            var(--gold-light) 45%,
-
-            var(--gold) 60%,
-
-            transparent 75%
+            #fff8d8 35%,
+            var(--gold-light) 65%,
+            var(--gold) 85%,
+            transparent 100%
         );
 
-
     box-shadow:
-
-        0 0 5px
-        rgba(255,255,255,.95),
-
-        0 0 12px
-        var(--gold),
-
-        0 0 22px
-        rgba(212,175,90,.65);
+        0 0 8px #ffffff,
+        0 0 16px var(--gold-light),
+        0 0 28px rgba(212, 175, 90, 0.85);
 
 }
 
 
-/* SHORT LIGHT STREAK */
-
-.logo-spark::after {
-
-    content:
-        "";
+.spark-flare-h {
 
     position:
         absolute;
 
+    top:
+        50%;
+
     left:
         50%;
+
+    width:
+        44px;
+
+    height:
+        2px;
+
+    transform:
+        translate(-50%, -50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.95),
+            transparent
+        );
+
+    box-shadow:
+        0 0 6px rgba(255, 240, 180, 0.9);
+
+}
+
+
+.spark-flare-v {
+
+    position:
+        absolute;
 
     top:
         50%;
 
+    left:
+        50%;
+
     width:
-        32px;
+        2px;
 
     height:
-        1px;
+        44px;
 
     transform:
-        translate(-50%, -50%)
-        rotate(-45deg);
+        translate(-50%, -50%);
 
     background:
+        linear-gradient(
+            180deg,
+            transparent,
+            rgba(255, 255, 255, 0.95),
+            transparent
+        );
 
+    box-shadow:
+        0 0 6px rgba(255, 240, 180, 0.9);
+
+}
+
+
+.spark-flare-d1 {
+
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    width:
+        24px;
+
+    height:
+        1.5px;
+
+    transform:
+        translate(-50%, -50%) rotate(45deg);
+
+    background:
         linear-gradient(
             90deg,
-
             transparent,
-
-            rgba(255,255,255,.9),
-
+            rgba(255, 240, 180, 0.85),
             transparent
         );
 
 }
 
 
-/* SPARK ANIMATION */
+.spark-flare-d2 {
 
-.hero-brand.spark-active
-.logo-spark {
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    width:
+        24px;
+
+    height:
+        1.5px;
+
+    transform:
+        translate(-50%, -50%) rotate(-45deg);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 240, 180, 0.85),
+            transparent
+        );
+
+}
+
+
+/* SPARK TRIGGER ANIMATION */
+
+.hero-brand.spark-active .logo-spark {
 
     animation:
         cinematicSpark
-        1s
-        ease-out
+        0.9s
+        cubic-bezier(.16, 1, .3, 1)
         forwards;
 
 }
@@ -926,40 +1117,40 @@ section {
             0;
 
         transform:
-            scale(.2);
+            translate(30%, -30%) scale(.1) rotate(0deg);
 
     }
 
 
-    18% {
+    20% {
 
         opacity:
             1;
 
         transform:
-            scale(1.15);
+            translate(30%, -30%) scale(1.25) rotate(30deg);
 
     }
 
 
-    42% {
+    45% {
 
         opacity:
             1;
 
         transform:
-            scale(1);
+            translate(30%, -30%) scale(1) rotate(60deg);
 
     }
 
 
-    70% {
+    75% {
 
         opacity:
-            .55;
+            .6;
 
         transform:
-            scale(.75);
+            translate(30%, -30%) scale(.7) rotate(90deg);
 
     }
 
@@ -970,7 +1161,7 @@ section {
             0;
 
         transform:
-            scale(.2);
+            translate(30%, -30%) scale(.1) rotate(120deg);
 
     }
 
@@ -984,53 +1175,63 @@ section {
 .brand-tagline {
 
     margin-top:
-        0;
+        12px;
 
     font-family:
-        "Great Vibes",
-        cursive;
+        "Montserrat",
+        sans-serif;
 
     font-size:
         clamp(
-            2rem,
-            4vw,
-            4.5rem
+            0.92rem,
+            1.4vw,
+            1.25rem
         );
 
     font-weight:
-        400;
+        300;
+
+    letter-spacing:
+        0.35em;
+
+    text-transform:
+        uppercase;
 
     line-height:
-        1;
+        1.4;
 
     color:
-        var(--white);
+        #ffffff;
 
     white-space:
         nowrap;
 
-
-    /*
-        Calm normal glow.
-
-        NO GOLD SWEEP.
-        NO SHIMMER.
-        NO FLASH.
-    */
+    pointer-events:
+        auto;
 
     text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.45),
+        0 0 22px rgba(255, 255, 255, 0.20);
 
-        0 0 5px
-        rgba(255,255,255,.25),
+    animation:
+        heroTaglineReveal 1.8s cubic-bezier(.16, 1, .3, 1) 0.65s both;
 
-        0 0 14px
-        rgba(255,255,255,.10);
+}
 
+@keyframes heroTaglineReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
 /* =========================================================
-   12. HERO SOUND BUTTON
+   12. HERO SOUND BUTTON & SVG ICONS
    ========================================================= */
 
 .sound-button {
@@ -1048,10 +1249,10 @@ section {
         10;
 
     width:
-        48px;
+        50px;
 
     height:
-        48px;
+        50px;
 
     display:
         flex;
@@ -1064,22 +1265,29 @@ section {
 
     border:
         1px solid
-        rgba(255,255,255,.45);
+        rgba(212,175,90,.4);
 
     border-radius:
         50%;
 
     color:
-        #fff;
+        var(--gold-light);
 
     background:
-        rgba(11,61,50,.35);
+        rgba(11,61,50,.55);
 
     backdrop-filter:
-        blur(8px);
+        blur(12px);
+
+    -webkit-backdrop-filter:
+        blur(12px);
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(212, 175, 90, 0.15);
 
     transition:
-        var(--transition);
+        all 0.35s cubic-bezier(.16, 1, .3, 1);
 
 }
 
@@ -1087,14 +1295,36 @@ section {
 .sound-button:hover {
 
     color:
-        var(--gold);
+        #ffffff;
 
     border-color:
-        var(--gold);
+        var(--gold-bright);
+
+    background:
+        rgba(16, 79, 66, 0.8);
 
     transform:
-        scale(1.08);
+        scale(1.1);
 
+    box-shadow:
+        0 6px 22px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(212, 175, 90, 0.35);
+
+}
+
+.sound-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.sound-icon svg {
+    transition: transform 0.25s ease;
+}
+
+.sound-button:hover .sound-icon svg {
+    transform: scale(1.1);
 }
 
 
@@ -1182,10 +1412,26 @@ section {
 .stories-section {
 
     padding:
-        clamp(80px, 10vw, 160px) 20px;
+        clamp(48px, 6.5vw, 95px) 20px clamp(80px, 10vw, 150px);
 
     background:
         var(--green);
+
+}
+
+
+.stories-heading {
+
+    margin:
+        0 auto clamp(20px, 3vw, 36px);
+
+}
+
+
+.stories-heading .section-eyebrow {
+
+    margin-bottom:
+        0;
 
 }
 
@@ -1242,9 +1488,28 @@ section {
     background:
         #000;
 
+    border-radius:
+        6px;
+
     border:
         1px solid
-        rgba(212,175,90,.20);
+        rgba(212,175,90,.25);
+
+    transition:
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+
+}
+
+
+.story-video-card:hover .story-video-wrapper {
+
+    border-color:
+        var(--gold);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(212, 175, 90, 0.2);
 
 }
 
@@ -1426,12 +1691,15 @@ section {
             130px
         );
 
-    bottom:
+    top:
         clamp(
-            60px,
-            10vw,
-            130px
+            55px,
+            8vw,
+            115px
         );
+
+    bottom:
+        auto;
 
     width:
         min(
@@ -1450,9 +1718,9 @@ section {
 
     font-size:
         clamp(
-            2.2rem,
-            5vw,
-            5.5rem
+            2rem,
+            4.2vw,
+            4.5rem
         );
 
     font-weight:
@@ -1462,7 +1730,37 @@ section {
         1.05;
 
     margin-bottom:
-        20px;
+        8px;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.photographer-intro-content .photographer-role {
+
+    display:
+        block;
+
+    margin-bottom:
+        50px;
+
+    color:
+        var(--gold);
+
+    font-size:
+        clamp(
+            .72rem,
+            1.1vw,
+            .88rem
+        );
+
+    letter-spacing:
+        .32em;
+
+    text-transform:
+        uppercase;
 
 }
 
@@ -1484,6 +1782,170 @@ section {
 
     line-height:
         1.55;
+
+}
+
+
+.photographer-intro-content .photographer-quote {
+
+    font-style:
+        italic;
+
+    font-weight:
+        500;
+
+    color:
+        var(--gold-light);
+
+    font-size:
+        clamp(
+            1.35rem,
+            2.1vw,
+            1.9rem
+        );
+
+    line-height:
+        1.35;
+
+    margin-bottom:
+        22px;
+
+    text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.7),
+        0 0 15px rgba(212, 175, 90, 0.25);
+
+}
+
+
+.photographer-location {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    margin-top:
+        150px;
+
+    white-space:
+        nowrap;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size:
+        clamp(0.70rem, 0.88vw, 0.82rem);
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.20em;
+
+    text-transform:
+        uppercase;
+
+    filter:
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95));
+
+}
+
+
+.photographer-location span {
+
+    display:
+        inline-block;
+
+    white-space:
+        nowrap;
+
+    /* PURE WHITE BASE WITH SHARP METALLIC REFLECTION SWEEP */
+
+    background:
+        linear-gradient(
+            110deg,
+            #ffffff 0%,
+            #ffffff 36%,
+            #ffffff 44%,
+            rgba(220, 220, 220, 0.5) 47%,
+            #ffffff 50%,
+            rgba(220, 220, 220, 0.5) 53%,
+            #ffffff 56%,
+            #ffffff 64%,
+            #ffffff 100%
+        );
+
+    background-size:
+        240% 100%;
+
+    background-position:
+        130% 0;
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    animation:
+        locationMetallicSweep
+        6s
+        cubic-bezier(0.25, 0.1, 0.25, 1)
+        infinite;
+
+}
+
+
+@keyframes locationMetallicSweep {
+
+    0% {
+
+        background-position:
+            135% 0;
+
+    }
+
+    50% {
+
+        background-position:
+            -35% 0;
+
+    }
+
+    100% {
+
+        background-position:
+            -35% 0;
+
+    }
+
+}
+
+
+.photographer-location svg {
+
+    flex-shrink:
+        0;
+
+    width:
+        13px;
+
+    height:
+        13px;
+
+    stroke:
+        #ffffff;
+
+    filter:
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
 
 }
 
@@ -1950,25 +2412,41 @@ section {
 .tab {
 
     padding:
-        10px 20px;
+        10px 22px;
 
     color:
-        rgba(255,255,255,.55);
+        var(--gold);
 
     border:
-        1px solid transparent;
+        1px solid rgba(212, 175, 90, 0.35);
+
+    background:
+        rgba(6, 42, 35, 0.6);
+
+    border-radius:
+        4px;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
 
     font-size:
-        .85rem;
+        .82rem;
+
+    font-weight:
+        500;
 
     letter-spacing:
-        .15em;
+        .18em;
 
     text-transform:
         uppercase;
 
+    cursor:
+        pointer;
+
     transition:
-        var(--transition);
+        all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 
 }
 
@@ -1977,10 +2455,19 @@ section {
 .tab.active {
 
     color:
-        var(--gold);
+        var(--gold-light);
 
     border-color:
-        var(--gold-border);
+        var(--gold);
+
+    background:
+        rgba(212, 175, 90, 0.18);
+
+    box-shadow:
+        0 0 16px rgba(212, 175, 90, 0.3);
+
+    transform:
+        translateY(-2px);
 
 }
 
@@ -2509,13 +2996,174 @@ section {
 
     width:
         clamp(
-            120px,
-            15vw,
-            220px
+            160px,
+            20vw,
+            240px
         );
 
     height:
         auto;
+
+    object-fit:
+        contain;
+
+    margin-bottom:
+        clamp(-82px, -9vw, -58px);
+
+    filter:
+        drop-shadow(0 4px 12px rgba(0, 0, 0, .55))
+        drop-shadow(0 0 20px rgba(212, 175, 90, .15));
+
+}
+
+
+.footer-brand-name-wrapper {
+
+    position:
+        relative;
+
+    display:
+        inline-block;
+
+}
+
+
+.footer-brand-name {
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        clamp(
+            2.4rem,
+            4.5vw,
+            4.2rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        .95;
+
+    letter-spacing:
+        .02em;
+
+    white-space:
+        nowrap;
+
+    background:
+        linear-gradient(
+            105deg,
+            #a57934 0%,
+            #cfa34e 16%,
+            #f1d892 32%,
+            #fff2b8 42%,
+            #cca04d 56%,
+            #ebce80 72%,
+            #af7f34 86%,
+            #eed086 100%
+        );
+
+    background-size:
+        240% 100%;
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+    animation:
+        footerGoldShimmer
+        6s
+        cubic-bezier(0.25, 0.1, 0.25, 1)
+        infinite;
+
+    filter:
+        drop-shadow(
+            0 2px 4px
+            rgba(0, 0, 0, .80)
+        )
+        drop-shadow(
+            0 0 10px
+            rgba(212, 175, 90, .20)
+        );
+
+}
+
+
+@keyframes footerGoldShimmer {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+}
+
+
+.footer-brand-studio {
+
+    margin-top:
+        2px;
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        clamp(
+            .85rem,
+            1.3vw,
+            1.25rem
+        );
+
+    font-weight:
+        500;
+
+    line-height:
+        1;
+
+    letter-spacing:
+        .72em;
+
+    padding-left:
+        .62em;
+
+    white-space:
+        nowrap;
+
+    background:
+        linear-gradient(
+            105deg,
+            #9a7134 0%,
+            #d4af5a 25%,
+            #f3d993 40%,
+            #bd8e43 52%,
+            #e0ba6b 72%,
+            #a97a35 100%
+        );
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
 
 }
 
@@ -2523,21 +3171,36 @@ section {
 .footer-tagline {
 
     margin-top:
-        15px;
+        18px;
+
+    margin-bottom:
+        35px;
 
     font-family:
-        "Great Vibes",
-        cursive;
+        "Montserrat",
+        sans-serif;
 
     font-size:
         clamp(
-            1.8rem,
-            3vw,
-            3rem
+            0.78rem,
+            1.05vw,
+            0.95rem
         );
 
+    font-weight:
+        400;
+
+    letter-spacing:
+        0.24em;
+
+    text-transform:
+        uppercase;
+
     color:
-        #fff;
+        #ffffff;
+
+    text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.35);
 
 }
 
@@ -2654,69 +3317,193 @@ section {
    26. FLOATING WHATSAPP / FREE DEMO
    ========================================================= */
 
+/* =========================================================
+   26. FLOATING WHATSAPP / FREE CONSULTATION CALL
+   ========================================================= */
+
 .floating-demo-button {
 
     position:
         fixed;
 
     right:
-        25px;
+        20px;
 
     bottom:
-        25px;
+        20px;
 
     z-index:
         1000;
 
     display:
-        flex;
+        inline-flex;
 
     align-items:
         center;
 
     gap:
-        12px;
+        8px;
 
     padding:
-        13px 18px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.25);
+        9px 16px;
 
     border-radius:
         999px;
 
     color:
-        var(--green-dark);
+        #041d18;
 
     background:
-        var(--gold);
+        linear-gradient(
+            135deg,
+            #dfba68 0%,
+            #fff6d6 24%,
+            #d4af5a 48%,
+            #f7e6a8 74%,
+            #c6993c 100%
+        );
+
+    background-size:
+        200% 200%;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
 
     font-size:
-        .95rem;
+        clamp(0.68rem, 0.85vw, 0.78rem);
 
     font-weight:
-        600;
+        700;
 
     letter-spacing:
-        .08em;
+        0.08em;
 
-    box-shadow:
+    text-transform:
+        uppercase;
 
-        0 8px 30px
-        rgba(0,0,0,.35),
+    text-decoration:
+        none;
 
-        0 0 20px
-        rgba(212,175,90,.18);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.5);
+
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 8px rgba(212, 175, 90, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.6);
+
+    overflow:
+        hidden;
+
+    cursor:
+        pointer;
 
     animation:
-        demoPulse 4s
+        floatingGlowPulse 4s
         ease-in-out
         infinite;
 
     transition:
-        var(--transition);
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.3s ease;
+
+}
+
+
+/* Continuous traveling sparkle light beam */
+.floating-demo-button::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        -150%;
+
+    width:
+        80%;
+
+    height:
+        100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.75) 50%,
+            transparent 100%
+        );
+
+    transform:
+        skewX(-25deg);
+
+    animation:
+        floatingSparkleSweep 3.5s
+        cubic-bezier(0.25, 0.1, 0.25, 1)
+        infinite;
+
+    pointer-events:
+        none;
+
+}
+
+
+@keyframes floatingSparkleSweep {
+
+    0% {
+        left: -150%;
+    }
+
+    45%, 100% {
+        left: 220%;
+    }
+
+}
+
+
+.floating-demo-sparkle {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        #062a23;
+
+    transform:
+        scale(0.85);
+
+    animation:
+        starTwinkle 2.5s
+        ease-in-out
+        infinite;
+
+}
+
+
+@keyframes starTwinkle {
+
+    0%, 100% {
+        transform: scale(0.75) rotate(0deg);
+        opacity: 0.85;
+    }
+
+    50% {
+        transform: scale(1) rotate(45deg);
+        opacity: 1;
+    }
 
 }
 
@@ -2724,8 +3511,13 @@ section {
 .floating-demo-button:hover {
 
     transform:
-        translateY(-4px)
-        scale(1.03);
+        translateY(-2px)
+        scale(1.02);
+
+    box-shadow: 
+        0 6px 18px rgba(0, 0, 0, 0.35),
+        0 0 12px rgba(212, 175, 90, 0.3),
+        inset 0 1px 1px #ffffff;
 
 }
 
@@ -2733,10 +3525,10 @@ section {
 .floating-demo-icon {
 
     width:
-        25px;
+        18px;
 
     height:
-        25px;
+        18px;
 
     display:
         flex;
@@ -2751,40 +3543,48 @@ section {
         50%;
 
     background:
-        var(--green-dark);
+        #062a23;
 
     color:
-        var(--gold);
+        var(--gold-light);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        700;
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.3s ease;
 
 }
 
 
-@keyframes demoPulse {
+.floating-demo-button:hover .floating-demo-icon {
 
-    0%,
-    100% {
+    transform:
+        translateX(2px);
 
-        box-shadow:
+}
 
-            0 8px 30px
-            rgba(0,0,0,.35),
 
-            0 0 15px
-            rgba(212,175,90,.12);
+@keyframes floatingGlowPulse {
 
+    0%, 100% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.3),
+            0 0 6px rgba(212, 175, 90, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.6);
     }
 
-
     50% {
-
-        box-shadow:
-
-            0 8px 30px
-            rgba(0,0,0,.35),
-
-            0 0 28px
-            rgba(212,175,90,.30);
-
+        box-shadow: 
+            0 5px 18px rgba(0, 0, 0, 0.35),
+            0 0 10px rgba(212, 175, 90, 0.25),
+            inset 0 1px 1px rgba(255, 255, 255, 0.8);
     }
 
 }
@@ -3045,9 +3845,6 @@ section {
 
     /* =====================================================
        LOGO
-
-       Still large enough to be clearly visible,
-       but responsive.
        ===================================================== */
 
     .hero-logo-image {
@@ -3055,15 +3852,15 @@ section {
         width:
             clamp(
                 200px,
-                58vw,
-                300px
+                55vw,
+                290px
             );
 
-        margin:
+        margin-top:
             0;
 
         margin-bottom:
-            -70px;
+            clamp(-105px, -11vw, -78px);
 
     }
 
@@ -3072,7 +3869,8 @@ section {
        GEMRAY
        ===================================================== */
 
-    .brand-name {
+    .brand-name,
+    .brand-glint {
 
         font-size:
             clamp(
@@ -3118,14 +3916,17 @@ section {
     .brand-tagline {
 
         margin-top:
-            0;
+            10px;
 
         font-size:
             clamp(
-                2.1rem,
-                9vw,
-                3.8rem
+                0.82rem,
+                3.4vw,
+                1rem
             );
+
+        letter-spacing:
+            0.28em;
 
         max-width:
             90vw;
@@ -3142,11 +3943,14 @@ section {
 
     .logo-spark {
 
-        right:
-            4px;
-
         top:
-            30px;
+            5%;
+
+        right:
+            0;
+
+        transform:
+            translate(35%, -35%) scale(0.85);
 
     }
 
@@ -3187,7 +3991,7 @@ section {
     .stories-section {
 
         padding:
-            80px 15px;
+            50px 15px 80px;
 
     }
 
@@ -3217,8 +4021,6 @@ section {
 
     /* =====================================================
        PHOTOGRAPHER MOBILE REEL
-
-       9:16
        ===================================================== */
 
     .photographer-mobile-video {
@@ -3227,22 +4029,56 @@ section {
             relative;
 
         display:
-            block;
+            flex;
+
+        flex-direction:
+            column;
+
+        justify-content:
+            center;
+
+        align-items:
+            center;
+
+        min-height:
+            100svh;
 
         width:
             100%;
 
-        aspect-ratio:
-            9 / 16;
-
-        max-height:
-            100svh;
+        padding:
+            80px 20px 70px;
 
         overflow:
             hidden;
 
         background:
-            #000;
+            var(--green-dark);
+
+    }
+
+
+    .photographer-mobile-video .photographer-video-overlay {
+
+        position:
+            absolute;
+
+        inset:
+            0;
+
+        z-index:
+            2;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.70) 0%,
+                rgba(6, 42, 35, 0.75) 50%,
+                rgba(0, 0, 0, 0.85) 100%
+            );
+
+        pointer-events:
+            none;
 
     }
 
@@ -3273,17 +4109,44 @@ section {
     .photographer-mobile-video
     .photographer-intro-content {
 
+        position:
+            relative;
+
+        z-index:
+            4;
+
         left:
-            25px;
+            auto;
 
         right:
-            25px;
+            auto;
+
+        top:
+            auto;
 
         bottom:
-            60px;
+            auto;
 
         width:
-            auto;
+            100%;
+
+        max-width:
+            480px;
+
+        margin:
+            0 auto;
+
+        text-align:
+            center;
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
 
     }
 
@@ -3293,10 +4156,112 @@ section {
 
         font-size:
             clamp(
-                2rem,
-                9vw,
-                3.5rem
+                1.9rem,
+                7.5vw,
+                2.6rem
             );
+
+        white-space:
+            nowrap;
+
+        margin-bottom:
+            4px;
+
+        text-align:
+            center;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-intro-content .photographer-role {
+
+        margin-bottom:
+            20px;
+
+        font-size:
+            clamp(
+                0.66rem,
+                2.8vw,
+                0.78rem
+            );
+
+        letter-spacing:
+            0.18em;
+
+        text-align:
+            center;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-intro-content .photographer-quote {
+
+        font-size:
+            clamp(
+                1.05rem,
+                4.2vw,
+                1.3rem
+            );
+
+        line-height:
+            1.4;
+
+        margin-bottom:
+            14px;
+
+        text-align:
+            center;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-intro-content p {
+
+        font-size:
+            clamp(
+                0.86rem,
+                3.3vw,
+                0.96rem
+            );
+
+        line-height:
+            1.55;
+
+        color:
+            rgba(255, 255, 255, 0.85);
+
+        text-align:
+            center;
+
+        max-width:
+            420px;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-location {
+
+        margin-top:
+            26px;
+
+        font-size:
+            clamp(0.62rem, 2.3vw, 0.74rem);
+
+        letter-spacing:
+            0.14em;
+
+        white-space:
+            nowrap;
+
+        justify-content:
+            center;
+
+        text-align:
+            center;
 
     }
 
@@ -3599,15 +4564,22 @@ section {
     .hero-logo-image {
 
         width:
-            190px;
+            clamp(170px, 48vw, 210px);
+
+        margin-top:
+            0;
+
+        margin-bottom:
+            -58px;
 
     }
 
 
-    .brand-name {
+    .brand-name,
+    .brand-glint {
 
         font-size:
-            2rem;
+            clamp(2rem, 9.5vw, 2.6rem);
 
     }
 
@@ -3629,10 +4601,13 @@ section {
     .brand-tagline {
 
         margin-top:
-            21px;
+            8px;
 
         font-size:
-            2.3rem;
+            clamp(0.78rem, 3.8vw, 0.88rem);
+
+        letter-spacing:
+            0.24em;
 
     }
 

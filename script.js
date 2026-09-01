@@ -1,352 +1,270 @@
 /* =========================================================
-   GEMRAY STUDIO
-   MAIN JAVASCRIPT
-   ========================================================= */
-
-
-/* =========================================================
-   01. HERO VIDEO
+   01. HERO VIDEO & SOUND
    ========================================================= */
 
 const bgVideo = document.getElementById("bgVideo");
-
 const soundBtn = document.getElementById("soundBtn");
-
 const iconMuted = document.getElementById("iconMuted");
 const iconUnmuted = document.getElementById("iconUnmuted");
 
+let hasUserInteractedForSound = false;
 
-/*
-    Hero video:
-    - autoplay
-    - muted initially
-    - loop
-    - playsinline
-*/
+function updateHeroSoundIcon() {
+    if (!bgVideo || !soundBtn) return;
 
+    if (bgVideo.muted) {
+        if (iconMuted) iconMuted.style.display = "inline-flex";
+        if (iconUnmuted) iconUnmuted.style.display = "none";
+        soundBtn.setAttribute("aria-label", "Unmute video");
+    } else {
+        if (iconMuted) iconMuted.style.display = "none";
+        if (iconUnmuted) iconUnmuted.style.display = "inline-flex";
+        soundBtn.setAttribute("aria-label", "Mute video");
+    }
+}
+
+// Initial video setup
 if (bgVideo) {
-
     bgVideo.muted = true;
     bgVideo.volume = 1;
 
-    bgVideo.play().catch(() => {
-        // Browser may block autoplay.
-        // Video will start after user interaction.
-    });
-
-}
-
-
-/* =========================================================
-   02. HERO SOUND ICON
-   ========================================================= */
-
-function updateHeroSoundIcon() {
-
-    if (!bgVideo || !soundBtn) return;
-
-
-    if (bgVideo.muted) {
-
-        if (iconMuted) {
-            iconMuted.style.display = "block";
-        }
-
-        if (iconUnmuted) {
-            iconUnmuted.style.display = "none";
-        }
-
-        soundBtn.setAttribute(
-            "aria-label",
-            "Unmute video"
-        );
-
-    } else {
-
-        if (iconMuted) {
-            iconMuted.style.display = "none";
-        }
-
-        if (iconUnmuted) {
-            iconUnmuted.style.display = "block";
-        }
-
-        soundBtn.setAttribute(
-            "aria-label",
-            "Mute video"
-        );
-
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // Autoplay with audio was restricted initially; will start on interaction
+        });
     }
 
+    updateHeroSoundIcon();
 }
 
+// Automatically unmute and play sound on FIRST touch/click anywhere on the screen (Mobile + Laptop)
+function unmuteOnFirstInteraction() {
+    if (hasUserInteractedForSound || !bgVideo) return;
+    hasUserInteractedForSound = true;
 
-updateHeroSoundIcon();
+    bgVideo.muted = false;
+    bgVideo.volume = 1;
 
+    if (bgVideo.paused) {
+        bgVideo.play().catch(() => {});
+    }
 
-/* =========================================================
-   03. HERO SOUND BUTTON
-   ========================================================= */
+    updateHeroSoundIcon();
 
+    // Clean up one-time listeners
+    const events = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
+    events.forEach((evt) => {
+        window.removeEventListener(evt, unmuteOnFirstInteraction, { capture: true });
+    });
+}
+
+// Register one-time interaction listeners across mobile and desktop
+const interactionEvents = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
+interactionEvents.forEach((evt) => {
+    window.addEventListener(evt, unmuteOnFirstInteraction, { capture: true, once: true, passive: true });
+});
+
+// Sound button toggle functionality
 if (soundBtn && bgVideo) {
+    soundBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        hasUserInteractedForSound = true; // Mark as interacted so global listener won't override manual mute
 
-    soundBtn.addEventListener(
-        "click",
-        function (event) {
+        bgVideo.muted = !bgVideo.muted;
+        bgVideo.volume = 1;
 
-            /*
-                Prevent the button click from
-                reaching the video.
-            */
-
-            event.stopPropagation();
-
-
-            bgVideo.muted =
-                !bgVideo.muted;
-
-
-            bgVideo.volume = 1;
-
-
-            /*
-                If video somehow stopped,
-                start it again.
-            */
-
-            if (bgVideo.paused) {
-
-                bgVideo.play().catch(() => {});
-
-            }
-
-
-            updateHeroSoundIcon();
-
+        if (bgVideo.paused) {
+            bgVideo.play().catch(() => {});
         }
-    );
 
+        updateHeroSoundIcon();
+    });
 }
 
 
 /* =========================================================
-   04. HERO VIDEO TOUCH / CLICK
+   02. CINEMATIC METALLIC GLINT & SPARK CONTROLLER
    ========================================================= */
 
-/*
-    Important:
-
-    The website does NOT automatically unmute
-    just because the user clicks somewhere.
-
-    If the user intentionally taps the HERO VIDEO,
-    sound can be enabled.
-*/
-
-if (bgVideo) {
-
-    bgVideo.addEventListener(
-        "click",
-        function () {
-
-            if (bgVideo.muted) {
-
-                bgVideo.muted = false;
-
-                bgVideo.volume = 1;
-
-                updateHeroSoundIcon();
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   05. CINEMATIC GOLD REFLECTION
-   ========================================================= */
-
-/*
-    Animation sequence:
-
-    Normal gold
-         ↓
-    Wait 7–12 seconds
-         ↓
-    Gold reflection moves left → right
-         ↓
-    Reflection reaches Y
-         ↓
-    Tiny spark appears
-         ↓
-    Spark disappears
-         ↓
-    Logo returns to normal
-         ↓
-    Wait again
-*/
-
-
-const heroBrand =
-    document.getElementById("heroBrand");
-
+const heroBrand = document.getElementById("heroBrand");
+const brandNameWrapper = document.querySelector(".brand-name-wrapper");
 
 let goldAnimationRunning = false;
-
 let goldTimer = null;
-
-
-/* =========================================================
-   START GOLD REFLECTION
-   ========================================================= */
+let sparkTimeout = null;
+let cleanupTimeout = null;
 
 function startGoldReflection() {
-
-    if (!heroBrand) return;
-
-    if (goldAnimationRunning) return;
-
+    if (!heroBrand || goldAnimationRunning) return;
 
     goldAnimationRunning = true;
 
-
-    /*
-        Remove previous animation classes.
-    */
-
-    heroBrand.classList.remove(
-        "gold-sweep"
-    );
-
-    heroBrand.classList.remove(
-        "spark-active"
-    );
-
-
-    /*
-        Force browser reflow.
-
-        This allows the same CSS animation
-        to restart every time.
-    */
-
+    // Reset previous states cleanly
+    heroBrand.classList.remove("gold-sweep", "spark-active");
     void heroBrand.offsetWidth;
 
+    // Start glint sweep Left -> Right across GEMRAY (3.2s)
+    heroBrand.classList.add("gold-sweep");
 
-    /*
-        Start gold reflection.
-    */
+    // Spark triggers at the exact moment the glint reaches the final 'Y' of GEMRAY (2550ms)
+    if (sparkTimeout) clearTimeout(sparkTimeout);
+    sparkTimeout = setTimeout(function () {
+        if (heroBrand) {
+            heroBrand.classList.add("spark-active");
+        }
+    }, 2550);
 
-    heroBrand.classList.add(
-        "gold-sweep"
-    );
+    // Clean up animation classes as soon as glint and spark complete together (3500ms)
+    if (cleanupTimeout) clearTimeout(cleanupTimeout);
+    cleanupTimeout = setTimeout(function () {
+        if (heroBrand) {
+            heroBrand.classList.remove("gold-sweep", "spark-active");
+        }
+        goldAnimationRunning = false;
 
+        // Seamlessly repeat the glow and spark cycle continuously
+        scheduleNextReflection();
+    }, 3500);
+}
 
-    /*
-        Spark appears when the reflection
-        reaches the end of GEMRAY.
-    */
+function scheduleNextReflection() {
+    if (goldTimer) clearTimeout(goldTimer);
+    // Smooth pause of 1.5s - 2.5s before the next sweep repeats
+    const pauseDelay = Math.floor(Math.random() * 1000) + 1500;
+    goldTimer = setTimeout(function () {
+        startGoldReflection();
+    }, pauseDelay);
+}
 
-    setTimeout(
-        function () {
+// Initial cycle starts gently after page load (1.5s)
+setTimeout(function () {
+    startGoldReflection();
+}, 1500);
 
-            heroBrand.classList.add(
-                "spark-active"
-            );
+// Interactive Glint on Hover or Tap
+if (brandNameWrapper) {
+    brandNameWrapper.addEventListener("mouseenter", function () {
+        if (!goldAnimationRunning) {
+            if (goldTimer) clearTimeout(goldTimer);
+            startGoldReflection();
+        }
+    });
 
-        },
-        1650
-    );
-
-
-    /*
-        Remove everything after animation.
-    */
-
-    setTimeout(
-        function () {
-
-            heroBrand.classList.remove(
-                "gold-sweep"
-            );
-
-            heroBrand.classList.remove(
-                "spark-active"
-            );
-
-            goldAnimationRunning = false;
-
-        },
-        3000
-    );
-
+    brandNameWrapper.addEventListener("click", function () {
+        if (!goldAnimationRunning) {
+            if (goldTimer) clearTimeout(goldTimer);
+            startGoldReflection();
+        }
+    });
 }
 
 
 /* =========================================================
-   06. RANDOM REFLECTION TIMER
+   03. AMBIENT GOLD DUST / STARDUST PARTICLE CANVAS
    ========================================================= */
 
-function scheduleGoldReflection() {
+function initHeroParticles() {
+    const canvas = document.getElementById("heroParticles");
+    if (!canvas) return;
 
-    /*
-        Random delay:
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-        Minimum = 7 seconds
-        Maximum = 12 seconds
-    */
+    let particles = [];
+    let animationFrameId = null;
+    let width = 0;
+    let height = 0;
+    let isVisible = true;
 
-    const minimumDelay = 7000;
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        createParticles();
+    }
 
-    const maximumDelay = 12000;
+    function createParticles() {
+        particles = [];
+        // Dense enough to be magical, light enough to be 60/120fps smooth
+        const count = Math.min(Math.floor(width * 0.035), 45);
 
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.6 + 0.5,
+                alpha: Math.random() * 0.6 + 0.2,
+                speedY: -(Math.random() * 0.35 + 0.15),
+                speedX: (Math.random() - 0.5) * 0.25,
+                pulse: Math.random() * Math.PI * 2,
+                pulseSpeed: Math.random() * 0.025 + 0.01,
+                color: Math.random() > 0.3 ? "212, 175, 90" : "255, 235, 175" // Warm gold / Pale starlight
+            });
+        }
+    }
 
-    const randomDelay =
-        Math.floor(
-            Math.random() *
-            (
-                maximumDelay -
-                minimumDelay
-            )
-        ) +
-        minimumDelay;
+    function draw() {
+        if (!isVisible) return;
 
+        ctx.clearRect(0, 0, width, height);
 
-    goldTimer =
-        setTimeout(
-            function () {
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
 
-                startGoldReflection();
+            p.pulse += p.pulseSpeed;
+            const currentAlpha = Math.max(0.1, p.alpha + Math.sin(p.pulse) * 0.25);
 
-                scheduleGoldReflection();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.color}, ${currentAlpha})`;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = `rgba(${p.color}, 0.8)`;
+            ctx.fill();
 
-            },
-            randomDelay
-        );
+            // Movement
+            p.y += p.speedY;
+            p.x += p.speedX;
 
+            // Wrap around edges seamlessly
+            if (p.y < -10) {
+                p.y = height + 10;
+                p.x = Math.random() * width;
+            }
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+        }
+
+        animationFrameId = requestAnimationFrame(draw);
+    }
+
+    // Window resize observer
+    window.addEventListener("resize", resize, { passive: true });
+    resize();
+    draw();
+
+    // Pause animation when hero is off-screen to preserve battery
+    if ("IntersectionObserver" in window) {
+        const heroSection = document.getElementById("hero");
+        if (heroSection) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    isVisible = entry.isIntersecting;
+                    if (isVisible && !animationFrameId) {
+                        draw();
+                    }
+                });
+            }, { threshold: 0.05 });
+            observer.observe(heroSection);
+        }
+    }
 }
 
-
-/*
-    Give the page a few seconds before
-    the first reflection.
-
-    This keeps the initial logo calm.
-*/
-
-setTimeout(
-    function () {
-
-        startGoldReflection();
-
-        scheduleGoldReflection();
-
-    },
-    3000
-);
+// Initialize particles after DOM is ready
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initHeroParticles);
+} else {
+    initHeroParticles();
+}
 
 
 /* =========================================================
@@ -1104,11 +1022,48 @@ if (contactForm) {
 
             event.preventDefault();
 
+            const nameInput = document.getElementById("name");
+            const phoneInput = document.getElementById("phone");
+            const emailInput = document.getElementById("email");
+            const serviceInput = document.getElementById("service");
+            const dateInput = document.getElementById("date");
+            const messageInput = document.getElementById("message");
 
-            alert(
-                "Thank you! Your enquiry has been received."
-            );
+            const name = nameInput && nameInput.value.trim() ? nameInput.value.trim() : "Not provided";
+            const phone = phoneInput && phoneInput.value.trim() ? phoneInput.value.trim() : "Not provided";
+            const email = emailInput && emailInput.value.trim() ? emailInput.value.trim() : "Not provided";
+            const service = serviceInput && serviceInput.value ? serviceInput.value : "General Enquiry";
 
+            // Format date to DD-MM-YYYY
+            let weddingDate = "Not specified";
+            if (dateInput && dateInput.value) {
+                const parts = dateInput.value.split("-");
+                if (parts.length === 3) {
+                    weddingDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                } else {
+                    weddingDate = dateInput.value;
+                }
+            }
+
+            const storyMessage = messageInput && messageInput.value.trim() ? messageInput.value.trim() : "No additional notes provided";
+
+            // Compose message requesting a callback
+            const text =
+                `*New Enquiry for Gemray Studio* 💍📸\n\n` +
+                `Hello Bhushan, I would like to request a callback regarding our wedding enquiry.\n\n` +
+                `👤 *Name:* ${name}\n` +
+                `📞 *Phone:* ${phone}\n` +
+                `✉️ *Email:* ${email}\n` +
+                `✨ *Service:* ${service}\n` +
+                `📅 *Wedding Date:* ${weddingDate}\n\n` +
+                `💬 *Our Story & Details:*\n${storyMessage}\n\n` +
+                `Looking forward to connecting with you!`;
+
+            const whatsappNumber = "918956010406";
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(text)}`;
+
+            // Directly navigate user to WhatsApp
+            window.location.href = whatsappUrl;
 
             contactForm.reset();
 

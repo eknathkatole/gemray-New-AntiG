@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gemray Studio Portfolio - Wedding Photography and Cinematography">
+    <meta name="theme-color" content="#0b3d32">
+    <title>Portfolio | Gemray Studio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .portfolio-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px clamp(20px, 4vw, 50px);
+            background: rgba(6, 42, 35, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 90, 0.15);
+        }
+        .portfolio-nav-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .portfolio-nav-logo img {
+            width: 32px;
+            height: auto;
+        }
+        .portfolio-nav-logo span {
+            font-family: "Cinzel Decorative", serif;
+            font-size: 1.15rem;
+            color: var(--gold-light);
+            letter-spacing: 0.05em;
+        }
+        .portfolio-nav-links {
+            display: flex;
+            align-items: center;
+            gap: clamp(14px, 2.5vw, 30px);
+            flex-wrap: wrap;
+        }
+        .portfolio-nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .portfolio-nav-links a:hover,
+        .portfolio-nav-links a.active {
+            color: var(--gold);
+        }
+        .portfolio-hero {
+            padding: 160px 20px 60px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--green-dark) 0%, var(--green) 100%);
+        }
+        .portfolio-full-grid {
+            width: min(100% - 40px, var(--content-width));
+            margin: 0 auto 100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .portfolio-item {
+            position: relative;
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            border-radius: 4px;
+            background: var(--green-dark);
+            border: 1px solid rgba(212, 175, 90, 0.2);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+        }
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+        .portfolio-item:hover {
+            transform: translateY(-6px);
+            border-color: var(--gold);
+        }
+        .portfolio-item:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="site-wrapper">
+        <!-- TOP NAVIGATION BAR -->
+        <nav class="portfolio-nav" aria-label="Main Navigation">
+            <a href="index.html" class="portfolio-nav-logo">
+                <img src="photos/logo.png" alt="Gemray Studio">
+                <span>GEMRAY</span>
+            </a>
+            <div class="portfolio-nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#stories">Stories</a>
+                <a href="index.html#photographer">Photographer</a>
+                <a href="portfolio.html" class="active">Portfolio</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </nav>
+
+        <header class="portfolio-hero">
+            <div class="section-heading">
+                <span class="section-eyebrow">The Gallery</span>
+                <h2>Moments in frame.</h2>
+                <p>A curated collection of timeless wedding stories, pre-wedding memories, and intimate celebrations.</p>
+            </div>
+
+            <!-- GALLERY FILTER TABS -->
+            <div class="gallery-tabs" role="tablist">
+                <button class="tab active" data-filter="all" type="button">
+                    All
+                </button>
+                <button class="tab" data-filter="wedding" type="button">
+                    Wedding
+                </button>
+                <button class="tab" data-filter="prewedding" type="button">
+                    Pre-Wedding
+                </button>
+                <button class="tab" data-filter="engagement" type="button">
+                    Engagement
+                </button>
+            </div>
+        </header>
+
+        <main class="portfolio-full-grid gallery-grid">
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo1.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo2.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo3.jpg" alt="Engagement Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo4.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo5.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo6.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo7.jpg" alt="Engagement Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo8.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo9.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo10.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo11.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo12.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo13.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo14.jpg" alt="Engagement Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo15.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo16.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo17.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo18.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo19.jpg" alt="Wedding Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo20.jpg" alt="Engagement Photography" loading="lazy"></article>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-brand">
+                <img src="photos/logo.png" alt="Gemray Studio" class="footer-logo">
+                <div class="footer-brand-name-wrapper">
+                    <div class="footer-brand-name">GEMRAY</div>
+                </div>
+                <div class="footer-brand-studio">STUDIO</div>
+                <p class="footer-tagline">Your love, our frame</p>
+            </div>
+
+            <!-- FOOTER NAVIGATION -->
+            <nav class="footer-navigation" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="index.html#stories">Stories</a>
+                <a href="index.html#photographer">Photographer</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+
+            <div class="footer-social">
+                <a href="https://wa.me/message/AZ6IJJFY67CKG1" target="_blank" rel="noopener noreferrer">
+                    WhatsApp
+                </a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Gemray Studio • Bhushan Lawane</p>
+            </div>
+        </footer>
+
+        <!-- FLOATING BOOK YOUR FREE CONSULTATION CALL BUTTON -->
+        <a
+            href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%20free%20consultation%20call%20regarding%20wedding%20photography%20and%20cinematography%20services.%20Please%20let%20me%20know%20a%20convenient%20time%20to%20connect!%20%F0%9F%92%8D%F0%9F%93%B8"
+            class="floating-demo-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Book your free consultation call on WhatsApp"
+        >
+            <span class="floating-demo-sparkle" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+                </svg>
+            </span>
+            <span class="floating-demo-text">
+                Book Your Free Consultation Call
+            </span>
+            <span class="floating-demo-icon">
+                →
+            </span>
+        </a>
+    </div>
+
+    <!-- Lightbox Component -->
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <button id="lbClose" class="lightbox-close" type="button" aria-label="Close image">×</button>
+        <button id="lbPrev" class="lightbox-prev" type="button" aria-label="Previous image">←</button>
+        <div class="lightbox-image-wrapper">
+            <img id="lbImg" src="" alt="">
+        </div>
+        <button id="lbNext" class="lightbox-next" type="button" aria-label="Next image">→</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
