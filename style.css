@@ -1,0 +1,3685 @@
+/* =========================================================
+   GEMRAY STUDIO
+   COMPLETE STYLE.CSS
+   ========================================================= */
+
+
+/* =========================================================
+   01. ROOT VARIABLES
+   ========================================================= */
+
+:root {
+
+    --green: #0b3d32;
+
+    --green-dark: #062a23;
+
+    --green-light: #104f42;
+
+
+    --gold: #d4af5a;
+
+    --gold-light: #f3d993;
+
+    --gold-bright: #f7e4a5;
+
+    --gold-dark: #96702e;
+
+
+    --white: #ffffff;
+
+    --white-soft: #e8e5dc;
+
+
+    --text-muted:
+        rgba(255, 255, 255, 0.70);
+
+
+    --border:
+        rgba(255, 255, 255, 0.16);
+
+
+    --gold-border:
+        rgba(212, 175, 90, 0.40);
+
+
+    --content-width:
+        1400px;
+
+
+    --transition:
+        400ms cubic-bezier(.16, 1, .3, 1);
+
+}
+
+
+/* =========================================================
+   02. RESET
+   ========================================================= */
+
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    width: 100%;
+
+    min-height: 100%;
+
+    background:
+        var(--green);
+
+    scroll-behavior:
+        smooth;
+
+}
+
+
+body {
+
+    width: 100%;
+
+    min-height: 100%;
+
+    margin: 0;
+
+    overflow-x: hidden;
+
+    background:
+        var(--green);
+
+    color:
+        var(--white);
+
+    font-family:
+        "Cormorant Garamond",
+        Georgia,
+        serif;
+
+    -webkit-font-smoothing:
+        antialiased;
+
+    text-rendering:
+        optimizeLegibility;
+
+}
+
+
+img,
+video {
+
+    display: block;
+
+    max-width: 100%;
+
+}
+
+
+button,
+input,
+textarea,
+select {
+
+    font: inherit;
+
+}
+
+
+button {
+
+    border: 0;
+
+    outline: none;
+
+    cursor: pointer;
+
+}
+
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+}
+
+
+::selection {
+
+    background:
+        var(--gold);
+
+    color:
+        var(--green-dark);
+
+}
+
+
+/* =========================================================
+   03. COMMON SECTION
+   ========================================================= */
+
+section {
+
+    position: relative;
+
+    width: 100%;
+
+}
+
+
+.section-heading {
+
+    width:
+        min(
+            calc(100% - 40px),
+            900px
+        );
+
+    margin:
+        0 auto 60px;
+
+    text-align:
+        center;
+
+}
+
+
+.section-eyebrow {
+
+    display:
+        block;
+
+    margin-bottom:
+        18px;
+
+    color:
+        var(--gold);
+
+    font-size:
+        .78rem;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .35em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.section-heading h2,
+.about-content h2,
+.portfolio-preview-content h2,
+.contact-content h2 {
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-weight:
+        400;
+
+    line-height:
+        1.12;
+
+    font-size:
+        clamp(
+            2rem,
+            4vw,
+            4.5rem
+        );
+
+}
+
+
+.section-heading p {
+
+    max-width:
+        650px;
+
+    margin:
+        24px auto 0;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        clamp(
+            1.05rem,
+            1.5vw,
+            1.35rem
+        );
+
+    line-height:
+        1.6;
+
+}
+
+
+/* =========================================================
+   04. HERO
+   ========================================================= */
+
+.hero-section {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    height:
+        100svh;
+
+    min-height:
+        600px;
+
+    overflow:
+        hidden;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        var(--green);
+
+}
+
+
+/* =========================================================
+   HERO VIDEO
+   ========================================================= */
+
+.hero-video {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    object-position:
+        center;
+
+    z-index:
+        1;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+/* =========================================================
+   HERO OVERLAY
+   ========================================================= */
+
+.hero-overlay {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        2;
+
+    pointer-events:
+        none;
+
+    background:
+
+        linear-gradient(
+            180deg,
+
+            rgba(0, 0, 0, .30),
+
+            rgba(11, 61, 50, .08) 35%,
+
+            rgba(0, 0, 0, .18) 65%,
+
+            rgba(0, 0, 0, .58)
+        );
+
+}
+
+
+.hero-overlay::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    background:
+
+        radial-gradient(
+            ellipse at center,
+            transparent 30%,
+            rgba(0, 0, 0, .38)
+        );
+
+}
+
+
+/* =========================================================
+   05. HERO BRAND
+
+   IMPORTANT:
+
+   This is ONE composition.
+
+   logo
+   GEMRAY
+   STUDIO
+   tagline
+
+   Everything is centered together.
+   ========================================================= */
+
+.hero-brand {
+
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index:
+        5;
+
+    width:
+        min(94vw, 1000px);
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    gap:
+        2px;
+
+}
+
+
+/* =========================================================
+   06. LOGO PNG
+
+   PATH:
+
+   photos/logo.png
+
+   Size intentionally enlarged.
+   ========================================================= */
+
+.hero-logo-image {
+
+    width:
+        clamp(
+            180px,
+            24vw,
+            360px
+        );
+
+    height:
+        auto;
+
+    object-fit:
+        contain;
+
+    margin:
+        0;
+
+    margin-bottom:
+        -120px;
+
+    filter:
+
+        drop-shadow(
+            0 5px 15px
+            rgba(0, 0, 0, .50)
+        );
+
+}
+
+
+/* =========================================================
+   07. GEMRAY
+
+   FONT:
+   Cinzel Decorative
+   ========================================================= */
+
+.brand-name {
+
+    position:
+        relative;
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        clamp(
+            2.5rem,
+            5.8vw,
+            6rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        .95;
+
+    letter-spacing:
+        .02em;
+
+    white-space:
+        nowrap;
+
+
+    /* GOLD METAL */
+
+    background:
+
+        linear-gradient(
+            105deg,
+
+            #9a7134 0%,
+
+            #c49a4a 17%,
+
+            #efd58e 30%,
+
+            #fff0b5 38%,
+
+            #c49747 49%,
+
+            #e7c878 63%,
+
+            #a87835 80%,
+
+            #edcf85 100%
+        );
+
+
+    background-size:
+        220% 100%;
+
+
+    background-position:
+        0% 50%;
+
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+
+    -webkit-text-fill-color:
+        transparent;
+
+
+    filter:
+
+        drop-shadow(
+            0 2px 3px
+            rgba(0, 0, 0, .75)
+        )
+
+        drop-shadow(
+            0 0 7px
+            rgba(212, 175, 90, .13)
+        );
+
+}
+
+
+/* =========================================================
+   08. STUDIO
+   ========================================================= */
+
+.brand-studio {
+
+    margin-top:
+        0;
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        clamp(
+            .9rem,
+            1.7vw,
+            1.8rem
+        );
+
+    font-weight:
+        500;
+
+    line-height:
+        1;
+
+    letter-spacing:
+        .62em;
+
+    padding-left:
+        .62em;
+
+    white-space:
+        nowrap;
+
+
+    /* GOLD */
+
+    background:
+
+        linear-gradient(
+            105deg,
+
+            #9a7134 0%,
+
+            #d4af5a 25%,
+
+            #f3d993 40%,
+
+            #bd8e43 52%,
+
+            #e0ba6b 72%,
+
+            #a97a35 100%
+        );
+
+
+    background-size:
+        220% 100%;
+
+
+    background-position:
+        0% 50%;
+
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+
+    -webkit-text-fill-color:
+        transparent;
+
+}
+
+
+/* =========================================================
+   09. GOLD REFLECTION
+   ========================================================= */
+
+.hero-brand.gold-sweep
+.brand-name,
+
+.hero-brand.gold-sweep
+.brand-studio {
+
+    animation:
+        goldReflection
+        2.2s
+        cubic-bezier(.25, .1, .25, 1)
+        forwards;
+
+}
+
+
+@keyframes goldReflection {
+
+    0% {
+
+        background-position:
+            0% 50%;
+
+        filter:
+
+            drop-shadow(
+                0 2px 3px
+                rgba(0, 0, 0, .75)
+            )
+
+            drop-shadow(
+                0 0 5px
+                rgba(212, 175, 90, .10)
+            );
+
+    }
+
+
+    25% {
+
+        background-position:
+            28% 50%;
+
+    }
+
+
+    50% {
+
+        background-position:
+            58% 50%;
+
+        filter:
+
+            drop-shadow(
+                0 2px 3px
+                rgba(0, 0, 0, .75)
+            )
+
+            drop-shadow(
+                0 0 18px
+                rgba(241, 213, 139, .40)
+            );
+
+    }
+
+
+    75% {
+
+        background-position:
+            82% 50%;
+
+    }
+
+
+    100% {
+
+        background-position:
+            100% 50%;
+
+        filter:
+
+            drop-shadow(
+                0 2px 3px
+                rgba(0, 0, 0, .75)
+            )
+
+            drop-shadow(
+                0 0 7px
+                rgba(212, 175, 90, .13)
+            );
+
+    }
+
+}
+
+
+/* =========================================================
+   10. CINEMATIC SPARK
+   ========================================================= */
+
+.logo-spark {
+
+    position:
+        absolute;
+
+    /*
+        Positioned near the final Y
+        of GEMRAY.
+    */
+
+    right:
+        clamp(
+            4px,
+            1vw,
+            15px
+        );
+
+    top:
+        clamp(
+            38px,
+            4vw,
+            90px
+        );
+
+    width:
+        7px;
+
+    height:
+        7px;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+
+}
+
+
+/* MAIN LIGHT */
+
+.logo-spark::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    width:
+        7px;
+
+    height:
+        7px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius:
+        50%;
+
+
+    background:
+
+        radial-gradient(
+            circle,
+
+            #ffffff 0%,
+
+            #fff8d8 25%,
+
+            var(--gold-light) 45%,
+
+            var(--gold) 60%,
+
+            transparent 75%
+        );
+
+
+    box-shadow:
+
+        0 0 5px
+        rgba(255,255,255,.95),
+
+        0 0 12px
+        var(--gold),
+
+        0 0 22px
+        rgba(212,175,90,.65);
+
+}
+
+
+/* SHORT LIGHT STREAK */
+
+.logo-spark::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    width:
+        32px;
+
+    height:
+        1px;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-45deg);
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent,
+
+            rgba(255,255,255,.9),
+
+            transparent
+        );
+
+}
+
+
+/* SPARK ANIMATION */
+
+.hero-brand.spark-active
+.logo-spark {
+
+    animation:
+        cinematicSpark
+        1s
+        ease-out
+        forwards;
+
+}
+
+
+@keyframes cinematicSpark {
+
+    0% {
+
+        opacity:
+            0;
+
+        transform:
+            scale(.2);
+
+    }
+
+
+    18% {
+
+        opacity:
+            1;
+
+        transform:
+            scale(1.15);
+
+    }
+
+
+    42% {
+
+        opacity:
+            1;
+
+        transform:
+            scale(1);
+
+    }
+
+
+    70% {
+
+        opacity:
+            .55;
+
+        transform:
+            scale(.75);
+
+    }
+
+
+    100% {
+
+        opacity:
+            0;
+
+        transform:
+            scale(.2);
+
+    }
+
+}
+
+
+/* =========================================================
+   11. TAGLINE
+   ========================================================= */
+
+.brand-tagline {
+
+    margin-top:
+        0;
+
+    font-family:
+        "Great Vibes",
+        cursive;
+
+    font-size:
+        clamp(
+            2rem,
+            4vw,
+            4.5rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        1;
+
+    color:
+        var(--white);
+
+    white-space:
+        nowrap;
+
+
+    /*
+        Calm normal glow.
+
+        NO GOLD SWEEP.
+        NO SHIMMER.
+        NO FLASH.
+    */
+
+    text-shadow:
+
+        0 0 5px
+        rgba(255,255,255,.25),
+
+        0 0 14px
+        rgba(255,255,255,.10);
+
+}
+
+
+/* =========================================================
+   12. HERO SOUND BUTTON
+   ========================================================= */
+
+.sound-button {
+
+    position:
+        absolute;
+
+    right:
+        30px;
+
+    bottom:
+        30px;
+
+    z-index:
+        10;
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.45);
+
+    border-radius:
+        50%;
+
+    color:
+        #fff;
+
+    background:
+        rgba(11,61,50,.35);
+
+    backdrop-filter:
+        blur(8px);
+
+    transition:
+        var(--transition);
+
+}
+
+
+.sound-button:hover {
+
+    color:
+        var(--gold);
+
+    border-color:
+        var(--gold);
+
+    transform:
+        scale(1.08);
+
+}
+
+
+#iconUnmuted {
+
+    display:
+        none;
+
+}
+
+
+/* =========================================================
+   13. SCROLL INDICATOR
+   ========================================================= */
+
+.scroll-indicator {
+
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    bottom:
+        25px;
+
+    transform:
+        translateX(-50%);
+
+    z-index:
+        8;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    color:
+        rgba(255,255,255,.65);
+
+    font-size:
+        .7rem;
+
+    letter-spacing:
+        .25em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.scroll-line {
+
+    width:
+        1px;
+
+    height:
+        35px;
+
+    background:
+
+        linear-gradient(
+            to bottom,
+
+            rgba(255,255,255,.7),
+
+            transparent
+        );
+
+}
+
+
+/* =========================================================
+   14. CUSTOMER STORIES
+   ========================================================= */
+
+.stories-section {
+
+    padding:
+        clamp(80px, 10vw, 160px) 20px;
+
+    background:
+        var(--green);
+
+}
+
+
+.stories-grid {
+
+    width:
+        min(
+            100%,
+            var(--content-width)
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        clamp(
+            20px,
+            3vw,
+            45px
+        );
+
+}
+
+
+.story-video-card {
+
+    min-width:
+        0;
+
+}
+
+
+.story-video-wrapper {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    aspect-ratio:
+        16 / 9;
+
+    overflow:
+        hidden;
+
+    background:
+        #000;
+
+    border:
+        1px solid
+        rgba(212,175,90,.20);
+
+}
+
+
+.story-video {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    background:
+        #000;
+
+    border:
+        0;
+
+}
+
+
+.story-video-content {
+
+    padding:
+        22px 4px 0;
+
+}
+
+
+.story-video-content span {
+
+    display:
+        block;
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--gold);
+
+    font-size:
+        .8rem;
+
+    letter-spacing:
+        .25em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.story-video-content h3 {
+
+    font-size:
+        clamp(
+            1.5rem,
+            2vw,
+            2.2rem
+        );
+
+    font-weight:
+        400;
+
+}
+
+
+/* =========================================================
+   15. PHOTOGRAPHER INTRO
+   ========================================================= */
+
+.photographer-intro-section {
+
+    width:
+        100%;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.photographer-desktop-video {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    height:
+        100svh;
+
+    min-height:
+        600px;
+
+    overflow:
+        hidden;
+
+}
+
+
+.horizontal-video {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    object-position:
+        center;
+
+    background:
+        #000;
+
+}
+
+
+.photographer-video-overlay {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        2;
+
+    pointer-events:
+        none;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            rgba(0,0,0,.58),
+
+            rgba(11,61,50,.10) 60%,
+
+            rgba(0,0,0,.35)
+        );
+
+}
+
+
+.photographer-intro-content {
+
+    position:
+        absolute;
+
+    z-index:
+        4;
+
+    left:
+        clamp(
+            25px,
+            8vw,
+            130px
+        );
+
+    bottom:
+        clamp(
+            60px,
+            10vw,
+            130px
+        );
+
+    width:
+        min(
+            90%,
+            600px
+        );
+
+}
+
+
+.photographer-intro-content h2 {
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        clamp(
+            2.2rem,
+            5vw,
+            5.5rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        1.05;
+
+    margin-bottom:
+        20px;
+
+}
+
+
+.photographer-intro-content p {
+
+    max-width:
+        520px;
+
+    color:
+        rgba(255,255,255,.78);
+
+    font-size:
+        clamp(
+            1.05rem,
+            1.5vw,
+            1.4rem
+        );
+
+    line-height:
+        1.55;
+
+}
+
+
+/* =========================================================
+   16. PHOTOGRAPHER SOUND BUTTON
+   ========================================================= */
+
+.video-sound-button {
+
+    position:
+        absolute;
+
+    right:
+        40px;
+
+    bottom:
+        40px;
+
+    z-index:
+        8;
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border:
+        1px solid
+        rgba(255,255,255,.5);
+
+    border-radius:
+        50%;
+
+    color:
+        #fff;
+
+    background:
+        rgba(11,61,50,.35);
+
+    backdrop-filter:
+        blur(8px);
+
+    transition:
+        var(--transition);
+
+}
+
+
+.video-sound-button:hover {
+
+    color:
+        var(--gold);
+
+    border-color:
+        var(--gold);
+
+    transform:
+        scale(1.08);
+
+}
+
+
+.photographer-unmuted-icon {
+
+    display:
+        none;
+
+}
+
+
+/* =========================================================
+   17. MOBILE PHOTOGRAPHER VIDEO
+   ========================================================= */
+
+.photographer-mobile-video {
+
+    display:
+        none;
+
+}
+
+
+/* =========================================================
+   18. ABOUT
+   ========================================================= */
+
+.about-section {
+
+    padding:
+        clamp(80px, 10vw, 160px) 20px;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.about-container {
+
+    width:
+        min(
+            100%,
+            1200px
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0,1fr)
+        minmax(0,1fr);
+
+    gap:
+        clamp(
+            45px,
+            8vw,
+            120px
+        );
+
+    align-items:
+        center;
+
+}
+
+
+.about-image {
+
+    overflow:
+        hidden;
+
+    border:
+        1px solid
+        var(--gold-border);
+
+}
+
+
+.about-image img {
+
+    width:
+        100%;
+
+    aspect-ratio:
+        4 / 5;
+
+    object-fit:
+        cover;
+
+}
+
+
+.about-content h2 {
+
+    margin-bottom:
+        28px;
+
+}
+
+
+.about-content p {
+
+    max-width:
+        560px;
+
+    margin-bottom:
+        18px;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        clamp(
+            1.15rem,
+            1.6vw,
+            1.45rem
+        );
+
+    line-height:
+        1.65;
+
+}
+
+
+.about-signature {
+
+    margin-top:
+        40px;
+
+    font-family:
+        "Great Vibes",
+        cursive;
+
+    font-size:
+        3rem;
+
+    color:
+        var(--gold);
+
+}
+
+
+/* =========================================================
+   19. QUOTE
+   ========================================================= */
+
+.quote-section {
+
+    min-height:
+        70svh;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        100px 20px;
+
+    background:
+        var(--green);
+
+}
+
+
+.quote-content {
+
+    width:
+        min(
+            100%,
+            1000px
+        );
+
+    text-align:
+        center;
+
+}
+
+
+.quote-content blockquote {
+
+    font-size:
+        clamp(
+            2.3rem,
+            5vw,
+            5.5rem
+        );
+
+    font-weight:
+        300;
+
+    font-style:
+        italic;
+
+    line-height:
+        1.1;
+
+}
+
+
+.quote-mark {
+
+    display:
+        block;
+
+    margin-top:
+        35px;
+
+    color:
+        var(--gold);
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+/* =========================================================
+   20. PORTFOLIO
+   ========================================================= */
+
+.portfolio-preview-section {
+
+    min-height:
+        70svh;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        100px 20px;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.portfolio-preview-content {
+
+    width:
+        min(
+            100%,
+            850px
+        );
+
+    text-align:
+        center;
+
+}
+
+
+.portfolio-preview-content p {
+
+    max-width:
+        620px;
+
+    margin:
+        25px auto 40px;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        clamp(
+            1.1rem,
+            1.5vw,
+            1.4rem
+        );
+
+    line-height:
+        1.6;
+
+}
+
+
+.portfolio-button {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        15px 30px;
+
+    border:
+        1px solid
+        var(--gold);
+
+    color:
+        var(--gold);
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .2em;
+
+    text-transform:
+        uppercase;
+
+    transition:
+        var(--transition);
+
+}
+
+
+.portfolio-button:hover {
+
+    background:
+        var(--gold);
+
+    color:
+        var(--green-dark);
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+/* =========================================================
+   21. GALLERY
+   ========================================================= */
+
+.gallery-section {
+
+    padding:
+        clamp(80px, 10vw, 160px) 20px;
+
+    background:
+        var(--green);
+
+}
+
+
+.gallery-tabs {
+
+    width:
+        min(
+            100%,
+            800px
+        );
+
+    margin:
+        0 auto 50px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        10px;
+
+}
+
+
+.tab {
+
+    padding:
+        10px 20px;
+
+    color:
+        rgba(255,255,255,.55);
+
+    border:
+        1px solid transparent;
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+    transition:
+        var(--transition);
+
+}
+
+
+.tab:hover,
+.tab.active {
+
+    color:
+        var(--gold);
+
+    border-color:
+        var(--gold-border);
+
+}
+
+
+.gallery-grid {
+
+    width:
+        min(
+            100%,
+            1500px
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:
+        12px;
+
+}
+
+
+.g-item {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    aspect-ratio:
+        4 / 5;
+
+    cursor:
+        pointer;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.g-item img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    transition:
+        transform 900ms
+        cubic-bezier(.16,1,.3,1);
+
+}
+
+
+.g-item:hover img {
+
+    transform:
+        scale(1.045);
+
+}
+
+
+.g-item.hidden {
+
+    display:
+        none;
+
+}
+
+
+/* =========================================================
+   22. SERVICES
+   ========================================================= */
+
+.services-section {
+
+    padding:
+        clamp(80px, 10vw, 160px) 20px;
+
+    background:
+        var(--green-dark);
+
+}
+
+
+.services-grid {
+
+    width:
+        min(
+            100%,
+            1250px
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    border-top:
+        1px solid
+        var(--border);
+
+    border-left:
+        1px solid
+        var(--border);
+
+}
+
+
+.service-card {
+
+    min-height:
+        260px;
+
+    padding:
+        35px;
+
+    border-right:
+        1px solid
+        var(--border);
+
+    border-bottom:
+        1px solid
+        var(--border);
+
+    transition:
+        var(--transition);
+
+}
+
+
+.service-card:hover {
+
+    background:
+        rgba(212,175,90,.06);
+
+}
+
+
+.service-number {
+
+    display:
+        block;
+
+    margin-bottom:
+        40px;
+
+    color:
+        var(--gold);
+
+    font-size:
+        .8rem;
+
+    letter-spacing:
+        .15em;
+
+}
+
+
+.service-card h3 {
+
+    margin-bottom:
+        15px;
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        clamp(
+            1.1rem,
+            1.5vw,
+            1.55rem
+        );
+
+    font-weight:
+        400;
+
+    line-height:
+        1.3;
+
+}
+
+
+.service-card p {
+
+    max-width:
+        350px;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        1.05rem;
+
+    line-height:
+        1.5;
+
+}
+
+
+/* =========================================================
+   23. CONTACT
+   ========================================================= */
+
+.contact-section {
+
+    padding:
+        clamp(80px, 10vw, 160px) 20px;
+
+    background:
+        var(--green);
+
+}
+
+
+.contact-container {
+
+    width:
+        min(
+            100%,
+            1250px
+        );
+
+    margin:
+        0 auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0,.9fr)
+        minmax(0,1.1fr);
+
+    gap:
+        clamp(
+            50px,
+            8vw,
+            120px
+        );
+
+}
+
+
+.contact-content h2 {
+
+    margin-bottom:
+        25px;
+
+}
+
+
+.contact-content > p {
+
+    max-width:
+        520px;
+
+    margin-bottom:
+        35px;
+
+    color:
+        var(--text-muted);
+
+    font-size:
+        clamp(
+            1.1rem,
+            1.5vw,
+            1.35rem
+        );
+
+    line-height:
+        1.6;
+
+}
+
+
+.contact-details {
+
+    padding-top:
+        25px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+}
+
+
+.contact-details p {
+
+    margin-bottom:
+        10px;
+
+    color:
+        rgba(255,255,255,.75);
+
+    font-size:
+        1.1rem;
+
+}
+
+
+/* =========================================================
+   24. CONTACT FORM
+   ========================================================= */
+
+.contact-form {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:
+        24px;
+
+}
+
+
+.form-group {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+
+}
+
+
+.form-group-full {
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+.form-group label {
+
+    color:
+        rgba(255,255,255,.65);
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+
+    width:
+        100%;
+
+    padding:
+        10px 0;
+
+    border:
+        0;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.22);
+
+    outline:
+        none;
+
+    color:
+        #fff;
+
+    background:
+        transparent;
+
+    border-radius:
+        0;
+
+    font-size:
+        1.15rem;
+
+    transition:
+        border-color var(--transition);
+
+}
+
+
+.form-group textarea {
+
+    resize:
+        vertical;
+
+    min-height:
+        130px;
+
+}
+
+
+.form-group select option {
+
+    background:
+        var(--green-dark);
+
+    color:
+        #fff;
+
+}
+
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+
+    border-color:
+        var(--gold);
+
+}
+
+
+.submit-button {
+
+    grid-column:
+        1 / -1;
+
+    justify-self:
+        start;
+
+    padding:
+        15px 30px;
+
+    border:
+        1px solid
+        var(--gold);
+
+    color:
+        var(--gold);
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+    transition:
+        var(--transition);
+
+}
+
+
+.submit-button:hover {
+
+    background:
+        var(--gold);
+
+    color:
+        var(--green-dark);
+
+}
+
+
+/* =========================================================
+   25. FOOTER
+   ========================================================= */
+
+.site-footer {
+
+    padding:
+        80px 20px 30px;
+
+    background:
+        #062a23;
+
+    text-align:
+        center;
+
+    border-top:
+        1px solid
+        var(--border);
+
+}
+
+
+.footer-brand {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+}
+
+
+.footer-logo {
+
+    width:
+        clamp(
+            120px,
+            15vw,
+            220px
+        );
+
+    height:
+        auto;
+
+}
+
+
+.footer-tagline {
+
+    margin-top:
+        15px;
+
+    font-family:
+        "Great Vibes",
+        cursive;
+
+    font-size:
+        clamp(
+            1.8rem,
+            3vw,
+            3rem
+        );
+
+    color:
+        #fff;
+
+}
+
+
+.footer-navigation {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        12px 30px;
+
+    margin:
+        50px auto 30px;
+
+}
+
+
+.footer-navigation a {
+
+    color:
+        rgba(255,255,255,.65);
+
+    font-size:
+        .85rem;
+
+    letter-spacing:
+        .12em;
+
+    text-transform:
+        uppercase;
+
+    transition:
+        color var(--transition);
+
+}
+
+
+.footer-navigation a:hover {
+
+    color:
+        var(--gold);
+
+}
+
+
+.footer-social {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        30px;
+
+}
+
+
+.footer-social a {
+
+    color:
+        var(--gold);
+
+}
+
+
+.footer-bottom {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        10px 25px;
+
+    margin-top:
+        50px;
+
+    padding-top:
+        25px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+}
+
+
+.footer-bottom p {
+
+    color:
+        rgba(255,255,255,.4);
+
+    font-size:
+        .8rem;
+
+}
+
+
+/* =========================================================
+   26. FLOATING WHATSAPP / FREE DEMO
+   ========================================================= */
+
+.floating-demo-button {
+
+    position:
+        fixed;
+
+    right:
+        25px;
+
+    bottom:
+        25px;
+
+    z-index:
+        1000;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    padding:
+        13px 18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius:
+        999px;
+
+    color:
+        var(--green-dark);
+
+    background:
+        var(--gold);
+
+    font-size:
+        .95rem;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        .08em;
+
+    box-shadow:
+
+        0 8px 30px
+        rgba(0,0,0,.35),
+
+        0 0 20px
+        rgba(212,175,90,.18);
+
+    animation:
+        demoPulse 4s
+        ease-in-out
+        infinite;
+
+    transition:
+        var(--transition);
+
+}
+
+
+.floating-demo-button:hover {
+
+    transform:
+        translateY(-4px)
+        scale(1.03);
+
+}
+
+
+.floating-demo-icon {
+
+    width:
+        25px;
+
+    height:
+        25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--green-dark);
+
+    color:
+        var(--gold);
+
+}
+
+
+@keyframes demoPulse {
+
+    0%,
+    100% {
+
+        box-shadow:
+
+            0 8px 30px
+            rgba(0,0,0,.35),
+
+            0 0 15px
+            rgba(212,175,90,.12);
+
+    }
+
+
+    50% {
+
+        box-shadow:
+
+            0 8px 30px
+            rgba(0,0,0,.35),
+
+            0 0 28px
+            rgba(212,175,90,.30);
+
+    }
+
+}
+
+
+/* =========================================================
+   27. LIGHTBOX
+   ========================================================= */
+
+.lightbox {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    z-index:
+        2000;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        50px;
+
+    background:
+        rgba(0,0,0,.96);
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+    pointer-events:
+        none;
+
+    transition:
+        opacity 300ms ease,
+        visibility 300ms ease;
+
+}
+
+
+.lightbox.active {
+
+    opacity:
+        1;
+
+    visibility:
+        visible;
+
+    pointer-events:
+        auto;
+
+}
+
+
+.lightbox-image-wrapper {
+
+    width:
+        min(90vw,1200px);
+
+    height:
+        min(85vh,850px);
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+
+.lightbox-image-wrapper img {
+
+    max-width:
+        100%;
+
+    max-height:
+        100%;
+
+    object-fit:
+        contain;
+
+}
+
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+
+    position:
+        absolute;
+
+    z-index:
+        5;
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        #fff;
+
+    border:
+        1px solid
+        rgba(255,255,255,.25);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(255,255,255,.04);
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    transition:
+        var(--transition);
+
+}
+
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+
+    color:
+        var(--gold);
+
+    border-color:
+        var(--gold);
+
+}
+
+
+.lightbox-close {
+
+    top:
+        25px;
+
+    right:
+        25px;
+
+    font-size:
+        30px;
+
+}
+
+
+.lightbox-prev {
+
+    left:
+        25px;
+
+    top:
+        50%;
+
+    transform:
+        translateY(-50%);
+
+}
+
+
+.lightbox-next {
+
+    right:
+        25px;
+
+    top:
+        50%;
+
+    transform:
+        translateY(-50%);
+
+}
+
+
+/* =========================================================
+   28. TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+
+    .services-grid {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+    }
+
+
+    .about-container {
+
+        gap:
+            50px;
+
+    }
+
+
+}
+
+
+/* =========================================================
+   29. MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .hero-section {
+
+        height:
+            100svh;
+
+        min-height:
+            600px;
+
+    }
+
+
+    .hero-brand {
+
+        width:
+            95vw;
+
+    }
+
+
+    /* =====================================================
+       LOGO
+
+       Still large enough to be clearly visible,
+       but responsive.
+       ===================================================== */
+
+    .hero-logo-image {
+
+        width:
+            clamp(
+                200px,
+                58vw,
+                300px
+            );
+
+        margin:
+            0;
+
+        margin-bottom:
+            -70px;
+
+    }
+
+
+    /* =====================================================
+       GEMRAY
+       ===================================================== */
+
+    .brand-name {
+
+        font-size:
+            clamp(
+                2.2rem,
+                10vw,
+                4.5rem
+            );
+
+        max-width:
+            95vw;
+
+        margin-top:
+            0;
+
+    }
+
+
+    /* =====================================================
+       STUDIO
+       ===================================================== */
+
+    .brand-studio {
+
+        margin-top:
+            0;
+
+        font-size:
+            1.05rem;
+
+        letter-spacing:
+            .52em;
+
+        padding-left:
+            .52em;
+
+    }
+
+
+    /* =====================================================
+       TAGLINE
+       ===================================================== */
+
+    .brand-tagline {
+
+        margin-top:
+            0;
+
+        font-size:
+            clamp(
+                2.1rem,
+                9vw,
+                3.8rem
+            );
+
+        max-width:
+            90vw;
+
+        white-space:
+            normal;
+
+    }
+
+
+    /* =====================================================
+       SPARK
+       ===================================================== */
+
+    .logo-spark {
+
+        right:
+            4px;
+
+        top:
+            30px;
+
+    }
+
+
+    /* =====================================================
+       HERO SOUND
+       ===================================================== */
+
+    .sound-button {
+
+        right:
+            18px;
+
+        bottom:
+            18px;
+
+        width:
+            44px;
+
+        height:
+            44px;
+
+    }
+
+
+    .scroll-indicator {
+
+        display:
+            none;
+
+    }
+
+
+    /* =====================================================
+       STORIES
+       ===================================================== */
+
+    .stories-section {
+
+        padding:
+            80px 15px;
+
+    }
+
+
+    .stories-grid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            50px;
+
+    }
+
+
+    /* =====================================================
+       PHOTOGRAPHER DESKTOP HIDDEN
+       ===================================================== */
+
+    .photographer-desktop-video {
+
+        display:
+            none;
+
+    }
+
+
+    /* =====================================================
+       PHOTOGRAPHER MOBILE REEL
+
+       9:16
+       ===================================================== */
+
+    .photographer-mobile-video {
+
+        position:
+            relative;
+
+        display:
+            block;
+
+        width:
+            100%;
+
+        aspect-ratio:
+            9 / 16;
+
+        max-height:
+            100svh;
+
+        overflow:
+            hidden;
+
+        background:
+            #000;
+
+    }
+
+
+    .vertical-video {
+
+        position:
+            absolute;
+
+        inset:
+            0;
+
+        width:
+            100%;
+
+        height:
+            100%;
+
+        object-fit:
+            cover;
+
+        object-position:
+            center;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-intro-content {
+
+        left:
+            25px;
+
+        right:
+            25px;
+
+        bottom:
+            60px;
+
+        width:
+            auto;
+
+    }
+
+
+    .photographer-mobile-video
+    .photographer-intro-content h2 {
+
+        font-size:
+            clamp(
+                2rem,
+                9vw,
+                3.5rem
+            );
+
+    }
+
+
+    .photographer-mobile-video
+    .video-sound-button {
+
+        right:
+            20px;
+
+        bottom:
+            20px;
+
+    }
+
+
+    /* =====================================================
+       ABOUT
+       ===================================================== */
+
+    .about-section {
+
+        padding:
+            80px 20px;
+
+    }
+
+
+    .about-container {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            50px;
+
+    }
+
+
+    /* =====================================================
+       QUOTE
+       ===================================================== */
+
+    .quote-section {
+
+        min-height:
+            60svh;
+
+        padding:
+            80px 20px;
+
+    }
+
+
+    /* =====================================================
+       PORTFOLIO
+       ===================================================== */
+
+    .portfolio-preview-section {
+
+        min-height:
+            60svh;
+
+        padding:
+            80px 20px;
+
+    }
+
+
+    /* =====================================================
+       GALLERY
+       ===================================================== */
+
+    .gallery-section {
+
+        padding:
+            80px 10px;
+
+    }
+
+
+    .gallery-grid {
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:
+            7px;
+
+    }
+
+
+    .gallery-tabs {
+
+        justify-content:
+            flex-start;
+
+        overflow-x:
+            auto;
+
+        flex-wrap:
+            nowrap;
+
+        scrollbar-width:
+            none;
+
+    }
+
+
+    .gallery-tabs::-webkit-scrollbar {
+
+        display:
+            none;
+
+    }
+
+
+    .tab {
+
+        flex:
+            0 0 auto;
+
+        padding:
+            8px 12px;
+
+        font-size:
+            .72rem;
+
+    }
+
+
+    /* =====================================================
+       SERVICES
+       ===================================================== */
+
+    .services-section {
+
+        padding:
+            80px 15px;
+
+    }
+
+
+    .services-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .service-card {
+
+        min-height:
+            auto;
+
+        padding:
+            30px 25px;
+
+    }
+
+
+    /* =====================================================
+       CONTACT
+       ===================================================== */
+
+    .contact-section {
+
+        padding:
+            80px 20px;
+
+    }
+
+
+    .contact-container {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            60px;
+
+    }
+
+
+    .contact-form {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .form-group-full {
+
+        grid-column:
+            auto;
+
+    }
+
+
+    .submit-button {
+
+        grid-column:
+            auto;
+
+        width:
+            100%;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .site-footer {
+
+        padding:
+            65px 15px 25px;
+
+    }
+
+
+    .footer-navigation {
+
+        gap:
+            15px 20px;
+
+    }
+
+
+    /* =====================================================
+       FLOATING BUTTON
+       ===================================================== */
+
+    .floating-demo-button {
+
+        right:
+            15px;
+
+        bottom:
+            15px;
+
+        padding:
+            11px 14px;
+
+        font-size:
+            .82rem;
+
+    }
+
+
+    /* =====================================================
+       LIGHTBOX
+       ===================================================== */
+
+    .lightbox {
+
+        padding:
+            15px;
+
+    }
+
+
+    .lightbox-image-wrapper {
+
+        width:
+            94vw;
+
+        height:
+            85vh;
+
+    }
+
+
+    .lightbox-close,
+    .lightbox-prev,
+    .lightbox-next {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+    }
+
+
+}
+
+
+/* =========================================================
+   30. SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+
+    .hero-logo-image {
+
+        width:
+            190px;
+
+    }
+
+
+    .brand-name {
+
+        font-size:
+            2rem;
+
+    }
+
+
+    .brand-studio {
+
+        font-size:
+            .9rem;
+
+        letter-spacing:
+            .48em;
+
+        padding-left:
+            .48em;
+
+    }
+
+
+    .brand-tagline {
+
+        margin-top:
+            21px;
+
+        font-size:
+            2.3rem;
+
+    }
+
+
+    .floating-demo-button {
+
+        max-width:
+            calc(100vw - 30px);
+
+    }
+
+
+}
+
+
+/* =========================================================
+   31. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+    html {
+
+        scroll-behavior:
+            auto;
+
+    }
+
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            .01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            .01ms !important;
+
+    }
+
+}

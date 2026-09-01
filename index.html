@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- =====================================================
+         BASIC META
+         ===================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Gemray Studio - Wedding Photography and Cinematography"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0b3d32"
+    >
+
+    <title>Gemray Studio | Wedding Photography</title>
+
+
+    <!-- =====================================================
+         GOOGLE FONTS
+         ===================================================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         EXTERNAL CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         WEBSITE WRAPPER
+         ===================================================== -->
+
+    <div class="site-wrapper">
+
+
+        <!-- =================================================
+             01. HERO SECTION
+             ================================================= -->
+
+        <section
+            id="hero"
+            class="hero-section"
+        >
+
+
+            <!-- HERO BACKGROUND VIDEO -->
+
+            <video
+                id="bgVideo"
+                class="hero-video"
+                src="vid/bg.mp4"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+            ></video>
+
+
+            <!-- DARK CINEMATIC OVERLAY -->
+
+            <div
+                class="hero-overlay"
+                aria-hidden="true"
+            ></div>
+
+
+            <!-- HERO SOUND BUTTON -->
+
+            <button
+                id="soundBtn"
+                class="sound-button"
+                type="button"
+                aria-label="Unmute video"
+            >
+
+                <span id="iconMuted">
+                    🔇
+                </span>
+
+                <span id="iconUnmuted">
+                    🔊
+                </span>
+
+            </button>
+
+
+            <!-- =================================================
+                 COMPLETE CENTERED BRAND COMPOSITION
+
+                 logo
+                 ↓
+                 GEMRAY
+                 ↓
+                 STUDIO
+                 ↓
+                 tagline
+
+                 The entire group is centered together.
+                 ================================================= -->
+
+            <div
+                id="heroBrand"
+                class="hero-brand"
+            >
+
+
+                <!-- =================================================
+                     LOGO IMAGE
+
+                     DO NOT CHANGE THIS PATH
+                     ================================================= -->
+
+                <img
+                    id="heroLogoImage"
+                    class="hero-logo-image"
+                    src="photos/logo.png"
+                    alt="Gemray Studio logo"
+                >
+
+
+                <!-- =================================================
+                     GEMRAY
+
+                     FONT:
+                     Cinzel Decorative
+                     ================================================= -->
+
+                <div
+                    id="brandName"
+                    class="brand-name"
+                >
+                    GEMRAY
+                </div>
+
+
+                <!-- =================================================
+                     STUDIO
+
+                     FONT:
+                     Cormorant Garamond
+                     ================================================= -->
+
+                <div
+                    id="brandStudio"
+                    class="brand-studio"
+                >
+                    STUDIO
+                </div>
+
+
+                <!-- =================================================
+                     CINEMATIC SPARK
+
+                     Controlled by JavaScript.
+                     ================================================= -->
+
+                <span
+                    id="logoSpark"
+                    class="logo-spark"
+                    aria-hidden="true"
+                ></span>
+
+
+                <!-- =================================================
+                     TAGLINE
+
+                     FONT:
+                     Great Vibes
+                     ================================================= -->
+
+                <div
+                    id="brandTagline"
+                    class="brand-tagline"
+                >
+                    Your love, our frame
+                </div>
+
+
+            </div>
+
+
+            <!-- SCROLL INDICATOR -->
+
+            <div
+                class="scroll-indicator"
+                aria-hidden="true"
+            >
+
+                <span>
+                    Scroll
+                </span>
+
+                <span
+                    class="scroll-line"
+                ></span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             02. CUSTOMER REVIEW / STORIES SECTION
+             ================================================= -->
+
+        <section
+            id="stories"
+            class="stories-section"
+        >
+
+
+            <!-- SECTION INTRO -->
+
+            <div
+                class="section-heading"
+            >
+
+                <span
+                    class="section-eyebrow"
+                >
+                    Real Stories
+                </span>
+
+                <h2>
+                    Love, captured honestly.
+                </h2>
+
+                <p>
+                    Every celebration has a story.
+                    We preserve the moments that make it yours.
+                </p>
+
+            </div>
+
+
+            <!-- TWO VIDEO LAYOUT -->
+
+            <div
+                class="stories-grid"
+            >
+
+
+                <!-- =================================================
+                     WEDDING CUSTOMER VIDEO
+                     ================================================= -->
+
+                <article
+                    class="story-video-card"
+                >
+
+                    <div
+                        class="story-video-wrapper"
+                    >
+
+                        <iframe
+                            class="story-video"
+                            src="https://www.youtube.com/embed/F4NpFBNJBtA?rel=0&modestbranding=1"
+                            title="Wedding Story"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+
+                    </div>
+
+
+                    <div
+                        class="story-video-content"
+                    >
+
+                        <span>
+                            Wedding Story
+                        </span>
+
+                        <h3>
+                            A day worth remembering.
+                        </h3>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- =================================================
+                     COUPLE INTERVIEW VIDEO
+                     ================================================= -->
+
+                <article
+                    class="story-video-card"
+                >
+
+                    <div
+                        class="story-video-wrapper"
+                    >
+
+                        <iframe
+                            class="story-video"
+                            src="https://www.youtube.com/embed/7K_xBMFBFsY?rel=0&modestbranding=1"
+                            title="Couple Interview"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+
+                    </div>
+
+
+                    <div
+                        class="story-video-content"
+                    >
+
+                        <span>
+                            Couple Interview
+                        </span>
+
+                        <h3>
+                            Their story, in their words.
+                        </h3>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             03. PHOTOGRAPHER INTRODUCTION
+             =================================================
+
+             DESKTOP:
+             Horizontal fullscreen video
+
+             MOBILE:
+             9:16 vertical reel
+
+             MOBILE VIDEO PATH:
+             vid/My movie 005.mp4
+
+             ================================================= -->
+
+        <section
+            id="photographer"
+            class="photographer-intro-section"
+        >
+
+
+            <!-- =================================================
+                 DESKTOP PHOTOGRAPHER VIDEO
+                 ================================================= -->
+
+            <div
+                class="photographer-desktop-video"
+            >
+
+
+                <video
+                    id="photographerVideoDesktop"
+                    class="photographer-video horizontal-video"
+                    src="vid/photographer-intro.mp4"
+                    muted
+                    playsinline
+                    preload="metadata"
+                ></video>
+
+
+                <!-- VIDEO OVERLAY -->
+
+                <div
+                    class="photographer-video-overlay"
+                    aria-hidden="true"
+                ></div>
+
+
+                <!-- INTRODUCTION TEXT -->
+
+                <div
+                    class="photographer-intro-content"
+                >
+
+                    <span
+                        class="section-eyebrow"
+                    >
+                        The Photographer
+                    </span>
+
+                    <h2>
+                        Behind the frame.
+                    </h2>
+
+                    <p>
+                        The person behind the stories,
+                        emotions and photographs
+                        you will remember forever.
+                    </p>
+
+                </div>
+
+
+                <!-- SOUND BUTTON -->
+
+                <button
+                    id="photographerSoundBtn"
+                    class="video-sound-button"
+                    type="button"
+                    aria-label="Unmute photographer video"
+                >
+
+                    <span
+                        class="photographer-muted-icon"
+                    >
+                        🔇
+                    </span>
+
+                    <span
+                        class="photographer-unmuted-icon"
+                    >
+                        🔊
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MOBILE PHOTOGRAPHER VIDEO
+
+                 9:16 INSTAGRAM / REEL STYLE
+                 ================================================= -->
+
+            <div
+                class="photographer-mobile-video"
+            >
+
+
+                <video
+                    id="photographerVideoMobile"
+                    class="photographer-video vertical-video"
+                    src="vid/My movie 005.mp4"
+                    muted
+                    playsinline
+                    preload="metadata"
+                ></video>
+
+
+                <!-- MOBILE VIDEO OVERLAY -->
+
+                <div
+                    class="photographer-video-overlay"
+                    aria-hidden="true"
+                ></div>
+
+
+                <!-- MOBILE INTRO TEXT -->
+
+                <div
+                    class="photographer-intro-content"
+                >
+
+                    <span
+                        class="section-eyebrow"
+                    >
+                        The Photographer
+                    </span>
+
+                    <h2>
+                        Behind the frame.
+                    </h2>
+
+                </div>
+
+
+                <!-- MOBILE SOUND -->
+
+                <button
+                    id="photographerMobileSoundBtn"
+                    class="video-sound-button"
+                    type="button"
+                    aria-label="Unmute photographer video"
+                >
+
+                    <span
+                        class="photographer-muted-icon"
+                    >
+                        🔇
+                    </span>
+
+                    <span
+                        class="photographer-unmuted-icon"
+                    >
+                        🔊
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             04. ABOUT PHOTOGRAPHER
+             ================================================= -->
+
+        <section
+            id="about"
+            class="about-section"
+        >
+
+
+            <div
+                class="about-container"
+            >
+
+
+                <!-- PHOTOGRAPHER IMAGE -->
+
+                <div
+                    class="about-image"
+                >
+
+                    <img
+                        src="photos/photographer.jpg"
+                        alt="Gemray Studio photographer"
+                        loading="lazy"
+                    >
+
+                </div>
+
+
+                <!-- ABOUT TEXT -->
+
+                <div
+                    class="about-content"
+                >
+
+                    <span
+                        class="section-eyebrow"
+                    >
+                        Gemray Studio
+                    </span>
+
+                    <h2>
+                        More than photographs.
+                    </h2>
+
+                    <p>
+                        We believe the most meaningful wedding
+                        photographs are the ones that bring you
+                        back to how the moment felt.
+                    </p>
+
+                    <p>
+                        From quiet glances to unforgettable
+                        celebrations, we capture your story
+                        with an honest and cinematic approach.
+                    </p>
+
+                    <div
+                        class="about-signature"
+                    >
+                        Bhushan Lawane
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             05. QUOTE SECTION
+             ================================================= -->
+
+        <section
+            id="quote"
+            class="quote-section"
+        >
+
+
+            <div
+                class="quote-content"
+            >
+
+                <span
+                    class="section-eyebrow"
+                >
+                    Our Philosophy
+                </span>
+
+                <blockquote>
+                    "The photographs you keep are the
+                    moments you never want to forget."
+                </blockquote>
+
+                <span
+                    class="quote-mark"
+                >
+                    Gemray Studio
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             06. PORTFOLIO PREVIEW
+             ================================================= -->
+
+        <section
+            id="portfolio-preview"
+            class="portfolio-preview-section"
+        >
+
+
+            <div
+                class="portfolio-preview-content"
+            >
+
+                <span
+                    class="section-eyebrow"
+                >
+                    Selected Work
+                </span>
+
+                <h2>
+                    Photographer's Portfolio
+                </h2>
+
+                <p>
+                    Explore a collection of weddings,
+                    celebrations and stories captured
+                    by Gemray Studio.
+                </p>
+
+
+                <!-- =================================================
+                     REDIRECT TO NEW PORTFOLIO PAGE
+                     ================================================= -->
+
+                <a
+                    href="portfolio.html"
+                    class="portfolio-button"
+                >
+                    View Portfolio
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             07. GALLERY
+             ================================================= -->
+
+        <section
+            id="gallery"
+            class="gallery-section"
+        >
+
+
+            <div
+                class="section-heading"
+            >
+
+                <span
+                    class="section-eyebrow"
+                >
+                    The Gallery
+                </span>
+
+                <h2>
+                    Moments in frame.
+                </h2>
+
+            </div>
+
+
+            <!-- GALLERY FILTER -->
+
+            <div
+                class="gallery-tabs"
+                role="tablist"
+            >
+
+                <button
+                    class="tab active"
+                    data-filter="all"
+                    type="button"
+                >
+                    All
+                </button>
+
+                <button
+                    class="tab"
+                    data-filter="wedding"
+                    type="button"
+                >
+                    Wedding
+                </button>
+
+                <button
+                    class="tab"
+                    data-filter="prewedding"
+                    type="button"
+                >
+                    Pre-Wedding
+                </button>
+
+                <button
+                    class="tab"
+                    data-filter="engagement"
+                    type="button"
+                >
+                    Engagement
+                </button>
+
+            </div>
+
+
+            <!-- GALLERY GRID -->
+
+            <div
+                class="gallery-grid"
+            >
+
+
+                <article
+                    class="g-item"
+                    data-cat="wedding"
+                >
+
+                    <img
+                        src="photos/photo1.jpg"
+                        alt="Wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="prewedding"
+                >
+
+                    <img
+                        src="photos/photo2.jpg"
+                        alt="Pre-wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="engagement"
+                >
+
+                    <img
+                        src="photos/photo3.jpg"
+                        alt="Engagement photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="wedding"
+                >
+
+                    <img
+                        src="photos/photo4.jpg"
+                        alt="Wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="wedding"
+                >
+
+                    <img
+                        src="photos/photo5.jpg"
+                        alt="Wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="prewedding"
+                >
+
+                    <img
+                        src="photos/photo6.jpg"
+                        alt="Pre-wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="engagement"
+                >
+
+                    <img
+                        src="photos/photo7.jpg"
+                        alt="Engagement photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="wedding"
+                >
+
+                    <img
+                        src="photos/photo8.jpg"
+                        alt="Wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+                <article
+                    class="g-item"
+                    data-cat="wedding"
+                >
+
+                    <img
+                        src="photos/photo9.jpg"
+                        alt="Wedding photography"
+                        loading="lazy"
+                    >
+
+                </article>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             08. SERVICES
+             ================================================= -->
+
+        <section
+            id="services"
+            class="services-section"
+        >
+
+
+            <div
+                class="section-heading"
+            >
+
+                <span
+                    class="section-eyebrow"
+                >
+                    What We Do
+                </span>
+
+                <h2>
+                    Our Services
+                </h2>
+
+            </div>
+
+
+            <div
+                class="services-grid"
+            >
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        01
+                    </span>
+
+                    <h3>
+                        Wedding Photography
+                    </h3>
+
+                    <p>
+                        Authentic moments and timeless
+                        photographs from your wedding day.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        02
+                    </span>
+
+                    <h3>
+                        Wedding Cinematography
+                    </h3>
+
+                    <p>
+                        Cinematic films crafted around
+                        the emotion and energy of your day.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        03
+                    </span>
+
+                    <h3>
+                        Pre-Wedding
+                    </h3>
+
+                    <p>
+                        Beautifully directed sessions
+                        that tell your story before the wedding.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        04
+                    </span>
+
+                    <h3>
+                        Engagement
+                    </h3>
+
+                    <p>
+                        Intimate photographs celebrating
+                        the beginning of your journey together.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        05
+                    </span>
+
+                    <h3>
+                        Destination Weddings
+                    </h3>
+
+                    <p>
+                        Your story, wherever your celebration
+                        takes you.
+                    </p>
+
+                </article>
+
+
+                <article
+                    class="service-card"
+                >
+
+                    <span
+                        class="service-number"
+                    >
+                        06
+                    </span>
+
+                    <h3>
+                        Wedding Films
+                    </h3>
+
+                    <p>
+                        Emotional films created to preserve
+                        the atmosphere of your celebration.
+                    </p>
+
+                </article>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             09. CONTACT
+             ================================================= -->
+
+        <section
+            id="contact"
+            class="contact-section"
+        >
+
+
+            <div
+                class="contact-container"
+            >
+
+
+                <!-- CONTACT INFORMATION -->
+
+                <div
+                    class="contact-content"
+                >
+
+                    <span
+                        class="section-eyebrow"
+                    >
+                        Let's Create
+                    </span>
+
+                    <h2>
+                        Your story deserves
+                        to be remembered.
+                    </h2>
+
+                    <p>
+                        Tell us a little about your celebration
+                        and let's create something unforgettable.
+                    </p>
+
+
+                    <div
+                        class="contact-details"
+                    >
+
+                        <p>
+                            Jalgaon, Maharashtra, India
+                        </p>
+
+                        <p>
+                            +91 89560 10406
+                        </p>
+
+                        <p>
+                            Gemray Studio
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CONTACT FORM -->
+
+                <form
+                    id="contactForm"
+                    class="contact-form"
+                >
+
+
+                    <div
+                        class="form-group"
+                    >
+
+                        <label for="name">
+                            Name
+                        </label>
+
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                    >
+
+                        <label for="phone">
+                            Phone
+                        </label>
+
+                        <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                    >
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                    >
+
+                        <label for="service">
+                            Service
+                        </label>
+
+                        <select
+                            id="service"
+                            name="service"
+                        >
+
+                            <option value="">
+                                Select a service
+                            </option>
+
+                            <option value="wedding">
+                                Wedding Photography
+                            </option>
+
+                            <option value="cinematography">
+                                Wedding Cinematography
+                            </option>
+
+                            <option value="prewedding">
+                                Pre-Wedding
+                            </option>
+
+                            <option value="engagement">
+                                Engagement
+                            </option>
+
+                            <option value="destination">
+                                Destination Wedding
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        class="form-group"
+                    >
+
+                        <label for="date">
+                            Wedding Date
+                        </label>
+
+                        <input
+                            id="date"
+                            name="date"
+                            type="date"
+                        >
+
+                    </div>
+
+
+                    <div
+                        class="form-group form-group-full"
+                    >
+
+                        <label for="message">
+                            Tell us about your story
+                        </label>
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="5"
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="submit-button"
+                    >
+                        Send Enquiry
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             10. FOOTER
+             ================================================= -->
+
+        <footer
+            id="footer"
+            class="site-footer"
+        >
+
+
+            <div
+                class="footer-brand"
+            >
+
+                <img
+                    src="photos/logo.png"
+                    alt="Gemray Studio"
+                    class="footer-logo"
+                >
+
+                <p
+                    class="footer-tagline"
+                >
+                    Your love, our frame
+                </p>
+
+            </div>
+
+
+            <!-- FOOTER NAVIGATION -->
+
+            <nav
+                class="footer-navigation"
+                aria-label="Footer navigation"
+            >
+
+                <a href="#hero">
+                    Home
+                </a>
+
+                <a href="#stories">
+                    Stories
+                </a>
+
+                <a href="#photographer">
+                    Photographer
+                </a>
+
+                <a href="portfolio.html">
+                    Portfolio
+                </a>
+
+                <a href="#about">
+                    About
+                </a>
+
+                <a href="#gallery">
+                    Gallery
+                </a>
+
+                <a href="#services">
+                    Services
+                </a>
+
+                <a href="#contact">
+                    Contact
+                </a>
+
+            </nav>
+
+
+            <!-- SOCIAL -->
+
+            <div
+                class="footer-social"
+            >
+
+                <a
+                    href="https://wa.me/message/AZ6IJJFY67CKG1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    WhatsApp
+                </a>
+
+            </div>
+
+
+            <!-- COPYRIGHT -->
+
+            <div
+                class="footer-bottom"
+            >
+
+                <p>
+                    © 2026 Gemray Studio
+                </p>
+
+                <p>
+                    Bhushan Lawane
+                </p>
+
+            </div>
+
+
+        </footer>
+
+
+
+        <!-- =================================================
+             FLOATING BOOK YOUR FREE DEMO BUTTON
+
+             ALWAYS VISIBLE
+             RIGHT BOTTOM
+             WHATSAPP
+             ================================================= -->
+
+        <a
+            href="https://wa.me/message/AZ6IJJFY67CKG1"
+            class="floating-demo-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Book your free demo on WhatsApp"
+        >
+
+            <span
+                class="floating-demo-text"
+            >
+                Book Your Free Demo
+            </span>
+
+            <span
+                class="floating-demo-icon"
+            >
+                →
+            </span>
+
+        </a>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         LIGHTBOX
+         ===================================================== -->
+
+    <div
+        id="lightbox"
+        class="lightbox"
+        aria-hidden="true"
+    >
+
+
+        <!-- CLOSE -->
+
+        <button
+            id="lbClose"
+            class="lightbox-close"
+            type="button"
+            aria-label="Close image"
+        >
+            ×
+        </button>
+
+
+        <!-- PREVIOUS -->
+
+        <button
+            id="lbPrev"
+            class="lightbox-prev"
+            type="button"
+            aria-label="Previous image"
+        >
+            ←
+        </button>
+
+
+        <!-- IMAGE -->
+
+        <div
+            class="lightbox-image-wrapper"
+        >
+
+            <img
+                id="lbImg"
+                src=""
+                alt=""
+            >
+
+        </div>
+
+
+        <!-- NEXT -->
+
+        <button
+            id="lbNext"
+            class="lightbox-next"
+            type="button"
+            aria-label="Next image"
+        >
+            →
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+
+         Keep JavaScript in:
+         script.js
+         ===================================================== -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
