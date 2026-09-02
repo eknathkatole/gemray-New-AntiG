@@ -23,63 +23,130 @@ function updateHeroSoundIcon() {
     }
 }
 
+// Safely play video, with fallback to muted play if unmuted playback is restricted by mobile browser
+function safePlayVideo(video) {
+    if (!video) return;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // Revert to muted playback so video NEVER stops playing on mobile
+            video.muted = true;
+            video.play().catch(() => {});
+            if (video === bgVideo) updateHeroSoundIcon();
+        });
+    }
+}
+
 // Initial video setup
 if (bgVideo) {
     bgVideo.muted = true;
     bgVideo.volume = 1;
-
-    const playPromise = bgVideo.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(() => {
-            // Autoplay with audio was restricted initially; will start on interaction
-        });
-    }
-
-    updateHeroSoundIcon();
-}
-
-// Automatically unmute and play sound on FIRST touch/click anywhere on the screen (Mobile + Laptop)
-function unmuteOnFirstInteraction() {
-    if (hasUserInteractedForSound || !bgVideo) return;
-    hasUserInteractedForSound = true;
-
-    bgVideo.muted = false;
-    bgVideo.volume = 1;
-
-    if (bgVideo.paused) {
-        bgVideo.play().catch(() => {});
-    }
-
+    safePlayVideo(bgVideo);
     updateHeroSoundIcon();
 
-    // Clean up one-time listeners
-    const events = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
-    events.forEach((evt) => {
-        window.removeEventListener(evt, unmuteOnFirstInteraction, { capture: true });
+    // Auto-resume if video gets paused unexpectedly (e.g. browser policy or low-power mode)
+    bgVideo.addEventListener("pause", () => {
+        if (!document.hidden && bgVideo) {
+            safePlayVideo(bgVideo);
+        }
     });
 }
 
-// Register one-time interaction listeners across mobile and desktop
-const interactionEvents = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
-interactionEvents.forEach((evt) => {
-    window.addEventListener(evt, unmuteOnFirstInteraction, { capture: true, once: true, passive: true });
+// Resume playback when returning to the tab/app
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && bgVideo) {
+        safePlayVideo(bgVideo);
+    }
 });
+
+// Try unmuting hero video safely on user tap
+function tryUnmuteHero() {
+    if (!bgVideo) return;
+    bgVideo.muted = false;
+    bgVideo.volume = 1;
+
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            updateHeroSoundIcon();
+        }).catch(() => {
+            // If mobile browser blocks unmuted playback, immediately revert to muted so video continues uninterrupted
+            bgVideo.muted = true;
+            bgVideo.play().catch(() => {});
+            updateHeroSoundIcon();
+        });
+    } else {
+        updateHeroSoundIcon();
+    }
+}
+
+// Track touch gestures so scrolling NEVER triggers unmute or pauses the video
+let touchStartX = 0;
+let touchStartY = 0;
+let touchMoved = false;
+
+window.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches.length > 0) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchMoved = false;
+    }
+}, { passive: true });
+
+window.addEventListener("touchmove", (e) => {
+    if (e.touches && e.touches.length > 0) {
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        // If finger moved more than 10px, it is a scroll gesture - NOT a tap!
+        if (dx > 10 || dy > 10) {
+            touchMoved = true;
+        }
+    }
+}, { passive: true });
+
+window.addEventListener("touchend", (e) => {
+    // Only unmute on a clean TAP (not a scroll/swipe) and only on first interaction
+    if (!touchMoved && !hasUserInteractedForSound) {
+        const target = e.target;
+        if (target && target.closest("button, a, input, select, textarea, form, .lightbox")) return;
+
+        hasUserInteractedForSound = true;
+        tryUnmuteHero();
+    }
+}, { passive: true });
+
+// Desktop click anywhere to unmute (clean tap)
+window.addEventListener("click", (e) => {
+    if (!hasUserInteractedForSound) {
+        const target = e.target;
+        if (target && target.closest("button, a, input, select, textarea, form, .lightbox")) return;
+
+        hasUserInteractedForSound = true;
+        tryUnmuteHero();
+    }
+}, { passive: true });
 
 // Sound button toggle functionality
 if (soundBtn && bgVideo) {
     soundBtn.addEventListener("click", function (event) {
         event.stopPropagation();
-        hasUserInteractedForSound = true; // Mark as interacted so global listener won't override manual mute
+        event.preventDefault();
+        hasUserInteractedForSound = true; // Mark as interacted so general tap won't override
 
-        bgVideo.muted = !bgVideo.muted;
-        bgVideo.volume = 1;
-
-        if (bgVideo.paused) {
-            bgVideo.play().catch(() => {});
+        if (bgVideo.muted) {
+            // User wants to UNMUTE
+            tryUnmuteHero();
+        } else {
+            // User wants to MUTE
+            bgVideo.muted = true;
+            safePlayVideo(bgVideo);
+            updateHeroSoundIcon();
         }
-
-        updateHeroSoundIcon();
     });
+
+    soundBtn.addEventListener("touchstart", function (e) {
+        e.stopPropagation();
+    }, { passive: true });
 }
 
 
@@ -371,27 +438,20 @@ function updatePhotographerSoundIcon(
    ========================================================= */
 
 if (photographerDesktopVideo) {
+    photographerDesktopVideo.muted = true;
+    photographerDesktopVideo.volume = 1;
+    safePlayVideo(photographerDesktopVideo);
 
-    /*
-        Start muted so autoplay is allowed.
-    */
-
-    photographerDesktopVideo.muted =
-        true;
-
-    photographerDesktopVideo.volume =
-        1;
-
-
-    photographerDesktopVideo.play()
-        .catch(() => {});
-
+    photographerDesktopVideo.addEventListener("pause", () => {
+        if (!document.hidden && photographerDesktopVideo) {
+            safePlayVideo(photographerDesktopVideo);
+        }
+    });
 
     updatePhotographerSoundIcon(
         photographerDesktopVideo,
         photographerSoundBtn
     );
-
 }
 
 
@@ -399,76 +459,30 @@ if (photographerDesktopVideo) {
    10. DESKTOP PHOTOGRAPHER SOUND
    ========================================================= */
 
-if (
-    photographerDesktopVideo &&
-    photographerSoundBtn
-) {
+if (photographerDesktopVideo && photographerSoundBtn) {
+    photographerSoundBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        event.preventDefault();
 
-    photographerSoundBtn.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-
-            photographerDesktopVideo.muted =
-                !photographerDesktopVideo.muted;
-
-
-            photographerDesktopVideo.volume =
-                1;
-
-
-            if (
-                photographerDesktopVideo.paused
-            ) {
-
-                photographerDesktopVideo
-                    .play()
-                    .catch(() => {});
-
+        if (photographerDesktopVideo.muted) {
+            photographerDesktopVideo.muted = false;
+            photographerDesktopVideo.volume = 1;
+            const p = photographerDesktopVideo.play();
+            if (p !== undefined) {
+                p.then(() => {
+                    updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
+                }).catch(() => {
+                    photographerDesktopVideo.muted = true;
+                    photographerDesktopVideo.play().catch(() => {});
+                    updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
+                });
             }
-
-
-            updatePhotographerSoundIcon(
-                photographerDesktopVideo,
-                photographerSoundBtn
-            );
-
+        } else {
+            photographerDesktopVideo.muted = true;
+            safePlayVideo(photographerDesktopVideo);
+            updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
         }
-    );
-
-
-    /*
-        Tapping the photographer video
-        intentionally enables sound.
-    */
-
-    photographerDesktopVideo.addEventListener(
-        "click",
-        function () {
-
-            if (
-                photographerDesktopVideo.muted
-            ) {
-
-                photographerDesktopVideo.muted =
-                    false;
-
-                photographerDesktopVideo.volume =
-                    1;
-
-
-                updatePhotographerSoundIcon(
-                    photographerDesktopVideo,
-                    photographerSoundBtn
-                );
-
-            }
-
-        }
-    );
-
+    });
 }
 
 
@@ -477,32 +491,20 @@ if (
    ========================================================= */
 
 if (photographerMobileVideo) {
+    photographerMobileVideo.muted = true;
+    photographerMobileVideo.volume = 1;
+    safePlayVideo(photographerMobileVideo);
 
-    /*
-        Mobile reel:
-
-        9:16
-        muted initially
-        autoplay
-        playsinline
-    */
-
-    photographerMobileVideo.muted =
-        true;
-
-    photographerMobileVideo.volume =
-        1;
-
-
-    photographerMobileVideo.play()
-        .catch(() => {});
-
+    photographerMobileVideo.addEventListener("pause", () => {
+        if (!document.hidden && photographerMobileVideo) {
+            safePlayVideo(photographerMobileVideo);
+        }
+    });
 
     updatePhotographerSoundIcon(
         photographerMobileVideo,
         photographerMobileSoundBtn
     );
-
 }
 
 
@@ -510,76 +512,34 @@ if (photographerMobileVideo) {
    12. MOBILE PHOTOGRAPHER SOUND
    ========================================================= */
 
-if (
-    photographerMobileVideo &&
-    photographerMobileSoundBtn
-) {
+if (photographerMobileVideo && photographerMobileSoundBtn) {
+    photographerMobileSoundBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        event.preventDefault();
 
-    photographerMobileSoundBtn.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-
-            photographerMobileVideo.muted =
-                !photographerMobileVideo.muted;
-
-
-            photographerMobileVideo.volume =
-                1;
-
-
-            if (
-                photographerMobileVideo.paused
-            ) {
-
-                photographerMobileVideo
-                    .play()
-                    .catch(() => {});
-
+        if (photographerMobileVideo.muted) {
+            photographerMobileVideo.muted = false;
+            photographerMobileVideo.volume = 1;
+            const p = photographerMobileVideo.play();
+            if (p !== undefined) {
+                p.then(() => {
+                    updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
+                }).catch(() => {
+                    photographerMobileVideo.muted = true;
+                    photographerMobileVideo.play().catch(() => {});
+                    updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
+                });
             }
-
-
-            updatePhotographerSoundIcon(
-                photographerMobileVideo,
-                photographerMobileSoundBtn
-            );
-
+        } else {
+            photographerMobileVideo.muted = true;
+            safePlayVideo(photographerMobileVideo);
+            updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
         }
-    );
+    });
 
-
-    /*
-        Direct touch/click on mobile reel
-        can enable sound.
-    */
-
-    photographerMobileVideo.addEventListener(
-        "click",
-        function () {
-
-            if (
-                photographerMobileVideo.muted
-            ) {
-
-                photographerMobileVideo.muted =
-                    false;
-
-                photographerMobileVideo.volume =
-                    1;
-
-
-                updatePhotographerSoundIcon(
-                    photographerMobileVideo,
-                    photographerMobileSoundBtn
-                );
-
-            }
-
-        }
-    );
-
+    photographerMobileSoundBtn.addEventListener("touchstart", function (e) {
+        e.stopPropagation();
+    }, { passive: true });
 }
 
 
