@@ -3,103 +3,542 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Gemray Studio Portfolio - Wedding Photography and Cinematography">
-    <meta name="theme-color" content="#0b3d32">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Gemray Studio Portfolio - Timeless Wedding Photography, Pre-Wedding, and Cinematography by Bhushan Lawane.">
+    <meta name="theme-color" content="#062a23">
     <title>Portfolio | Gemray Studio</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="photos/logo.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
 
     <!-- External CSS -->
     <link rel="stylesheet" href="style.css">
+    
     <style>
+        /* =====================================================
+           PORTFOLIO PAGE DEDICATED STYLES
+           ===================================================== */
+        
+        /* 1. TOP NAVIGATION BAR */
         .portfolio-nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 100;
+            height: 72px;
+            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px clamp(20px, 4vw, 50px);
-            background: rgba(6, 42, 35, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(212, 175, 90, 0.15);
+            padding: 0 clamp(16px, 4vw, 50px);
+            background: rgba(6, 42, 35, 0.90);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(212, 175, 90, 0.2);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
+
         .portfolio-nav-logo {
             display: inline-flex;
             align-items: center;
             gap: 10px;
             text-decoration: none;
+            z-index: 1002;
+            -webkit-tap-highlight-color: transparent;
         }
+
         .portfolio-nav-logo img {
             width: 32px;
             height: auto;
+            filter: drop-shadow(0 0 6px rgba(212, 175, 90, 0.3));
         }
+
         .portfolio-nav-logo span {
             font-family: "Cinzel Decorative", serif;
             font-size: 1.15rem;
             color: var(--gold-light);
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
+            font-weight: 700;
         }
+
+        /* Desktop Nav Links */
         .portfolio-nav-links {
             display: flex;
             align-items: center;
-            gap: clamp(14px, 2.5vw, 30px);
-            flex-wrap: wrap;
+            gap: clamp(16px, 2.5vw, 32px);
         }
+
         .portfolio-nav-links a {
-            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            color: rgba(255, 255, 255, 0.82);
             font-family: "Montserrat", sans-serif;
             font-size: 0.8rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
             text-decoration: none;
+            padding: 8px 4px;
             transition: color 0.3s ease;
         }
+
         .portfolio-nav-links a:hover,
         .portfolio-nav-links a.active {
-            color: var(--gold);
+            color: var(--gold-light);
         }
+
+        .portfolio-nav-links a.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 4px;
+            right: 4px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .portfolio-mobile-wa-btn {
+            display: none;
+        }
+
+        /* Hamburger Button (Mobile only) */
+        .portfolio-nav-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(212, 175, 90, 0.08);
+            border: 1px solid rgba(212, 175, 90, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1002;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .portfolio-nav-toggle:active {
+            background: rgba(212, 175, 90, 0.2);
+        }
+
+        .hamburger-line {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 2px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+        }
+
+        .hamburger-line:nth-child(2) {
+            margin: 5px 0;
+        }
+
+        .portfolio-nav-toggle.open .hamburger-line:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .portfolio-nav-toggle.open .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .portfolio-nav-toggle.open .hamburger-line:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* 2. HERO / HEADER SECTION */
         .portfolio-hero {
-            padding: 160px 20px 60px;
+            padding: clamp(110px, 16vw, 160px) 20px clamp(30px, 6vw, 55px);
             text-align: center;
             background: linear-gradient(180deg, var(--green-dark) 0%, var(--green) 100%);
+            position: relative;
+            overflow: hidden;
         }
+
+        .portfolio-hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(800px, 100%);
+            height: 250px;
+            background: radial-gradient(ellipse at top, rgba(212, 175, 90, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .portfolio-hero .section-heading {
+            margin-bottom: 36px;
+        }
+
+        .portfolio-hero h2 {
+            font-size: clamp(2.3rem, 6.5vw, 3.8rem);
+            line-height: 1.15;
+            margin: 12px 0 16px;
+            font-family: "Cormorant Garamond", Georgia, serif;
+            font-style: italic;
+            font-weight: 400;
+            background: linear-gradient(135deg, #ffffff 40%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .portfolio-hero p {
+            font-size: clamp(0.95rem, 3.2vw, 1.15rem);
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Dynamic Category Counter Pill */
+        .gallery-count-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 6px 18px;
+            background: rgba(6, 42, 35, 0.7);
+            border: 1px solid rgba(212, 175, 90, 0.28);
+            border-radius: 30px;
+            color: var(--gold-light);
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.76rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-count-pill span {
+            color: var(--gold-bright);
+            font-weight: 600;
+        }
+
+        /* 3. FILTER TABS */
+        .gallery-tabs {
+            width: min(100%, 750px);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 10px 22px;
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 90, 0.35);
+            background: rgba(6, 42, 35, 0.65);
+            border-radius: 24px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .tab:hover,
+        .tab.active {
+            color: var(--gold-light);
+            border-color: var(--gold);
+            background: rgba(212, 175, 90, 0.2);
+            box-shadow: 0 0 16px rgba(212, 175, 90, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* 4. GALLERY GRID */
         .portfolio-full-grid {
-            width: min(100% - 40px, var(--content-width));
-            margin: 0 auto 100px;
+            width: min(calc(100% - 32px), 1400px);
+            margin: 0 auto clamp(60px, 10vw, 100px);
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
         }
+
         .portfolio-item {
             position: relative;
-            aspect-ratio: 4/5;
+            aspect-ratio: 4 / 5;
             overflow: hidden;
-            border-radius: 4px;
+            border-radius: 6px;
             background: var(--green-dark);
-            border: 1px solid rgba(212, 175, 90, 0.2);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+            border: 1px solid rgba(212, 175, 90, 0.22);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.35s ease;
+            -webkit-tap-highlight-color: transparent;
         }
+
         .portfolio-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            object-position: center;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
         }
-        .portfolio-item:hover {
-            transform: translateY(-6px);
-            border-color: var(--gold);
+
+        /* Luxury View Overlay Hint on Hover */
+        .portfolio-item::after {
+            content: "VIEW";
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 42, 35, 0.55);
+            color: var(--gold-light);
+            font-family: "Cinzel Decorative", serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
         }
+
+        .portfolio-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 90, 0.2);
+        }
+
         .portfolio-item:hover img {
-            transform: scale(1.05);
+            transform: scale(1.06);
+        }
+
+        .portfolio-item:hover::after {
+            opacity: 1;
+        }
+
+        .portfolio-item.hidden {
+            display: none !important;
+        }
+
+        /* 5. LIGHTBOX POSITION COUNTER */
+        .lightbox-counter {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            color: var(--gold-light);
+            font-family: "Cinzel Decorative", serif;
+            font-size: 0.88rem;
+            letter-spacing: 0.16em;
+            background: rgba(6, 42, 35, 0.85);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 90, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: none;
+        }
+
+        /* =====================================================
+           RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
+           ===================================================== */
+        
+        /* TABLET (< 1024px) */
+        @media (max-width: 1024px) {
+            .portfolio-full-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
+            }
+        }
+
+        /* MOBILE (< 768px) */
+        @media (max-width: 768px) {
+            .portfolio-nav {
+                height: 62px;
+                padding: 0 16px;
+            }
+
+            .portfolio-nav-toggle {
+                display: flex;
+            }
+
+            /* Sliding Mobile Drawer */
+            .portfolio-nav-links {
+                position: fixed;
+                top: 62px;
+                left: 0;
+                right: 0;
+                height: calc(100svh - 62px);
+                background: linear-gradient(180deg, rgba(6, 42, 35, 0.98) 0%, rgba(11, 61, 50, 0.99) 100%);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 36px 20px 40px;
+                gap: 16px;
+                border-bottom: 1px solid rgba(212, 175, 90, 0.3);
+                transform: translateY(-120%);
+                opacity: 0;
+                visibility: hidden;
+                overflow-y: auto;
+                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.35s ease;
+                z-index: 1001;
+            }
+
+            .portfolio-nav-links.open {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .portfolio-nav-links a {
+                width: 100%;
+                max-width: 320px;
+                text-align: center;
+                font-size: 0.92rem;
+                padding: 13px 20px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(212, 175, 90, 0.15);
+                letter-spacing: 0.22em;
+            }
+
+            .portfolio-nav-links a.active {
+                background: rgba(212, 175, 90, 0.15);
+                border-color: var(--gold);
+                color: var(--gold-bright);
+            }
+
+            .portfolio-nav-links a.active::after {
+                display: none;
+            }
+
+            .portfolio-mobile-wa-btn {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                max-width: 320px;
+                margin-top: 10px;
+                padding: 14px 20px !important;
+                background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%) !important;
+                color: var(--green-dark) !important;
+                font-weight: 600 !important;
+                border-radius: 8px;
+                border: none !important;
+                font-size: 0.88rem !important;
+                box-shadow: 0 4px 18px rgba(212, 175, 90, 0.35);
+            }
+
+            /* Gallery Grid on Mobile */
+            .portfolio-full-grid {
+                width: calc(100% - 20px);
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 70px;
+            }
+
+            .portfolio-item {
+                border-radius: 5px;
+            }
+
+            .portfolio-item:hover {
+                transform: none;
+            }
+
+            .portfolio-item::after {
+                display: none; /* No hover overlay on touch */
+            }
+
+            /* Filter Tabs Scrollable on Mobile */
+            .gallery-tabs {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding: 4px 6px 12px;
+                gap: 8px;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .gallery-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab {
+                flex: 0 0 auto;
+                padding: 8px 16px;
+                font-size: 0.74rem;
+                letter-spacing: 0.12em;
+            }
+
+            /* Lightbox Mobile Adjustments */
+            .lightbox {
+                padding: 10px;
+            }
+
+            .lightbox-counter {
+                top: max(16px, env(safe-area-inset-top, 16px));
+                font-size: 0.78rem;
+                padding: 4px 12px;
+            }
+
+            .lightbox-close {
+                top: max(12px, env(safe-area-inset-top, 12px));
+                right: max(12px, env(safe-area-inset-right, 12px));
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+                background: rgba(6, 42, 35, 0.85);
+                border: 1px solid rgba(212, 175, 90, 0.4);
+            }
+
+            .lightbox-prev {
+                left: 10px;
+                width: 40px;
+                height: 40px;
+                background: rgba(6, 42, 35, 0.75);
+                border: 1px solid rgba(212, 175, 90, 0.35);
+            }
+
+            .lightbox-next {
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                background: rgba(6, 42, 35, 0.75);
+                border: 1px solid rgba(212, 175, 90, 0.35);
+            }
+
+            .lightbox-image-wrapper {
+                width: 95vw;
+                height: 75vh;
+            }
+        }
+
+        /* SMALL MOBILE (< 400px) */
+        @media (max-width: 400px) {
+            .portfolio-full-grid {
+                width: calc(100% - 14px);
+                gap: 6px;
+            }
+
+            .tab {
+                padding: 7px 13px;
+                font-size: 0.70rem;
+            }
+
+            .gallery-count-pill {
+                font-size: 0.70rem;
+                padding: 5px 14px;
+            }
         }
     </style>
 </head>
@@ -109,65 +548,83 @@
         <!-- TOP NAVIGATION BAR -->
         <nav class="portfolio-nav" aria-label="Main Navigation">
             <a href="index.html" class="portfolio-nav-logo">
-                <img src="photos/logo.png" alt="Gemray Studio">
+                <img src="photos/logo.png" alt="Gemray Studio Logo">
                 <span>GEMRAY</span>
             </a>
-            <div class="portfolio-nav-links">
+
+            <!-- Mobile Hamburger Toggle -->
+            <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Navigation Links (Desktop Horizontal & Mobile Sliding Drawer) -->
+            <div class="portfolio-nav-links" id="portfolioNavLinks">
                 <a href="index.html">Home</a>
                 <a href="index.html#stories">Stories</a>
                 <a href="index.html#photographer">Photographer</a>
                 <a href="portfolio.html" class="active">Portfolio</a>
                 <a href="index.html#contact">Contact</a>
+                <a href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%20free%20consultation%20call%20regarding%20wedding%20photography%20services." class="portfolio-mobile-wa-btn" target="_blank" rel="noopener noreferrer">
+                    Book Free Consultation Call
+                </a>
             </div>
         </nav>
 
+        <!-- PORTFOLIO HERO & FILTER CONTROLS -->
         <header class="portfolio-hero">
             <div class="section-heading">
                 <span class="section-eyebrow">The Gallery</span>
                 <h2>Moments in frame.</h2>
                 <p>A curated collection of timeless wedding stories, pre-wedding memories, and intimate celebrations.</p>
+                <div class="gallery-count-pill" id="galleryCountPill">
+                    <span id="galleryCountNumber">20</span> Moments Captured
+                </div>
             </div>
 
             <!-- GALLERY FILTER TABS -->
-            <div class="gallery-tabs" role="tablist">
-                <button class="tab active" data-filter="all" type="button">
+            <div class="gallery-tabs" role="tablist" aria-label="Gallery Categories">
+                <button class="tab active" data-filter="all" type="button" role="tab" aria-selected="true">
                     All
                 </button>
-                <button class="tab" data-filter="wedding" type="button">
+                <button class="tab" data-filter="wedding" type="button" role="tab" aria-selected="false">
                     Wedding
                 </button>
-                <button class="tab" data-filter="prewedding" type="button">
+                <button class="tab" data-filter="prewedding" type="button" role="tab" aria-selected="false">
                     Pre-Wedding
                 </button>
-                <button class="tab" data-filter="engagement" type="button">
+                <button class="tab" data-filter="engagement" type="button" role="tab" aria-selected="false">
                     Engagement
                 </button>
             </div>
         </header>
 
+        <!-- FULL GALLERY PHOTO GRID (2 COLUMNS ON MOBILE, 4 ON DESKTOP) -->
         <main class="portfolio-full-grid gallery-grid">
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo1.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo2.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo3.jpg" alt="Engagement Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo4.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo5.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo6.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo7.jpg" alt="Engagement Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo8.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo9.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo10.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo11.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo12.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo13.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo14.jpg" alt="Engagement Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo15.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo16.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo17.jpg" alt="Pre-Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo18.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo19.jpg" alt="Wedding Photography" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo20.jpg" alt="Engagement Photography" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo1.jpg" alt="Wedding Photography - Bride and Groom celebration" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo2.jpg" alt="Pre-Wedding Photography - Romantic couple portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo3.jpg" alt="Engagement Photography - Ring exchange ceremony" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo4.jpg" alt="Wedding Photography - Traditional rituals" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo5.jpg" alt="Wedding Photography - Mandap emotional moments" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo6.jpg" alt="Pre-Wedding Photography - Outdoor sunset photoshoot" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo7.jpg" alt="Engagement Photography - Couple candid laughter" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo8.jpg" alt="Wedding Photography - Bridal elegance portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo9.jpg" alt="Wedding Photography - Royal groom entry" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo10.jpg" alt="Wedding Photography - Haldi joy & vibrant colors" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo11.jpg" alt="Wedding Photography - Saptapadi holy fire vows" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo12.jpg" alt="Pre-Wedding Photography - Scenic landscape love story" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo13.jpg" alt="Wedding Photography - First dance together" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo14.jpg" alt="Engagement Photography - Dreamy ring ceremony" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo15.jpg" alt="Wedding Photography - Jaimala garland exchange" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo16.jpg" alt="Wedding Photography - Grand reception night" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo17.jpg" alt="Pre-Wedding Photography - Cinematic couple walk" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo18.jpg" alt="Wedding Photography - Candid family blessings" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo19.jpg" alt="Wedding Photography - Intimate portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo20.jpg" alt="Engagement Photography - Sparkling celebration" loading="lazy"></article>
         </main>
 
+        <!-- FOOTER -->
         <footer class="site-footer">
             <div class="footer-brand">
                 <img src="photos/logo.png" alt="Gemray Studio" class="footer-logo">
@@ -220,16 +677,18 @@
         </a>
     </div>
 
-    <!-- Lightbox Component -->
+    <!-- Lightbox Component with Counter & Touch Swipe Support -->
     <div id="lightbox" class="lightbox" aria-hidden="true">
         <button id="lbClose" class="lightbox-close" type="button" aria-label="Close image">×</button>
+        <div id="lbCounter" class="lightbox-counter">1 / 20</div>
         <button id="lbPrev" class="lightbox-prev" type="button" aria-label="Previous image">←</button>
         <div class="lightbox-image-wrapper">
-            <img id="lbImg" src="" alt="">
+            <img id="lbImg" src="" alt="Full view wedding photograph">
         </div>
         <button id="lbNext" class="lightbox-next" type="button" aria-label="Next image">→</button>
     </div>
 
+    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -544,132 +544,109 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
-   13. GALLERY FILTER
+   12B. PORTFOLIO MOBILE MENU TOGGLE
    ========================================================= */
 
-const galleryTabs =
-    document.querySelectorAll(
-        ".gallery-tabs .tab"
-    );
+const portfolioNavToggle = document.getElementById("portfolioNavToggle");
+const portfolioNavLinks = document.getElementById("portfolioNavLinks");
 
+if (portfolioNavToggle && portfolioNavLinks) {
+    portfolioNavToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const isOpen = portfolioNavLinks.classList.toggle("open");
+        portfolioNavToggle.classList.toggle("open");
+        portfolioNavToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
 
-const galleryItems =
-    document.querySelectorAll(
-        ".g-item"
-    );
+    // Close menu when clicking any nav link
+    portfolioNavLinks.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            portfolioNavLinks.classList.remove("open");
+            portfolioNavToggle.classList.remove("open");
+            portfolioNavToggle.setAttribute("aria-expanded", "false");
+        });
+    });
 
+    // Close menu when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!portfolioNavLinks.contains(e.target) && !portfolioNavToggle.contains(e.target)) {
+            portfolioNavLinks.classList.remove("open");
+            portfolioNavToggle.classList.remove("open");
+            portfolioNavToggle.setAttribute("aria-expanded", "false");
+        }
+    });
 
-galleryTabs.forEach(
-    function (tab) {
-
-        tab.addEventListener(
-            "click",
-            function () {
-
-
-                /*
-                    Remove active state
-                    from all tabs.
-                */
-
-                galleryTabs.forEach(
-                    function (item) {
-
-                        item.classList.remove(
-                            "active"
-                        );
-
-                    }
-                );
-
-
-                /*
-                    Activate clicked tab.
-                */
-
-                tab.classList.add(
-                    "active"
-                );
-
-
-                const filter =
-                    tab.dataset.filter;
-
-
-                /*
-                    Filter gallery items.
-                */
-
-                galleryItems.forEach(
-                    function (item) {
-
-                        const category =
-                            item.dataset.cat;
-
-
-                        if (
-                            filter === "all" ||
-                            category === filter
-                        ) {
-
-                            item.classList.remove(
-                                "hidden"
-                            );
-
-                        } else {
-
-                            item.classList.add(
-                                "hidden"
-                            );
-
-                        }
-
-                    }
-                );
-
-            }
-        );
-
-    }
-);
+    // Close on escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && portfolioNavLinks.classList.contains("open")) {
+            portfolioNavLinks.classList.remove("open");
+            portfolioNavToggle.classList.remove("open");
+            portfolioNavToggle.setAttribute("aria-expanded", "false");
+        }
+    });
+}
 
 
 /* =========================================================
-   14. LIGHTBOX
+   13. GALLERY FILTER & COUNT UPDATER
    ========================================================= */
 
-const lightbox =
-    document.getElementById(
-        "lightbox"
-    );
+const galleryTabs = document.querySelectorAll(".gallery-tabs .tab");
+const galleryItems = document.querySelectorAll(".g-item");
+const galleryCountNumber = document.getElementById("galleryCountNumber");
+
+function updateGalleryCount() {
+    if (galleryCountNumber) {
+        const visibleCount = document.querySelectorAll(".g-item:not(.hidden)").length;
+        galleryCountNumber.textContent = visibleCount;
+    }
+}
+
+galleryTabs.forEach(function (tab) {
+    tab.addEventListener("click", function () {
+        // Remove active state from all tabs
+        galleryTabs.forEach(function (item) {
+            item.classList.remove("active");
+            item.setAttribute("aria-selected", "false");
+        });
+
+        // Activate clicked tab
+        tab.classList.add("active");
+        tab.setAttribute("aria-selected", "true");
+
+        const filter = tab.dataset.filter;
+
+        // Filter gallery items
+        galleryItems.forEach(function (item) {
+            const category = item.dataset.cat;
+
+            if (filter === "all" || category === filter) {
+                item.classList.remove("hidden");
+            } else {
+                item.classList.add("hidden");
+            }
+        });
+
+        updateGalleryCount();
+    });
+});
+
+// Initial gallery count setup
+updateGalleryCount();
 
 
-const lbImg =
-    document.getElementById(
-        "lbImg"
-    );
+/* =========================================================
+   14. LIGHTBOX WITH MOBILE SWIPE & COUNTER
+   ========================================================= */
 
-
-const lbClose =
-    document.getElementById(
-        "lbClose"
-    );
-
-
-const lbPrev =
-    document.getElementById(
-        "lbPrev"
-    );
-
-
-const lbNext =
-    document.getElementById(
-        "lbNext"
-    );
-
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const lbClose = document.getElementById("lbClose");
+const lbPrev = document.getElementById("lbPrev");
+const lbNext = document.getElementById("lbNext");
+const lbCounter = document.getElementById("lbCounter");
 
 let visibleImages = [];
-
 let lbIndex = 0;
 
 
@@ -678,13 +655,13 @@ let lbIndex = 0;
    ========================================================= */
 
 function getVisibleImages() {
+    return [...document.querySelectorAll(".g-item:not(.hidden) img")];
+}
 
-    return [
-        ...document.querySelectorAll(
-            ".g-item:not(.hidden) img"
-        )
-    ];
-
+function updateLightboxCounter() {
+    if (lbCounter && visibleImages.length > 0) {
+        lbCounter.textContent = `${lbIndex + 1} / ${visibleImages.length}`;
+    }
 }
 
 
@@ -693,53 +670,23 @@ function getVisibleImages() {
    ========================================================= */
 
 function openLightbox(image) {
+    if (!lightbox || !lbImg) return;
 
-    if (!lightbox || !lbImg)
-        return;
+    visibleImages = getVisibleImages();
+    lbIndex = visibleImages.indexOf(image);
 
+    if (lbIndex === -1) return;
 
-    visibleImages =
-        getVisibleImages();
+    lbImg.src = image.currentSrc || image.src;
+    lbImg.alt = image.alt || "Wedding photograph full view";
 
+    updateLightboxCounter();
 
-    lbIndex =
-        visibleImages.indexOf(
-            image
-        );
+    lightbox.classList.add("active");
+    lightbox.setAttribute("aria-hidden", "false");
 
-
-    if (lbIndex === -1)
-        return;
-
-
-    lbImg.src =
-        image.currentSrc ||
-        image.src;
-
-
-    lbImg.alt =
-        image.alt || "";
-
-
-    lightbox.classList.add(
-        "active"
-    );
-
-
-    lightbox.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-
-    /*
-        Prevent page scrolling
-        while lightbox is open.
-    */
-
-    document.body.style.overflow =
-        "hidden";
-
+    // Prevent page scrolling while lightbox is open
+    document.body.style.overflow = "hidden";
 }
 
 
@@ -748,25 +695,11 @@ function openLightbox(image) {
    ========================================================= */
 
 function closeLightbox() {
+    if (!lightbox) return;
 
-    if (!lightbox)
-        return;
-
-
-    lightbox.classList.remove(
-        "active"
-    );
-
-
-    lightbox.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    document.body.style.overflow =
-        "";
-
+    lightbox.classList.remove("active");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
 }
 
 
@@ -775,40 +708,15 @@ function closeLightbox() {
    ========================================================= */
 
 function showSlide(direction) {
+    if (!lbImg || visibleImages.length === 0) return;
 
-    if (
-        !lbImg ||
-        visibleImages.length === 0
-    ) {
+    lbIndex = (lbIndex + direction + visibleImages.length) % visibleImages.length;
+    const image = visibleImages[lbIndex];
 
-        return;
+    lbImg.src = image.currentSrc || image.src;
+    lbImg.alt = image.alt || "Wedding photograph full view";
 
-    }
-
-
-    lbIndex =
-        (
-            lbIndex +
-            direction +
-            visibleImages.length
-        ) %
-        visibleImages.length;
-
-
-    const image =
-        visibleImages[
-            lbIndex
-        ];
-
-
-    lbImg.src =
-        image.currentSrc ||
-        image.src;
-
-
-    lbImg.alt =
-        image.alt || "";
-
+    updateLightboxCounter();
 }
 
 
@@ -816,152 +724,104 @@ function showSlide(direction) {
    19. GALLERY IMAGE EVENTS
    ========================================================= */
 
-galleryItems.forEach(
-    function (item) {
+galleryItems.forEach(function (item) {
+    const image = item.querySelector("img");
+    if (!image) return;
 
-        const image =
-            item.querySelector(
-                "img"
-            );
-
-
-        if (!image)
-            return;
-
-
-        image.addEventListener(
-            "click",
-            function () {
-
-                openLightbox(
-                    image
-                );
-
-            }
-        );
-
-    }
-);
+    image.addEventListener("click", function () {
+        openLightbox(image);
+    });
+});
 
 
 /* =========================================================
-   20. LIGHTBOX CONTROLS
+   20. LIGHTBOX CONTROLS & TOUCH SWIPE GESTURES
    ========================================================= */
 
 if (lbClose) {
-
-    lbClose.addEventListener(
-        "click",
-        closeLightbox
-    );
-
+    lbClose.addEventListener("click", closeLightbox);
 }
-
 
 if (lbPrev) {
-
-    lbPrev.addEventListener(
-        "click",
-        function () {
-
-            showSlide(-1);
-
-        }
-    );
-
+    lbPrev.addEventListener("click", function (e) {
+        e.stopPropagation();
+        showSlide(-1);
+    });
 }
-
 
 if (lbNext) {
-
-    lbNext.addEventListener(
-        "click",
-        function () {
-
-            showSlide(1);
-
-        }
-    );
-
+    lbNext.addEventListener("click", function (e) {
+        e.stopPropagation();
+        showSlide(1);
+    });
 }
 
-
-/* =========================================================
-   21. CLOSE LIGHTBOX BY BACKGROUND CLICK
-   ========================================================= */
-
+// Close lightbox on backdrop click
 if (lightbox) {
-
-    lightbox.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target ===
-                lightbox
-            ) {
-
-                closeLightbox();
-
-            }
-
+    lightbox.addEventListener("click", function (event) {
+        if (event.target === lightbox || event.target.classList.contains("lightbox-image-wrapper")) {
+            closeLightbox();
         }
-    );
+    });
 
+    // Touch Swipe Navigation on Mobile
+    let lbTouchStartX = 0;
+    let lbTouchStartY = 0;
+    let lbTouchEndX = 0;
+    let lbTouchEndY = 0;
+
+    lightbox.addEventListener("touchstart", function (e) {
+        if (e.touches && e.touches.length === 1) {
+            lbTouchStartX = e.touches[0].clientX;
+            lbTouchStartY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+
+    lightbox.addEventListener("touchend", function (e) {
+        if (e.changedTouches && e.changedTouches.length === 1) {
+            lbTouchEndX = e.changedTouches[0].clientX;
+            lbTouchEndY = e.changedTouches[0].clientY;
+
+            const diffX = lbTouchEndX - lbTouchStartX;
+            const diffY = lbTouchEndY - lbTouchStartY;
+            const absDiffX = Math.abs(diffX);
+            const absDiffY = Math.abs(diffY);
+
+            // Horizontal swipe (threshold: 40px)
+            if (absDiffX > 40 && absDiffX > absDiffY) {
+                if (diffX < 0) {
+                    // Swiped Left -> Next image
+                    showSlide(1);
+                } else {
+                    // Swiped Right -> Previous image
+                    showSlide(-1);
+                }
+            } else if (diffY > 75 && absDiffY > absDiffX) {
+                // Swiped Downwards -> Close Lightbox
+                closeLightbox();
+            }
+        }
+    }, { passive: true });
 }
 
 
 /* =========================================================
-   22. KEYBOARD CONTROLS
+   21. KEYBOARD CONTROLS
    ========================================================= */
 
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            !lightbox ||
-            !lightbox.classList.contains(
-                "active"
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            event.key ===
-            "ArrowLeft"
-        ) {
-
-            showSlide(-1);
-
-        }
-
-
-        if (
-            event.key ===
-            "ArrowRight"
-        ) {
-
-            showSlide(1);
-
-        }
-
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            closeLightbox();
-
-        }
-
+document.addEventListener("keydown", function (event) {
+    if (!lightbox || !lightbox.classList.contains("active")) {
+        return;
     }
-);
+
+    if (event.key === "ArrowLeft") {
+        showSlide(-1);
+    } else if (event.key === "ArrowRight") {
+        showSlide(1);
+    } else if (event.key === "Escape") {
+        closeLightbox();
+    }
+});
 
 
 /* =========================================================
