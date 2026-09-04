@@ -800,7 +800,7 @@
 
 
                     <div
-                        class="form-group"
+                        class="form-group custom-select-group"
                     >
 
                         <label for="service">
@@ -810,6 +810,9 @@
                         <select
                             id="service"
                             name="service"
+                            tabindex="-1"
+                            aria-hidden="true"
+                            style="display: none;"
                         >
 
                             <option value="">
@@ -837,6 +840,56 @@
                             </option>
 
                         </select>
+
+                        <!-- CUSTOM LUXURY GLASSMORPHIC DROPDOWN (ANDROID CHROME, IOS, & ALL PLATFORMS) -->
+                        <div class="custom-select-wrapper" id="customServiceSelect">
+                            <button
+                                type="button"
+                                class="custom-select-trigger"
+                                id="serviceSelectTrigger"
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                            >
+                                <span class="custom-select-value">Select a service</span>
+                                <span class="custom-select-arrow" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </span>
+                            </button>
+
+                            <div
+                                class="custom-select-dropdown"
+                                id="serviceDropdown"
+                                role="listbox"
+                                aria-label="Select a service"
+                            >
+                                <div class="custom-select-option selected" data-value="" role="option" aria-selected="true">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Select a service</span>
+                                </div>
+                                <div class="custom-select-option" data-value="Wedding Photography" role="option" aria-selected="false">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Wedding Photography</span>
+                                </div>
+                                <div class="custom-select-option" data-value="Wedding Cinematography" role="option" aria-selected="false">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Wedding Cinematography</span>
+                                </div>
+                                <div class="custom-select-option" data-value="Pre-Wedding" role="option" aria-selected="false">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Pre-Wedding</span>
+                                </div>
+                                <div class="custom-select-option" data-value="Engagement" role="option" aria-selected="false">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Engagement</span>
+                                </div>
+                                <div class="custom-select-option" data-value="Destination Wedding" role="option" aria-selected="false">
+                                    <span class="opt-check">✓</span>
+                                    <span class="opt-text">Destination Wedding</span>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
 

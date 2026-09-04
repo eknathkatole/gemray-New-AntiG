@@ -825,6 +825,85 @@ document.addEventListener("keydown", function (event) {
 
 
 /* =========================================================
+   22B. CUSTOM GLASSMORPHIC SELECT (ANDROID CHROME & ALL BROWSERS)
+   ========================================================= */
+
+const customServiceSelect = document.getElementById("customServiceSelect");
+const serviceSelectTrigger = document.getElementById("serviceSelectTrigger");
+const serviceDropdown = document.getElementById("serviceDropdown");
+const nativeServiceSelect = document.getElementById("service");
+
+if (customServiceSelect && serviceSelectTrigger && serviceDropdown && nativeServiceSelect) {
+    const triggerValue = serviceSelectTrigger.querySelector(".custom-select-value");
+    const options = serviceDropdown.querySelectorAll(".custom-select-option");
+
+    // Toggle dropdown open/close on trigger tap/click
+    serviceSelectTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const isOpen = customServiceSelect.classList.toggle("open");
+        serviceSelectTrigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    // Select an option
+    options.forEach(function (option) {
+        option.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const value = option.dataset.value;
+            const text = option.querySelector(".opt-text").textContent;
+
+            // Sync native select value
+            nativeServiceSelect.value = value;
+            nativeServiceSelect.dispatchEvent(new Event("change", { bubbles: true }));
+
+            // Update visible trigger text
+            if (triggerValue) {
+                triggerValue.textContent = text;
+            }
+
+            // Update option selected styles & checkmark
+            options.forEach(function (opt) {
+                opt.classList.remove("selected");
+                opt.setAttribute("aria-selected", "false");
+            });
+            option.classList.add("selected");
+            option.setAttribute("aria-selected", "true");
+
+            // Close dropdown
+            customServiceSelect.classList.remove("open");
+            serviceSelectTrigger.setAttribute("aria-expanded", "false");
+        });
+    });
+
+    // Close on click outside
+    document.addEventListener("click", function (e) {
+        if (!customServiceSelect.contains(e.target)) {
+            customServiceSelect.classList.remove("open");
+            serviceSelectTrigger.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    // Reset custom select when parent form resets
+    const parentForm = customServiceSelect.closest("form");
+    if (parentForm) {
+        parentForm.addEventListener("reset", function () {
+            if (triggerValue) {
+                triggerValue.textContent = "Select a service";
+            }
+            options.forEach(function (opt, idx) {
+                if (idx === 0) {
+                    opt.classList.add("selected");
+                    opt.setAttribute("aria-selected", "true");
+                } else {
+                    opt.classList.remove("selected");
+                    opt.setAttribute("aria-selected", "false");
+                }
+            });
+        });
+    }
+}
+
+
+/* =========================================================
    23. CONTACT FORM
    ========================================================= */
 
