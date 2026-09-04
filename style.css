@@ -3290,6 +3290,698 @@ section {
 }
 
 
+/* =========================================================
+   CUSTOM LUXURY GLASSMORPHIC CALENDAR DATE PICKER
+   (EMERALD GREEN & GOLD PALETTE FOR ALL BROWSERS)
+   ========================================================= */
+
+.custom-date-group {
+
+    position:
+        relative;
+
+}
+
+
+.custom-date-wrapper {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+}
+
+
+.custom-date-trigger {
+
+    width:
+        100%;
+
+    padding:
+        10px 0;
+
+    border:
+        0;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.22);
+
+    outline:
+        none;
+
+    color:
+        #fff;
+
+    background:
+        transparent;
+
+    border-radius:
+        0;
+
+    font-size:
+        1.15rem;
+
+    font-family:
+        "Cormorant Garamond",
+        Georgia,
+        serif;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    cursor:
+        pointer;
+
+    text-align:
+        left;
+
+    transition:
+        border-color var(--transition);
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+.custom-date-trigger:focus,
+.custom-date-wrapper.open .custom-date-trigger {
+
+    border-color:
+        var(--gold);
+
+}
+
+
+.custom-date-value {
+
+    color:
+        rgba(255, 255, 255, 0.7);
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+    font-size:
+        1.15rem;
+
+    transition:
+        color 0.3s ease;
+
+}
+
+
+.custom-date-value.has-value {
+
+    color:
+        #ffffff;
+
+    font-weight:
+        500;
+
+}
+
+
+.custom-date-icon {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        var(--gold);
+
+    transition:
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        color 0.3s ease;
+
+}
+
+
+.custom-date-trigger:hover .custom-date-icon,
+.custom-date-wrapper.open .custom-date-icon {
+
+    color:
+        var(--gold-light);
+
+    transform:
+        scale(1.08);
+
+}
+
+
+/* FLOATING GLASS CALENDAR POPUP */
+
+.custom-calendar-popup {
+
+    position:
+        absolute;
+
+    bottom:
+        calc(100% + 10px);
+
+    left:
+        0;
+
+    width:
+        100%;
+
+    min-width:
+        310px;
+
+    max-width:
+        340px;
+
+    z-index:
+        150;
+
+    padding:
+        16px 14px 12px;
+
+    background:
+        rgba(6, 42, 35, 0.94);
+
+    backdrop-filter:
+        blur(24px);
+
+    -webkit-backdrop-filter:
+        blur(24px);
+
+    border:
+        1px solid
+        rgba(212, 175, 90, 0.35);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.7),
+        0 0 25px rgba(212, 175, 90, 0.15);
+
+    opacity:
+        0;
+
+    visibility:
+        hidden;
+
+    transform:
+        translateY(8px) scale(0.97);
+
+    transform-origin:
+        bottom center;
+
+    transition:
+        opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.28s ease;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+}
+
+
+.custom-date-wrapper.open .custom-calendar-popup {
+
+    opacity:
+        1;
+
+    visibility:
+        visible;
+
+    transform:
+        translateY(0) scale(1);
+
+    pointer-events:
+        auto;
+
+}
+
+
+/* CALENDAR HEADER */
+
+.calendar-header {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    margin-bottom:
+        12px;
+
+    padding-bottom:
+        10px;
+
+    border-bottom:
+        1px solid
+        rgba(212, 175, 90, 0.2);
+
+}
+
+
+.cal-month-year {
+
+    font-family:
+        "Cinzel Decorative",
+        serif;
+
+    font-size:
+        0.96rem;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.08em;
+
+    color:
+        var(--gold-light);
+
+    text-align:
+        center;
+
+}
+
+
+.cal-nav-btn {
+
+    width:
+        32px;
+
+    height:
+        32px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(212, 175, 90, 0.1);
+
+    border:
+        1px solid
+        rgba(212, 175, 90, 0.3);
+
+    color:
+        var(--gold);
+
+    font-size:
+        1.25rem;
+
+    cursor:
+        pointer;
+
+    line-height:
+        1;
+
+    padding-bottom:
+        2px;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.2s ease;
+
+}
+
+
+.cal-nav-btn:hover {
+
+    background:
+        rgba(212, 175, 90, 0.25);
+
+    color:
+        #fff;
+
+    transform:
+        scale(1.08);
+
+}
+
+
+.cal-nav-btn:active {
+
+    transform:
+        scale(0.95);
+
+}
+
+
+/* WEEKDAYS */
+
+.cal-weekdays {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap:
+        4px;
+
+    text-align:
+        center;
+
+    margin-bottom:
+        8px;
+
+}
+
+
+.cal-weekdays span {
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        0.08em;
+
+    color:
+        rgba(212, 175, 90, 0.7);
+
+    text-transform:
+        uppercase;
+
+    padding:
+        4px 0;
+
+}
+
+
+/* DAYS GRID */
+
+.cal-days-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    gap:
+        4px;
+
+}
+
+
+.cal-day {
+
+    aspect-ratio:
+        1 / 1;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        transparent;
+
+    border:
+        1px solid
+        transparent;
+
+    color:
+        rgba(255, 255, 255, 0.88);
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size:
+        0.84rem;
+
+    font-weight:
+        400;
+
+    cursor:
+        pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        border-color 0.2s ease;
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+.cal-day:hover:not(:disabled) {
+
+    background:
+        rgba(212, 175, 90, 0.2);
+
+    color:
+        #ffffff;
+
+    border-color:
+        rgba(212, 175, 90, 0.4);
+
+    transform:
+        scale(1.08);
+
+}
+
+
+.cal-day:active:not(:disabled) {
+
+    transform:
+        scale(0.94);
+
+}
+
+
+.cal-day-today {
+
+    border-color:
+        var(--gold);
+
+    color:
+        var(--gold-light);
+
+    font-weight:
+        600;
+
+}
+
+
+.cal-day-selected {
+
+    background:
+        linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%) !important;
+
+    color:
+        var(--green-dark) !important;
+
+    font-weight:
+        700 !important;
+
+    box-shadow:
+        0 0 14px rgba(212, 175, 90, 0.6);
+
+    border-color:
+        transparent !important;
+
+}
+
+
+.cal-day-other-month {
+
+    color:
+        rgba(255, 255, 255, 0.18) !important;
+
+    pointer-events:
+        none;
+
+}
+
+
+.cal-day-disabled {
+
+    color:
+        rgba(255, 255, 255, 0.2) !important;
+
+    pointer-events:
+        none;
+
+    cursor:
+        default;
+
+}
+
+
+/* FOOTER BUTTONS */
+
+.cal-footer {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    margin-top:
+        10px;
+
+    padding-top:
+        8px;
+
+    border-top:
+        1px solid
+        rgba(212, 175, 90, 0.15);
+
+}
+
+
+.cal-action-btn {
+
+    padding:
+        5px 12px;
+
+    background:
+        transparent;
+
+    border:
+        1px solid
+        rgba(212, 175, 90, 0.25);
+
+    border-radius:
+        14px;
+
+    color:
+        rgba(255, 255, 255, 0.7);
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size:
+        0.74rem;
+
+    letter-spacing:
+        0.08em;
+
+    text-transform:
+        uppercase;
+
+    cursor:
+        pointer;
+
+    transition:
+        all 0.2s ease;
+
+}
+
+
+.cal-action-btn:hover {
+
+    color:
+        var(--gold-light);
+
+    border-color:
+        var(--gold);
+
+    background:
+        rgba(212, 175, 90, 0.12);
+
+}
+
+
+.cal-today-btn {
+
+    color:
+        var(--gold);
+
+    border-color:
+        rgba(212, 175, 90, 0.4);
+
+}
+
+
+@media (max-width: 600px) {
+
+    .custom-calendar-popup {
+
+        min-width:
+            100%;
+
+        max-width:
+            100%;
+
+        border-radius:
+            16px;
+
+        padding:
+            14px 10px 10px;
+
+    }
+
+    .cal-day {
+
+        font-size:
+            0.80rem;
+
+    }
+
+}
+
+
 .submit-button {
 
     grid-column:
@@ -4293,7 +4985,7 @@ section {
             0;
 
         margin-bottom:
-            clamp(-105px, -11vw, -78px);
+            clamp(-125px, -14vw, -92px);
 
     }
 
@@ -5003,7 +5695,7 @@ section {
             0;
 
         margin-bottom:
-            -58px;
+            -75px;
 
     }
 

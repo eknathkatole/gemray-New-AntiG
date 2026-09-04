@@ -904,6 +904,232 @@ if (customServiceSelect && serviceSelectTrigger && serviceDropdown && nativeServ
 
 
 /* =========================================================
+   22C. CUSTOM LUXURY GLASSMORPHIC CALENDAR DATE PICKER
+   ========================================================= */
+
+const customDateWrapper = document.getElementById("customDateWrapper");
+const datePickerTrigger = document.getElementById("datePickerTrigger");
+const customCalendarPopup = document.getElementById("customCalendarPopup");
+const dateDisplayValue = document.getElementById("dateDisplayValue");
+const nativeDateInput = document.getElementById("date");
+const calPrevMonth = document.getElementById("calPrevMonth");
+const calNextMonth = document.getElementById("calNextMonth");
+const calMonthYear = document.getElementById("calMonthYear");
+const calDaysGrid = document.getElementById("calDaysGrid");
+const calClearBtn = document.getElementById("calClearBtn");
+const calTodayBtn = document.getElementById("calTodayBtn");
+
+if (customDateWrapper && datePickerTrigger && customCalendarPopup && calDaysGrid) {
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let currentCalDate = new Date();
+    let selectedDate = null;
+
+    function renderCalendar() {
+        const year = currentCalDate.getFullYear();
+        const month = currentCalDate.getMonth();
+
+        // Header month and year
+        if (calMonthYear) {
+            calMonthYear.textContent = `${monthNames[month]} ${year}`;
+        }
+
+        calDaysGrid.innerHTML = "";
+
+        // First day of month (0 = Sun, 1 = Mon, etc.)
+        const firstDay = new Date(year, month, 1).getDay();
+        // Number of days in current month
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        // Number of days in previous month
+        const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+        // Prev month placeholder days
+        for (let i = firstDay - 1; i >= 0; i--) {
+            const dayCell = document.createElement("button");
+            dayCell.type = "button";
+            dayCell.className = "cal-day cal-day-other-month";
+            dayCell.textContent = daysInPrevMonth - i;
+            dayCell.disabled = true;
+            calDaysGrid.appendChild(dayCell);
+        }
+
+        // Current month days
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCell = document.createElement("button");
+            dayCell.type = "button";
+            dayCell.className = "cal-day";
+            dayCell.textContent = day;
+
+            const thisDate = new Date(year, month, day);
+            thisDate.setHours(0, 0, 0, 0);
+
+            // Is today?
+            if (thisDate.getTime() === today.getTime()) {
+                dayCell.classList.add("cal-day-today");
+            }
+
+            // Is past date? (Disable past dates for wedding bookings)
+            if (thisDate < today) {
+                dayCell.classList.add("cal-day-disabled");
+                dayCell.disabled = true;
+            } else {
+                // Is selected?
+                if (selectedDate && thisDate.getTime() === selectedDate.getTime()) {
+                    dayCell.classList.add("cal-day-selected");
+                    dayCell.setAttribute("aria-selected", "true");
+                }
+
+                dayCell.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    selectDate(new Date(year, month, day));
+                });
+            }
+
+            calDaysGrid.appendChild(dayCell);
+        }
+
+        // Fill remaining slots in week grid
+        const totalCells = firstDay + daysInMonth;
+        const remainingCells = (7 - (totalCells % 7)) % 7;
+        for (let i = 1; i <= remainingCells; i++) {
+            const dayCell = document.createElement("button");
+            dayCell.type = "button";
+            dayCell.className = "cal-day cal-day-other-month";
+            dayCell.textContent = i;
+            dayCell.disabled = true;
+            calDaysGrid.appendChild(dayCell);
+        }
+    }
+
+    function selectDate(date) {
+        selectedDate = date;
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const isoString = `${year}-${month}-${day}`;
+
+        // Update hidden input value for form submission
+        if (nativeDateInput) {
+            nativeDateInput.value = isoString;
+            nativeDateInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        // Format display text (e.g. "24 November 2026")
+        if (dateDisplayValue) {
+            dateDisplayValue.textContent = `${date.getDate()} ${monthNames[date.getMonth()]} ${year}`;
+            dateDisplayValue.classList.add("has-value");
+        }
+
+        renderCalendar();
+
+        // Close popup
+        customDateWrapper.classList.remove("open");
+        datePickerTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    function clearDate() {
+        selectedDate = null;
+        if (nativeDateInput) {
+            nativeDateInput.value = "";
+            nativeDateInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        if (dateDisplayValue) {
+            dateDisplayValue.textContent = "Select Wedding Date";
+            dateDisplayValue.classList.remove("has-value");
+        }
+        renderCalendar();
+        customDateWrapper.classList.remove("open");
+        datePickerTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    // Trigger toggle
+    datePickerTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        // Close service dropdown if open
+        if (typeof customServiceSelect !== "undefined" && customServiceSelect) {
+            customServiceSelect.classList.remove("open");
+            const st = document.getElementById("serviceSelectTrigger");
+            if (st) st.setAttribute("aria-expanded", "false");
+        }
+
+        const isOpen = customDateWrapper.classList.toggle("open");
+        datePickerTrigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (isOpen) {
+            renderCalendar();
+        }
+    });
+
+    // Month Navigation
+    if (calPrevMonth) {
+        calPrevMonth.addEventListener("click", function (e) {
+            e.stopPropagation();
+            currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if (calNextMonth) {
+        calNextMonth.addEventListener("click", function (e) {
+            e.stopPropagation();
+            currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
+
+    // Action buttons
+    if (calClearBtn) {
+        calClearBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            clearDate();
+        });
+    }
+
+    if (calTodayBtn) {
+        calTodayBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            currentCalDate = new Date();
+            selectDate(new Date());
+        });
+    }
+
+    // Close on click outside
+    document.addEventListener("click", function (e) {
+        if (!customDateWrapper.contains(e.target)) {
+            customDateWrapper.classList.remove("open");
+            datePickerTrigger.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && customDateWrapper.classList.contains("open")) {
+            customDateWrapper.classList.remove("open");
+            datePickerTrigger.setAttribute("aria-expanded", "false");
+            datePickerTrigger.focus();
+        }
+    });
+
+    // Reset when form resets
+    const parentForm = customDateWrapper.closest("form");
+    if (parentForm) {
+        parentForm.addEventListener("reset", function () {
+            clearDate();
+        });
+    }
+
+    // Initial render
+    renderCalendar();
+}
+
+
+/* =========================================================
    23. CONTACT FORM
    ========================================================= */
 
