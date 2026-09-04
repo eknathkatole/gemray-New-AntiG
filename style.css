@@ -2535,7 +2535,15 @@ section {
 .g-item.hidden {
 
     display:
-        none;
+        none !important;
+
+}
+
+
+.g-item.g-item-hidden-limit {
+
+    display:
+        none !important;
 
 }
 

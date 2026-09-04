@@ -282,7 +282,118 @@
             display: none !important;
         }
 
-        /* 5. LIGHTBOX POSITION COUNTER */
+        .portfolio-item.g-item-hidden-limit {
+            display: none !important;
+        }
+
+        @keyframes galleryFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .portfolio-item.g-item-reveal {
+            animation: galleryFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 5. EXPLORE MORE GALLERY BUTTON */
+        .gallery-explore-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: -30px auto clamp(60px, 8vw, 90px);
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .gallery-explore-container.hidden {
+            display: none !important;
+        }
+
+        .gallery-explore-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 34px;
+            background: rgba(6, 42, 35, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 90, 0.45);
+            border-radius: 40px;
+            color: var(--gold-light);
+            font-family: "Cinzel Decorative", serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 90, 0.18);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .gallery-explore-btn:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 90, 0.22) 0%, rgba(184, 134, 11, 0.38) 100%);
+            border-color: var(--gold);
+            color: #ffffff;
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6), 0 0 28px rgba(212, 175, 90, 0.4);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .gallery-explore-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .explore-btn-sparkle {
+            color: var(--gold);
+            font-size: 1.05rem;
+            line-height: 1;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-explore-btn:hover .explore-btn-sparkle {
+            transform: rotate(45deg) scale(1.15);
+            color: var(--gold-light);
+        }
+
+        .explore-btn-count {
+            background: rgba(212, 175, 90, 0.18);
+            border: 1px solid rgba(212, 175, 90, 0.4);
+            border-radius: 12px;
+            padding: 2px 9px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--gold-light);
+        }
+
+        .explore-btn-arrow {
+            display: inline-block;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease;
+            animation: exploreArrowFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes exploreArrowFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(3px);
+            }
+        }
+
+        /* 6. LIGHTBOX POSITION COUNTER */
         .lightbox-counter {
             position: absolute;
             top: 25px;
@@ -559,26 +670,47 @@
         <!-- FULL GALLERY PHOTO GRID (2 COLUMNS ON MOBILE, 4 ON DESKTOP) -->
         <main class="portfolio-full-grid gallery-grid">
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo1.jpg" alt="Wedding Photography - Bride and Groom celebration" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo2.jpg" alt="Pre-Wedding Photography - Romantic couple portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding.jpg" alt="Pre-Wedding Photography - Agape Love by Gemray Studio" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo3.jpg" alt="Engagement Photography - Ring exchange ceremony" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo4.jpg" alt="Wedding Photography - Traditional rituals" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(1).jpg" alt="Pre-Wedding Photography - Romantic couple portrait" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo5.jpg" alt="Wedding Photography - Mandap emotional moments" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo6.jpg" alt="Pre-Wedding Photography - Outdoor sunset photoshoot" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(2).jpg" alt="Pre-Wedding Photography - Intimate Moments" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo7.jpg" alt="Engagement Photography - Couple candid laughter" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo8.jpg" alt="Wedding Photography - Bridal elegance portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(3).jpg" alt="Pre-Wedding Photography - Cinematic Walk" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo9.jpg" alt="Wedding Photography - Royal groom entry" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(4).jpg" alt="Pre-Wedding Photography - Golden Hour Glow" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo10.jpg" alt="Wedding Photography - Haldi joy & vibrant colors" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(5).jpg" alt="Pre-Wedding Photography - Joyful Embrace" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo11.jpg" alt="Wedding Photography - Saptapadi holy fire vows" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo12.jpg" alt="Pre-Wedding Photography - Scenic landscape love story" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(6).jpg" alt="Pre-Wedding Photography - Timeless Love Story" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(7).jpg" alt="Pre-Wedding Photography - Romantic Connection" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo13.jpg" alt="Wedding Photography - First dance together" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo14.jpg" alt="Engagement Photography - Dreamy ring ceremony" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo15.jpg" alt="Wedding Photography - Jaimala garland exchange" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo16.jpg" alt="Wedding Photography - Grand reception night" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo17.jpg" alt="Pre-Wedding Photography - Cinematic couple walk" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo18.jpg" alt="Wedding Photography - Candid family blessings" loading="lazy"></article>
-            <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo19.jpg" alt="Wedding Photography - Intimate portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Little%20bit%20more!%20%23love%20%23prewedding.jpg" alt="Pre-Wedding Photography - Little Bit More Romance" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo20.jpg" alt="Engagement Photography - Sparkling celebration" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Little%20bit%20more!%20%23love%20%23prewedding%20(1).jpg" alt="Pre-Wedding Photography - Candid Chemistry" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Little%20bit%20more!%20%23love%20%23prewedding%20(2).jpg" alt="Pre-Wedding Photography - Emotional Connection" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo14.jpg" alt="Pre-Wedding Photography - Dreamy Setting" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo15.jpg" alt="Pre-Wedding Photography - Sunset Bliss" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo16.jpg" alt="Pre-Wedding Photography - Together in Love" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo17.jpg" alt="Pre-Wedding Photography - Outdoor Scenic Portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo18.jpg" alt="Pre-Wedding Photography - Elegant Vows" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/photo19.jpg" alt="Pre-Wedding Photography - Pure Romance" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo2.jpg" alt="Pre-Wedding Photography - Romantic couple portrait" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo6.jpg" alt="Pre-Wedding Photography - Outdoor sunset photoshoot" loading="lazy"></article>
+            <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/photo12.jpg" alt="Pre-Wedding Photography - Scenic landscape love story" loading="lazy"></article>
         </main>
+
+        <!-- EXPLORE MORE GALLERY ACTION -->
+        <div class="gallery-explore-container" id="galleryExploreContainer">
+            <button class="gallery-explore-btn" id="galleryExploreBtn" type="button" aria-label="Explore more photographs">
+                <span class="explore-btn-sparkle" aria-hidden="true">✦</span>
+                <span class="explore-btn-text">Explore More Moments</span>
+                <span class="explore-btn-count" id="exploreRemainingCount">+11</span>
+                <span class="explore-btn-arrow" aria-hidden="true">↓</span>
+            </button>
+        </div>
 
         <!-- FOOTER -->
         <footer class="site-footer">

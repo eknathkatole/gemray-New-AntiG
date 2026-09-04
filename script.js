@@ -588,51 +588,113 @@ if (portfolioNavToggle && portfolioNavLinks) {
 
 
 /* =========================================================
-   13. GALLERY FILTER & COUNT UPDATER
+   13. GALLERY FILTER, 20-ITEM LIMIT & EXPLORE MORE
    ========================================================= */
 
 const galleryTabs = document.querySelectorAll(".gallery-tabs .tab");
 const galleryItems = document.querySelectorAll(".g-item");
 const galleryCountNumber = document.getElementById("galleryCountNumber");
+const galleryExploreContainer = document.getElementById("galleryExploreContainer");
+const galleryExploreBtn = document.getElementById("galleryExploreBtn");
+const exploreRemainingCount = document.getElementById("exploreRemainingCount");
 
-function updateGalleryCount() {
+const GALLERY_LIMIT = 20;
+let currentGalleryFilter = "all";
+let isGalleryExpanded = false;
+
+function applyGalleryFilterAndLimit() {
+    let matchingIndex = 0;
+    let totalMatching = 0;
+
+    galleryItems.forEach(function (item) {
+        const category = item.dataset.cat;
+        const matchesFilter = (currentGalleryFilter === "all" || category === currentGalleryFilter);
+
+        if (matchesFilter) {
+            item.classList.remove("hidden");
+            totalMatching++;
+
+            if (!isGalleryExpanded && matchingIndex >= GALLERY_LIMIT) {
+                item.classList.add("g-item-hidden-limit");
+                item.classList.remove("g-item-reveal");
+            } else {
+                item.classList.remove("g-item-hidden-limit");
+            }
+            matchingIndex++;
+        } else {
+            item.classList.add("hidden");
+            item.classList.remove("g-item-hidden-limit");
+            item.classList.remove("g-item-reveal");
+        }
+    });
+
+    // Update Explore More button visibility and remaining count
+    if (galleryExploreContainer) {
+        if (!isGalleryExpanded && totalMatching > GALLERY_LIMIT) {
+            galleryExploreContainer.classList.remove("hidden");
+            if (exploreRemainingCount) {
+                exploreRemainingCount.textContent = `+${totalMatching - GALLERY_LIMIT}`;
+            }
+        } else {
+            galleryExploreContainer.classList.add("hidden");
+        }
+    }
+
     if (galleryCountNumber) {
-        const visibleCount = document.querySelectorAll(".g-item:not(.hidden)").length;
+        const visibleCount = document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)").length;
         galleryCountNumber.textContent = visibleCount;
     }
 }
 
+// Tab Click Events
 galleryTabs.forEach(function (tab) {
     tab.addEventListener("click", function () {
-        // Remove active state from all tabs
         galleryTabs.forEach(function (item) {
             item.classList.remove("active");
             item.setAttribute("aria-selected", "false");
         });
 
-        // Activate clicked tab
         tab.classList.add("active");
         tab.setAttribute("aria-selected", "true");
 
-        const filter = tab.dataset.filter;
+        currentGalleryFilter = tab.dataset.filter || "all";
+        isGalleryExpanded = false; // Reset pagination upon tab change
 
-        // Filter gallery items
-        galleryItems.forEach(function (item) {
-            const category = item.dataset.cat;
-
-            if (filter === "all" || category === filter) {
-                item.classList.remove("hidden");
-            } else {
-                item.classList.add("hidden");
-            }
-        });
-
-        updateGalleryCount();
+        applyGalleryFilterAndLimit();
     });
 });
 
-// Initial gallery count setup
-updateGalleryCount();
+// Explore More Click Event
+if (galleryExploreBtn) {
+    galleryExploreBtn.addEventListener("click", function () {
+        isGalleryExpanded = true;
+        let revealedIndex = 0;
+
+        galleryItems.forEach(function (item) {
+            const category = item.dataset.cat;
+            const matchesFilter = (currentGalleryFilter === "all" || category === currentGalleryFilter);
+
+            if (matchesFilter && item.classList.contains("g-item-hidden-limit")) {
+                item.classList.remove("g-item-hidden-limit");
+                item.classList.add("g-item-reveal");
+                item.style.animationDelay = `${revealedIndex * 40}ms`;
+                revealedIndex++;
+            }
+        });
+
+        if (galleryExploreContainer) {
+            galleryExploreContainer.classList.add("hidden");
+        }
+
+        if (galleryCountNumber) {
+            const visibleCount = document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)").length;
+            galleryCountNumber.textContent = visibleCount;
+        }
+    });
+}
+
+// Initial gallery filter and limit setup
+applyGalleryFilterAndLimit();
 
 
 /* =========================================================
@@ -655,7 +717,7 @@ let lbIndex = 0;
    ========================================================= */
 
 function getVisibleImages() {
-    return [...document.querySelectorAll(".g-item:not(.hidden) img")];
+    return [...document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit) img")];
 }
 
 function updateLightboxCounter() {
