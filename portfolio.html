@@ -35,7 +35,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 clamp(20px, 4vw, 50px);
+            padding: 0 clamp(16px, 3.5vw, 50px);
             background: rgba(6, 42, 35, 0.94);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -50,6 +50,7 @@
             justify-content: center;
             text-decoration: none;
             z-index: 1002;
+            flex-shrink: 0;
             -webkit-tap-highlight-color: transparent;
             transition: transform 0.3s ease;
         }
@@ -59,7 +60,7 @@
         }
 
         .portfolio-nav-logo img {
-            height: clamp(48px, 5.5vw, 60px);
+            height: clamp(44px, 5vw, 60px);
             width: auto;
             max-height: 60px;
             object-fit: contain;
@@ -71,11 +72,11 @@
             filter: drop-shadow(0 0 18px rgba(212, 175, 90, 0.75));
         }
 
-        /* Desktop Nav Links */
+        /* Nav Links */
         .portfolio-nav-links {
             display: flex;
             align-items: center;
-            gap: clamp(10px, 1.8vw, 20px);
+            gap: clamp(8px, 1.6vw, 18px);
         }
 
         .portfolio-nav-links a {
@@ -84,12 +85,13 @@
             font-family: "Montserrat", sans-serif;
             font-size: 0.78rem;
             font-weight: 500;
-            letter-spacing: 0.16em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             text-decoration: none;
             padding: 8px 18px;
             border-radius: 999px;
             border: 1px solid transparent;
+            white-space: nowrap;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -107,75 +109,19 @@
             box-shadow: 0 0 16px rgba(212, 175, 90, 0.25);
         }
 
-        .portfolio-nav-links a.active::after {
-            display: none;
+        .portfolio-nav-links a.portfolio-nav-wa-pill {
+            background: linear-gradient(135deg, rgba(212, 175, 90, 0.22) 0%, rgba(6, 42, 35, 0.85) 100%);
+            border: 1px solid rgba(212, 175, 90, 0.45);
+            color: var(--gold-light);
+            font-weight: 600;
         }
 
-        .portfolio-mobile-wa-btn {
-            display: none;
+        .portfolio-nav-links a.portfolio-nav-wa-pill:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 90, 0.35) 0%, rgba(6, 42, 35, 0.95) 100%);
+            border-color: var(--gold);
+            color: #ffffff;
         }
 
-        /* Left Side (Logo + Mobile Meet Bhushan Pill) */
-        .portfolio-nav-left {
-            display: inline-flex;
-            align-items: center;
-            gap: clamp(10px, 2vw, 16px);
-            z-index: 1002;
-        }
-
-        .portfolio-nav-photographer-btn {
-            display: none;
-        }
-
-        /* Hamburger Button */
-        .portfolio-nav-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 44px;
-            height: 44px;
-            background: rgba(6, 42, 35, 0.85);
-            border: 1px solid rgba(212, 175, 90, 0.35);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            padding: 0;
-            z-index: 1002;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .portfolio-nav-toggle:active {
-            background: rgba(212, 175, 90, 0.15);
-            transform: scale(0.95);
-        }
-
-        .hamburger-line {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: var(--gold);
-            border-radius: 2px;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
-        }
-
-        .hamburger-line:nth-child(2) {
-            margin: 5px 0;
-        }
-
-        .portfolio-nav-toggle.open .hamburger-line:nth-child(1) {
-            transform: translateY(7px) rotate(45deg);
-        }
-
-        .portfolio-nav-toggle.open .hamburger-line:nth-child(2) {
-            opacity: 0;
-            transform: scaleX(0);
-        }
-
-        .portfolio-nav-toggle.open .hamburger-line:nth-child(3) {
-            transform: translateY(-7px) rotate(-45deg);
-        }
 
         /* 2. HERO / FILTER SECTION */
         .portfolio-hero {
@@ -750,141 +696,83 @@
             }
         }
 
-        /* MOBILE (< 768px) */
+        /* MOBILE (< 768px): HORIZONTAL SWIPEABLE NAVBAR */
         @media (max-width: 768px) {
             .portfolio-nav {
-                height: 70px;
-                padding: 0 16px;
-            }
-
-            .portfolio-nav-left {
-                display: inline-flex;
+                height: 66px;
+                padding: 0 10px 0 14px;
+                display: flex;
                 align-items: center;
+                justify-content: flex-start;
                 gap: 10px;
             }
 
+            .portfolio-nav-logo {
+                flex-shrink: 0;
+                margin-right: 2px;
+            }
+
             .portfolio-nav-logo img {
-                height: 44px;
+                height: 40px;
                 width: auto;
-                max-height: 44px;
+                max-height: 40px;
             }
 
-            .portfolio-nav-photographer-btn {
-                display: inline-flex !important;
-                align-items: center;
-                justify-content: center;
-                padding: 6px 14px;
-                background: rgba(6, 42, 35, 0.85);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border: 1px solid rgba(212, 175, 90, 0.45);
-                border-radius: 999px;
-                color: var(--gold-light);
-                font-family: 'Montserrat', sans-serif;
-                font-size: 0.72rem;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                text-decoration: none;
-                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-                transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-                -webkit-tap-highlight-color: transparent;
-                white-space: nowrap;
-            }
-
-            .portfolio-nav-photographer-btn:active {
-                transform: scale(0.95);
-                background: rgba(212, 175, 90, 0.25);
-                border-color: var(--gold);
-                color: #ffffff;
-            }
-
-            .portfolio-nav-toggle {
-                display: flex;
-            }
-
-            .portfolio-hero {
-                padding: 95px 16px 20px;
-            }
-
-            /* Sliding Mobile Drawer */
             .portfolio-nav-links {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                height: calc(100svh - 70px);
-                background: linear-gradient(180deg, rgba(6, 42, 35, 0.98) 0%, rgba(11, 61, 50, 0.99) 100%);
-                backdrop-filter: blur(24px);
-                -webkit-backdrop-filter: blur(24px);
-                flex-direction: column;
+                flex: 1 1 auto;
+                min-width: 0;
+                display: flex;
+                flex-direction: row;
                 align-items: center;
                 justify-content: flex-start;
-                padding: 36px 20px 40px;
-                gap: 14px;
-                border-bottom: 1px solid rgba(212, 175, 90, 0.3);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-                transform: translateY(-120%);
-                opacity: 0;
-                visibility: hidden;
-                overflow-y: auto;
-                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, visibility 0.35s ease;
-                z-index: 1001;
+                gap: 6px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                white-space: nowrap;
+                padding: 4px 6px 4px 2px;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity;
             }
 
-            .portfolio-nav-links.open {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
-            }
-
-            .portfolio-nav-links a {
-                width: 100%;
-                max-width: 320px;
-                text-align: center;
-                font-size: 0.90rem;
-                padding: 13px 20px;
-                border-radius: 12px;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(212, 175, 90, 0.15);
-                letter-spacing: 0.20em;
-            }
-
-            .portfolio-nav-links a.active {
-                background: rgba(212, 175, 90, 0.15);
-                border-color: var(--gold);
-                color: var(--gold-light);
-                box-shadow: 0 0 16px rgba(212, 175, 90, 0.25);
-            }
-
-            .portfolio-nav-links a.active::after {
+            .portfolio-nav-links::-webkit-scrollbar {
                 display: none;
             }
 
-            .portfolio-nav-links a.nav-link-desktop-only {
-                display: none !important;
+            .portfolio-nav-links a {
+                flex: 0 0 auto;
+                padding: 6px 13px;
+                font-size: 0.72rem;
+                letter-spacing: 0.08em;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(212, 175, 90, 0.22);
+                color: rgba(255, 255, 255, 0.88);
+                scroll-snap-align: start;
+                transition: all 0.2s ease;
             }
 
-            .portfolio-mobile-wa-btn {
-                display: inline-flex !important;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                max-width: 320px;
-                margin-top: 10px;
-                padding: 14px 20px !important;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(6, 42, 35, 0.6) 45%, rgba(11, 61, 50, 0.8) 100%) !important;
-                backdrop-filter: blur(24px) !important;
-                -webkit-backdrop-filter: blur(24px) !important;
-                color: var(--gold-light) !important;
-                font-weight: 600 !important;
-                border-radius: 14px !important;
-                border: 1px solid rgba(212, 175, 90, 0.5) !important;
-                font-size: 0.84rem !important;
-                box-shadow: 
-                    0 10px 28px rgba(0, 0, 0, 0.45),
-                    0 0 16px rgba(212, 175, 90, 0.2),
-                    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.6),
+            .portfolio-nav-links a:hover,
+            .portfolio-nav-links a:active {
+                color: var(--gold-light);
+                border-color: rgba(212, 175, 90, 0.5);
+            }
+
+            .portfolio-nav-links a.active {
+                background: rgba(212, 175, 90, 0.2);
+                border-color: var(--gold);
+                color: var(--gold-light);
+                box-shadow: 0 0 12px rgba(212, 175, 90, 0.25);
+            }
+
+            .portfolio-nav-links a.portfolio-nav-wa-pill {
+                padding: 6px 13px;
+                border-color: rgba(212, 175, 90, 0.5);
+                font-weight: 600;
+            }
+
+            .portfolio-hero {
+                padding: 85px 16px 20px;
             }
 
             /* Gallery Grid on Mobile */
@@ -975,26 +863,25 @@
         /* SMALL MOBILE (< 400px) */
         @media (max-width: 400px) {
             .portfolio-nav {
-                padding: 0 12px;
-            }
-
-            .portfolio-nav-left {
-                gap: 8px;
+                height: 62px;
+                padding: 0 6px 0 10px;
+                gap: 6px;
             }
 
             .portfolio-nav-logo img {
-                height: 38px;
+                height: 36px;
+                max-height: 36px;
             }
 
-            .portfolio-nav-photographer-btn {
+            .portfolio-nav-links {
+                gap: 5px;
+                padding: 2px 4px;
+            }
+
+            .portfolio-nav-links a {
                 padding: 5px 10px;
-                font-size: 0.67rem;
-                letter-spacing: 0.05em;
-            }
-
-            .portfolio-nav-toggle {
-                width: 38px;
-                height: 38px;
+                font-size: 0.68rem;
+                letter-spacing: 0.06em;
             }
 
             .portfolio-full-grid {
@@ -1019,32 +906,19 @@
     <div class="site-wrapper">
         <!-- TOP NAVIGATION BAR -->
         <nav class="portfolio-nav" aria-label="Main Navigation">
-            <!-- Left Side: Logo + Meet Bhushan Button -->
-            <div class="portfolio-nav-left">
-                <a href="index.html" class="portfolio-nav-logo" aria-label="Gemray Studio Home">
-                    <img src="photos/logo.png" alt="Gemray Studio Logo">
-                </a>
-                <a href="index.html#photographer" class="portfolio-nav-photographer-btn">
-                    Meet Bhushan
-                </a>
-            </div>
+            <a href="index.html" class="portfolio-nav-logo" aria-label="Gemray Studio Home">
+                <img src="photos/logo.png" alt="Gemray Studio Logo">
+            </a>
 
-            <!-- Mobile Hamburger Toggle (Right Side) -->
-            <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
-
-            <!-- Navigation Links (Desktop Horizontal & Mobile Sliding Drawer) -->
+            <!-- Horizontally Swipeable Nav Pills on Mobile & Row on Desktop -->
             <div class="portfolio-nav-links" id="portfolioNavLinks">
                 <a href="index.html">Home</a>
                 <a href="index.html#stories">Stories</a>
                 <a href="portfolio.html" class="active">Portfolio</a>
-                <a href="index.html#photographer" class="nav-link-desktop-only">Meet Bhushan</a>
+                <a href="index.html#photographer">Meet Bhushan</a>
                 <a href="index.html#contact">Contact</a>
-                <a href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%2015%20minutes%20consultancy%20call%20regarding%20wedding%20photography%20services." class="portfolio-mobile-wa-btn" target="_blank" rel="noopener noreferrer">
-                    Book 15 Minutes Consultancy
+                <a href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%2015%20minutes%20consultancy%20call%20regarding%20wedding%20photography%20services." class="portfolio-nav-wa-pill" target="_blank" rel="noopener noreferrer">
+                    Book Consultancy
                 </a>
             </div>
         </nav>
