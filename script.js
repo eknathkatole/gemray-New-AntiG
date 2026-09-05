@@ -440,13 +440,6 @@ function updatePhotographerSoundIcon(
 if (photographerDesktopVideo) {
     photographerDesktopVideo.muted = true;
     photographerDesktopVideo.volume = 1;
-    safePlayVideo(photographerDesktopVideo);
-
-    photographerDesktopVideo.addEventListener("pause", () => {
-        if (!document.hidden && photographerDesktopVideo) {
-            safePlayVideo(photographerDesktopVideo);
-        }
-    });
 
     updatePhotographerSoundIcon(
         photographerDesktopVideo,
@@ -493,13 +486,6 @@ if (photographerDesktopVideo && photographerSoundBtn) {
 if (photographerMobileVideo) {
     photographerMobileVideo.muted = true;
     photographerMobileVideo.volume = 1;
-    safePlayVideo(photographerMobileVideo);
-
-    photographerMobileVideo.addEventListener("pause", () => {
-        if (!document.hidden && photographerMobileVideo) {
-            safePlayVideo(photographerMobileVideo);
-        }
-    });
 
     updatePhotographerSoundIcon(
         photographerMobileVideo,
@@ -580,6 +566,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 // Front active card
                 card.classList.add("is-active");
                 if (video) {
+                    try { video.currentTime = 0; } catch (e) {}
                     video.muted = isStorySoundMuted;
                     video.volume = 1;
                     safePlayVideo(video);
@@ -1054,10 +1041,20 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         });
     }
 
+    const firstVisitSections = new Set();
+
     function orchestrateSectionAudio(activeSectionId) {
+        const isFirstVisit = !firstVisitSections.has(activeSectionId);
+        if (isFirstVisit) {
+            firstVisitSections.add(activeSectionId);
+        }
+
         // 1. Hero Audio
         if (bgVideo) {
             if (activeSectionId === "hero") {
+                if (isFirstVisit) {
+                    try { bgVideo.currentTime = 0; } catch (e) {}
+                }
                 bgVideo.muted = false;
                 bgVideo.volume = 1;
                 const p = bgVideo.play();
@@ -1083,6 +1080,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 if (vid) {
                     const isActive = card.classList.contains("is-active");
                     if (activeSectionId === "stories" && isActive) {
+                        if (isFirstVisit) {
+                            try { vid.currentTime = 0; } catch (e) {}
+                        }
                         vid.muted = false;
                         vid.volume = 1;
                         const p = vid.play();
@@ -1120,6 +1120,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         // 3. Portfolio Showcase Video Audio
         if (portfolioShowcaseVideo) {
             if (activeSectionId === "portfolio-preview") {
+                if (isFirstVisit) {
+                    try { portfolioShowcaseVideo.currentTime = 0; } catch (e) {}
+                }
                 portfolioShowcaseVideo.muted = false;
                 portfolioShowcaseVideo.volume = 1;
                 const p = portfolioShowcaseVideo.play();
@@ -1141,6 +1144,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
         if (photographerDesktopVideo) {
             if (activeSectionId === "photographer" && !isMobile) {
+                if (isFirstVisit) {
+                    try { photographerDesktopVideo.currentTime = 0; } catch (e) {}
+                }
                 photographerDesktopVideo.muted = false;
                 photographerDesktopVideo.volume = 1;
                 const p = photographerDesktopVideo.play();
@@ -1159,6 +1165,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
         if (photographerMobileVideo) {
             if (activeSectionId === "photographer" && isMobile) {
+                if (isFirstVisit) {
+                    try { photographerMobileVideo.currentTime = 0; } catch (e) {}
+                }
                 photographerMobileVideo.muted = false;
                 photographerMobileVideo.volume = 1;
                 const p = photographerMobileVideo.play();
