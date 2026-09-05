@@ -795,64 +795,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         });
     }
 
-    // Smart IntersectionObserver: When hero is hidden and stories is viewed, hero audio mutes and review stories audio automatically plays!
-    if ("IntersectionObserver" in window && container) {
-        const storiesObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Mute hero video when entering stories / review section
-                    if (bgVideo) {
-                        bgVideo.muted = true;
-                        updateHeroSoundIcon();
-                    }
-
-                    // Automatically play the active story video with sound
-                    const activeCard = cards[currentIndex];
-                    if (activeCard) {
-                        const vid = activeCard.querySelector(".story-video");
-                        if (vid) {
-                            vid.muted = false;
-                            isStorySoundMuted = false;
-                            updateStorySoundIcon();
-                            const p = vid.play();
-                            if (p !== undefined) {
-                                p.catch(() => {
-                                    // Fallback to muted if browser blocks autoplay audio
-                                    vid.muted = true;
-                                    isStorySoundMuted = true;
-                                    updateStorySoundIcon();
-                                    safePlayVideo(vid);
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    // Mute and pause stories when scrolled out of stories section
-                    cards.forEach(card => {
-                        const vid = card.querySelector(".story-video");
-                        if (vid) {
-                            vid.muted = true;
-                            vid.pause();
-                        }
-                    });
-                    isStorySoundMuted = true;
-                    updateStorySoundIcon();
-
-                    // If scrolled back up into hero area, restore hero audio
-                    const heroElem = document.getElementById("hero");
-                    if (heroElem) {
-                        const rect = heroElem.getBoundingClientRect();
-                        if (rect.bottom > window.innerHeight * 0.3 && hasUserInteractedForSound) {
-                            tryUnmuteHero();
-                        }
-                    }
-                }
-            });
-        }, { threshold: 0.25 });
-
-        storiesObserver.observe(container);
-    }
-
     // Initialize initial state
     updateStoryDeck();
 })();
@@ -966,20 +908,22 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
-   12C. SEAMLESS SCROLL SECTION AUDIO ORCHESTRATOR
-   Automatically switches and un-mutes video audio as user
-   scrolls into Hero, Stories/Review, Portfolio Preview,
-   or Meet Photographer, ensuring only 1 audio plays at a time.
+   12C. SEAMLESS SCROLL SECTION AUDIO & NAV HIGHLIGHT ORCHESTRATOR
+   - Automatically switches & un-mutes video audio for active section
+   - Pauses all off-screen videos to ensure 60fps/120fps butter-smooth scrolling
+   - Updates active nav link pill and auto-scrolls mobile navbar container
    ========================================================= */
 
-(function initSeamlessSectionAudioOrchestrator() {
+(function initSeamlessSectionAudioAndNav() {
     const heroElem = document.getElementById("hero");
     const storiesElem = document.getElementById("stories");
     const portfolioElem = document.getElementById("portfolio-preview");
     const photographerElem = document.getElementById("photographer");
+    const contactElem = document.getElementById("contact");
 
     const portfolioShowcaseVideo = document.getElementById("portfolioShowcaseVideo");
     const portfolioSoundBtn = document.getElementById("portfolioSoundBtn");
+    const navLinksContainer = document.getElementById("portfolioNavLinks");
 
     function updatePortfolioSoundIcon() {
         if (!portfolioSoundBtn || !portfolioShowcaseVideo) return;
@@ -1022,13 +966,54 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
     const firstVisitSections = new Set();
 
-    function orchestrateSectionAudio(activeSectionId) {
+    // Map section IDs to corresponding navbar selector
+    const navLinkSelectors = {
+        "hero": 'a[href="index.html"], a[href="#hero"]',
+        "stories": 'a[href="#stories"]',
+        "portfolio-preview": 'a[href="portfolio.html"], a[href="#portfolio-preview"]',
+        "photographer": 'a[href="#photographer"]',
+        "contact": 'a[href="#contact"]'
+    };
+
+    function updateActiveNavLink(activeSectionId) {
+        if (!navLinksContainer) return;
+        const allLinks = navLinksContainer.querySelectorAll("a:not(.portfolio-nav-wa-pill)");
+        allLinks.forEach(link => link.classList.remove("active"));
+
+        const selector = navLinkSelectors[activeSectionId];
+        if (selector) {
+            const targetLink = navLinksContainer.querySelector(selector);
+            if (targetLink) {
+                targetLink.classList.add("active");
+                // Auto-scroll the mobile horizontally scrollable nav container to keep active link centered
+                if (window.innerWidth <= 768) {
+                    try {
+                        const containerWidth = navLinksContainer.offsetWidth;
+                        const linkLeft = targetLink.offsetLeft;
+                        const linkWidth = targetLink.offsetWidth;
+                        const scrollTo = linkLeft - (containerWidth / 2) + (linkWidth / 2);
+                        navLinksContainer.scrollTo({
+                            left: Math.max(0, scrollTo),
+                            behavior: "smooth"
+                        });
+                    } catch (e) {}
+                }
+            }
+        }
+    }
+
+    function orchestrateSectionAudioAndMedia(activeSectionId) {
         const isFirstVisit = !firstVisitSections.has(activeSectionId);
         if (isFirstVisit) {
             firstVisitSections.add(activeSectionId);
         }
 
-        // 1. Hero Audio
+        // Update active navigation item
+        updateActiveNavLink(activeSectionId);
+
+        const isMobile = window.innerWidth <= 768;
+
+        // 1. Hero Audio & Playback
         if (bgVideo) {
             if (activeSectionId === "hero") {
                 if (isFirstVisit) {
@@ -1045,12 +1030,14 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                     });
                 }
             } else {
+                // Pause and mute offscreen video to free hardware GPU resources
                 bgVideo.muted = true;
+                bgVideo.pause();
                 updateHeroSoundIcon();
             }
         }
 
-        // 2. Stories / Review Audio
+        // 2. Stories / Review Audio & Playback
         const storiesDeck = document.getElementById("storiesDeck");
         if (storiesDeck) {
             const storyCards = Array.from(storiesDeck.querySelectorAll(".story-deck-card"));
@@ -1081,7 +1068,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                         }
                     } else {
                         vid.muted = true;
-                        if (!isActive) vid.pause();
+                        vid.pause();
                     }
                 }
             });
@@ -1096,7 +1083,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             }
         }
 
-        // 3. Portfolio Showcase Video Audio
+        // 3. Portfolio Showcase Video Audio & Playback
         if (portfolioShowcaseVideo) {
             if (activeSectionId === "portfolio-preview") {
                 if (isFirstVisit) {
@@ -1114,13 +1101,12 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             } else {
                 portfolioShowcaseVideo.muted = true;
+                portfolioShowcaseVideo.pause();
                 updatePortfolioSoundIcon();
             }
         }
 
-        // 4. Meet Photographer Audio
-        const isMobile = window.innerWidth <= 768;
-
+        // 4. Meet Photographer Video Audio & Playback
         if (photographerDesktopVideo) {
             if (activeSectionId === "photographer" && !isMobile) {
                 if (isFirstVisit) {
@@ -1138,6 +1124,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             } else {
                 photographerDesktopVideo.muted = true;
+                photographerDesktopVideo.pause();
                 updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
             }
         }
@@ -1159,6 +1146,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             } else {
                 photographerMobileVideo.muted = true;
+                photographerMobileVideo.pause();
                 updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
             }
         }
@@ -1169,7 +1157,8 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             { id: "hero", el: heroElem },
             { id: "stories", el: storiesElem },
             { id: "portfolio-preview", el: portfolioElem },
-            { id: "photographer", el: photographerElem }
+            { id: "photographer", el: photographerElem },
+            { id: "contact", el: contactElem }
         ].filter(item => item.el !== null);
 
         let currentActiveId = null;
@@ -1188,12 +1177,12 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             });
 
-            if (topCandidate && highestRatio >= 0.25 && topCandidate !== currentActiveId) {
+            if (topCandidate && highestRatio >= 0.2 && topCandidate !== currentActiveId) {
                 currentActiveId = topCandidate;
-                orchestrateSectionAudio(currentActiveId);
+                orchestrateSectionAudioAndMedia(currentActiveId);
             }
         }, {
-            threshold: [0.1, 0.25, 0.5, 0.75]
+            threshold: [0.1, 0.2, 0.4, 0.6, 0.8]
         });
 
         // Expose global trigger for instantaneous scroll audio unlocking
@@ -1212,7 +1201,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             });
 
             currentActiveId = topCandidate;
-            orchestrateSectionAudio(currentActiveId);
+            orchestrateSectionAudioAndMedia(currentActiveId);
         };
 
         sections.forEach(s => observer.observe(s.el));
