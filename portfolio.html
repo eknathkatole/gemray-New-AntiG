@@ -274,6 +274,16 @@
             cursor: pointer;
         }
 
+        .portfolio-item video,
+        .portfolio-grid-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+
         /* Luxury View Overlay Hint on Hover */
         .portfolio-item::after {
             content: "VIEW";
@@ -298,6 +308,10 @@
             transform: translateY(-4px);
             border-color: var(--gold);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 90, 0.2);
+        }
+
+        .portfolio-item:hover video {
+            transform: scale(1.06);
         }
 
         .portfolio-item:hover img {
@@ -441,6 +455,286 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             pointer-events: none;
+        }
+
+        .lightbox-video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* =========================================================
+           7. FULLSCREEN MOBILE REELS VIEWER (MOBILE ONLY)
+           ========================================================= */
+        .mobile-reels-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: #020b08;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .mobile-reels-modal.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Top Header Bar */
+        .mobile-reels-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            padding: max(12px, env(safe-area-inset-top, 12px)) 16px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 70%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .reels-brand-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(6, 42, 35, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(212, 175, 90, 0.4);
+            border-radius: 999px;
+            padding: 6px 14px;
+            color: var(--gold-light);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            pointer-events: auto;
+        }
+
+        .reels-glow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            animation: reelsDotPulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes reelsDotPulse {
+            0%, 100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .reels-counter-badge {
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            pointer-events: auto;
+        }
+
+        .reels-close-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(6, 42, 35, 0.85);
+            border: 1px solid rgba(212, 175, 90, 0.45);
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            pointer-events: auto;
+            transition: transform 0.2s ease, background 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .reels-close-btn:active {
+            transform: scale(0.92);
+            background: rgba(212, 175, 90, 0.3);
+        }
+
+        /* Vertical Reel Container with Snapping */
+        .mobile-reels-container {
+            width: 100vw;
+            height: 100svh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .mobile-reels-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Individual Reel Slide */
+        .mobile-reel-slide {
+            width: 100vw;
+            height: 100svh;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #020b08;
+        }
+
+        /* Ambient Glass/Glow Background Blur */
+        .reel-ambient-bg-wrap {
+            position: absolute;
+            inset: -20px;
+            z-index: 1;
+            overflow: hidden;
+            filter: blur(45px) brightness(0.35) saturate(150%);
+            -webkit-filter: blur(45px) brightness(0.35) saturate(150%);
+            pointer-events: none;
+            transform: scale(1.15);
+        }
+
+        .reel-ambient-photo,
+        .reel-ambient-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Media Container */
+        .reel-media-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-main-photo {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 4px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .reel-main-video {
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Sound Button in Reel */
+        .reel-sound-toggle-btn {
+            position: absolute;
+            bottom: max(30px, env(safe-area-inset-bottom, 30px));
+            right: 18px;
+            z-index: 8;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(6, 42, 35, 0.85);
+            border: 1px solid rgba(212, 175, 90, 0.6);
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .reel-sound-toggle-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Center Play/Pause Pop Indicator */
+        .reel-video-play-indicator {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(212, 175, 90, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-light);
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.7);
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 5;
+        }
+
+        .reel-video-play-indicator.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Bottom Swipe Guide */
+        .reels-bottom-info {
+            position: absolute;
+            bottom: max(14px, env(safe-area-inset-bottom, 14px));
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 7;
+            pointer-events: none;
+        }
+
+        .reels-swipe-guide {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(0, 0, 0, 0.35);
+            padding: 4px 12px;
+            border-radius: 999px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            animation: reelsSwipeBounce 2.4s ease-in-out infinite;
+        }
+
+        @keyframes reelsSwipeBounce {
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50% { transform: translateY(-4px); opacity: 0.95; color: var(--gold-light); }
         }
 
         /* =====================================================
@@ -679,8 +973,8 @@
             <div class="portfolio-nav-links" id="portfolioNavLinks">
                 <a href="index.html">Home</a>
                 <a href="index.html#stories">Stories</a>
-                <a href="index.html#photographer">Photographer</a>
                 <a href="portfolio.html" class="active">Portfolio</a>
+                <a href="index.html#photographer">Meet Bhushan</a>
                 <a href="index.html#contact">Contact</a>
                 <a href="https://api.whatsapp.com/send?phone=918956010406&text=Hello%20Bhushan%20%2F%20Gemray%20Studio%2C%20I%20would%20like%20to%20book%20a%2015%20minutes%20consultancy%20call%20regarding%20wedding%20photography%20services." class="portfolio-mobile-wa-btn" target="_blank" rel="noopener noreferrer">
                     Book 15 Minutes Consultancy
@@ -707,17 +1001,35 @@
             </div>
         </header>
 
-        <!-- FULL GALLERY PHOTO GRID (2 COLUMNS ON MOBILE, 4 ON DESKTOP) -->
+        <!-- FULL GALLERY PHOTO & VIDEO GRID (2 COLUMNS ON MOBILE, 4 ON DESKTOP) -->
         <main class="portfolio-full-grid gallery-grid">
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo1.jpg" alt="Wedding Photography - Bride and Groom celebration" loading="lazy"></article>
+            
+            <!-- VIDEO ITEM 1: WEDDING CINEMATICS -->
+            <article class="portfolio-item portfolio-video-item g-item" data-cat="wedding">
+                <video src="vid/bg.mp4" autoplay muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
+            </article>
+
             <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding.jpg" alt="Pre-Wedding Photography - Agape Love by Gemray Studio" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo3.jpg" alt="Engagement Photography - Ring exchange ceremony" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo4.jpg" alt="Wedding Photography - Traditional rituals" loading="lazy"></article>
+            
+            <!-- VIDEO ITEM 2: WEDDING HIGHLIGHTS HORIZONTAL -->
+            <article class="portfolio-item portfolio-video-item g-item" data-cat="wedding">
+                <video src="vid/Website Intro Horizontal C.mp4" autoplay muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
+            </article>
+
             <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(1).jpg" alt="Pre-Wedding Photography - Romantic couple portrait" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo5.jpg" alt="Wedding Photography - Mandap emotional moments" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(2).jpg" alt="Pre-Wedding Photography - Intimate Moments" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="engagement"><img src="photos/photo7.jpg" alt="Engagement Photography - Couple candid laughter" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo8.jpg" alt="Wedding Photography - Bridal elegance portrait" loading="lazy"></article>
+            
+            <!-- VIDEO ITEM 3: PRE-WEDDING VERTICAL VIDEO -->
+            <article class="portfolio-item portfolio-video-item g-item" data-cat="prewedding">
+                <video src="vid/Website Intro Virtical C.mp4" autoplay muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
+            </article>
+
             <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(3).jpg" alt="Pre-Wedding Photography - Cinematic Walk" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="wedding"><img src="photos/photo9.jpg" alt="Wedding Photography - Royal groom entry" loading="lazy"></article>
             <article class="portfolio-item g-item" data-cat="prewedding"><img src="photos/prewedding/Agape%20love!%20%23pr%C3%A9wedding%20(4).jpg" alt="Pre-Wedding Photography - Golden Hour Glow" loading="lazy"></article>
@@ -767,8 +1079,8 @@
             <nav class="footer-navigation" aria-label="Footer navigation">
                 <a href="index.html">Home</a>
                 <a href="index.html#stories">Stories</a>
-                <a href="index.html#photographer">Photographer</a>
                 <a href="portfolio.html">Portfolio</a>
+                <a href="index.html#photographer">Meet Bhushan</a>
                 <a href="index.html#contact">Contact</a>
             </nav>
 
@@ -795,15 +1107,44 @@
         </a>
     </div>
 
-    <!-- Lightbox Component with Counter & Touch Swipe Support -->
+    <!-- Lightbox Component (Desktop) -->
     <div id="lightbox" class="lightbox" aria-hidden="true">
         <button id="lbClose" class="lightbox-close" type="button" aria-label="Close image">×</button>
         <div id="lbCounter" class="lightbox-counter">1 / 20</div>
         <button id="lbPrev" class="lightbox-prev" type="button" aria-label="Previous image">←</button>
         <div class="lightbox-image-wrapper">
             <img id="lbImg" src="" alt="Full view wedding photograph">
+            <video id="lbVideo" src="" autoplay loop playsinline class="lightbox-video" style="display:none;"></video>
         </div>
         <button id="lbNext" class="lightbox-next" type="button" aria-label="Next image">→</button>
+    </div>
+
+    <!-- FULLSCREEN MOBILE REELS VIEWER (MOBILE ONLY) -->
+    <div id="mobileReelsModal" class="mobile-reels-modal" aria-hidden="true">
+        <div class="mobile-reels-top-bar">
+            <div class="reels-brand-tag">
+                <span class="reels-glow-dot"></span>
+                <span class="reels-brand-text">Gemray Reels</span>
+            </div>
+            <div id="reelsCounter" class="reels-counter-badge">1 / 35</div>
+            <button id="reelsCloseBtn" class="reels-close-btn" type="button" aria-label="Close Reels">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div id="mobileReelsContainer" class="mobile-reels-container">
+            <!-- Populated dynamically by script.js -->
+        </div>
+        <div class="reels-bottom-info">
+            <div class="reels-swipe-guide">
+                <span>Swipe up for next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
