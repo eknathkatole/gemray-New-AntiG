@@ -124,11 +124,11 @@
             display: none;
         }
 
-        /* Mobile Right Actions (Meet Bhushan + Hamburger) */
-        .portfolio-nav-actions {
-            display: none;
+        /* Left Side (Logo + Mobile Meet Bhushan Pill) */
+        .portfolio-nav-left {
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: clamp(10px, 2vw, 16px);
             z-index: 1002;
         }
 
@@ -768,14 +768,16 @@
                 padding: 0 16px;
             }
 
+            .portfolio-nav-left {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
             .portfolio-nav-logo img {
                 height: 44px;
                 width: auto;
                 max-height: 44px;
-            }
-
-            .portfolio-nav-actions {
-                display: flex;
             }
 
             .portfolio-nav-photographer-btn {
@@ -986,12 +988,12 @@
                 padding: 0 12px;
             }
 
-            .portfolio-nav-logo img {
-                height: 38px;
+            .portfolio-nav-left {
+                gap: 8px;
             }
 
-            .portfolio-nav-actions {
-                gap: 6px;
+            .portfolio-nav-logo img {
+                height: 38px;
             }
 
             .portfolio-nav-photographer-btn {
@@ -1027,23 +1029,22 @@
     <div class="site-wrapper">
         <!-- TOP NAVIGATION BAR -->
         <nav class="portfolio-nav" aria-label="Main Navigation">
-            <a href="index.html" class="portfolio-nav-logo" aria-label="Gemray Studio Home">
-                <img src="photos/logo.png" alt="Gemray Studio Logo">
-            </a>
-
-            <!-- Mobile Right Actions: Meet Bhushan Button (Outside 3 lines) + Hamburger Toggle -->
-            <div class="portfolio-nav-actions">
+            <!-- Left Side: Logo + Meet Bhushan Button -->
+            <div class="portfolio-nav-left">
+                <a href="index.html" class="portfolio-nav-logo" aria-label="Gemray Studio Home">
+                    <img src="photos/logo.png" alt="Gemray Studio Logo">
+                </a>
                 <a href="index.html#photographer" class="portfolio-nav-photographer-btn">
                     Meet Bhushan
                 </a>
-
-                <!-- Mobile Hamburger Toggle -->
-                <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                    <span class="hamburger-line"></span>
-                </button>
             </div>
+
+            <!-- Mobile Hamburger Toggle (Right Side) -->
+            <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
 
             <!-- Navigation Links (Desktop Horizontal & Mobile Sliding Drawer) -->
             <div class="portfolio-nav-links" id="portfolioNavLinks">
