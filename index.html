@@ -289,97 +289,242 @@
             </div>
 
 
-            <!-- TWO VIDEO LAYOUT -->
-
+            <!-- 3D LAYERED VIDEO STACK CAROUSEL -->
             <div
-                class="stories-grid"
+                class="stories-stack-container"
+                id="storiesStackContainer"
             >
 
-
-                <!-- =================================================
-                     WEDDING CUSTOMER VIDEO
-                     ================================================= -->
-
-                <article
-                    class="story-video-card"
+                <div
+                    class="stories-deck"
+                    id="storiesDeck"
                 >
 
-                    <div
-                        class="story-video-wrapper"
+                    <!-- STORY CARD 1 -->
+                    <article
+                        class="story-deck-card"
+                        data-index="0"
                     >
+                        <div class="story-video-wrapper">
+                            <video
+                                class="story-video"
+                                src="vid/bg.mp4"
+                                poster="photos/photo1.jpg"
+                                playsinline
+                                webkit-playsinline
+                                loop
+                                preload="metadata"
+                            ></video>
+                            <div class="story-video-vignette"></div>
+                        </div>
 
+                        <div class="story-video-content">
+                            <span>Wedding Story</span>
+                            <h3>A day worth remembering.</h3>
+                        </div>
+                    </article>
+
+
+                    <!-- STORY CARD 2 -->
+                    <article
+                        class="story-deck-card"
+                        data-index="1"
+                    >
+                        <div class="story-video-wrapper">
+                            <video
+                                class="story-video"
+                                src="vid/Website Intro Horizontal C.mp4"
+                                poster="photos/photo5.jpg"
+                                playsinline
+                                webkit-playsinline
+                                loop
+                                preload="metadata"
+                            ></video>
+                            <div class="story-video-vignette"></div>
+                        </div>
+
+                        <div class="story-video-content">
+                            <span>Couple Interview</span>
+                            <h3>Their story, in their words.</h3>
+                        </div>
+                    </article>
+
+
+                    <!-- STORY CARD 3 -->
+                    <article
+                        class="story-deck-card"
+                        data-index="2"
+                    >
+                        <div class="story-video-wrapper">
+                            <video
+                                class="story-video"
+                                src="vid/bg.mp4"
+                                poster="photos/photo2.jpg"
+                                playsinline
+                                webkit-playsinline
+                                loop
+                                preload="metadata"
+                            ></video>
+                            <div class="story-video-vignette"></div>
+                        </div>
+
+                        <div class="story-video-content">
+                            <span>Cinematic Film</span>
+                            <h3>Timeless moments captured forever.</h3>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- GLOBAL SOUND CONTROL FOR ACTIVE STORY VIDEO -->
+                <button
+                    class="story-sound-btn"
+                    id="storySoundBtn"
+                    aria-label="Toggle story video sound"
+                >
+                    <svg class="sound-icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <line x1="23" y1="9" x2="17" y2="15"/>
+                        <line x1="17" y1="9" x2="23" y2="15"/>
+                    </svg>
+                    <svg class="sound-icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                </button>
+
+                <!-- PAGINATION INDICATORS -->
+                <div class="stories-pagination" id="storiesPagination">
+                        <span class="story-dot active" data-index="0"></span>
+                    <span class="story-dot" data-index="1"></span>
+                    <span class="story-dot" data-index="2"></span>
+                </div>
+
+            </div>
+        </section>
+
+
+
+        <!-- =================================================
+             03. SELECTED WORK / PORTFOLIO PREVIEW (REORDERED)
+             ================================================= -->
+
+        <section
+            id="portfolio-preview"
+            class="portfolio-preview-section"
+        >
+
+            <div class="portfolio-split-stage">
+
+                <!-- LEFT SIDE: CLEAN 16:9 CINEMATIC HORIZONTAL VIDEO WINDOW -->
+                <div class="portfolio-video-window">
+                    <div class="portfolio-video-window-frame">
                         <video
-                            class="story-video"
+                            class="portfolio-showcase-video"
                             src="vid/bg.mp4"
-                            poster="photos/photo1.jpg"
-                            controls
+                            autoplay
+                            muted
+                            loop
                             playsinline
                             webkit-playsinline
                             preload="metadata"
                         ></video>
+                        <div class="portfolio-video-overlay-glow"></div>
+                        <div class="portfolio-video-liquid-sheen"></div>
+                    </div>
+                </div>
+
+
+                <!-- RIGHT SIDE: BACKGROUND GLASS BLURRED PHOTO COLLAGE WITH DIRECT EXPLORE BUTTON -->
+                <div class="portfolio-photos-window">
+
+                    <!-- BACKGROUND GLASS BLURRED PHOTO COLLAGE (8 SLOTS) -->
+                    <div class="portfolio-glass-collage" id="portfolioGlassCollage">
+
+                        <!-- PHOTO SLOT 1 -->
+                        <div class="portfolio-glass-card pgc-1" data-slot="0">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo1.jpg" alt="Wedding moment" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 2 -->
+                        <div class="portfolio-glass-card pgc-2" data-slot="1">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo3.jpg" alt="Wedding celebration" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 3 -->
+                        <div class="portfolio-glass-card pgc-3" data-slot="2">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo5.jpg" alt="Couple portrait" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 4 -->
+                        <div class="portfolio-glass-card pgc-4" data-slot="3">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo7.jpg" alt="Prewedding love" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 5 -->
+                        <div class="portfolio-glass-card pgc-5" data-slot="4">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo9.jpg" alt="Emotional bridal moment" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 6 -->
+                        <div class="portfolio-glass-card pgc-6" data-slot="5">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo11.jpg" alt="Wedding joy" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 7 -->
+                        <div class="portfolio-glass-card pgc-7" data-slot="6">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo13.jpg" alt="Cherished wedding memory" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
+
+                        <!-- PHOTO SLOT 8 -->
+                        <div class="portfolio-glass-card pgc-8" data-slot="7">
+                            <div class="glass-img-frame">
+                                <img src="photos/photo20.jpg" alt="Royal celebration" class="glass-photo" loading="lazy">
+                                <div class="glass-photo-sheen"></div>
+                            </div>
+                        </div>
 
                     </div>
 
 
-                    <div
-                        class="story-video-content"
+                    <!-- LIQUID GLASS EXPLORE MORE BUTTON ONLY (NO EXTRA WRAPPER CIRCLE) -->
+                    <a
+                        href="portfolio.html"
+                        class="portfolio-explore-btn"
+                        id="portfolioExploreBtn"
                     >
-
-                        <span>
-                            Wedding Story
+                        <span class="explore-btn-text">Explore More</span>
+                        <span class="explore-btn-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
                         </span>
+                        <div class="explore-btn-sheen"></div>
+                    </a>
 
-                        <h3>
-                            A day worth remembering.
-                        </h3>
-
-                    </div>
-
-                </article>
-
-
-
-                <!-- =================================================
-                     COUPLE INTERVIEW VIDEO
-                     ================================================= -->
-
-                <article
-                    class="story-video-card"
-                >
-
-                    <div
-                        class="story-video-wrapper"
-                    >
-
-                        <video
-                            class="story-video"
-                            src="vid/bg.mp4"
-                            poster="photos/photo5.jpg"
-                            controls
-                            playsinline
-                            webkit-playsinline
-                            preload="metadata"
-                        ></video>
-
-                    </div>
-
-
-                    <div
-                        class="story-video-content"
-                    >
-
-                        <span>
-                            Couple Interview
-                        </span>
-
-                        <h3>
-                            Their story, in their words.
-                        </h3>
-
-                    </div>
-
-                </article>
-
+                </div>
 
             </div>
 
@@ -388,22 +533,7 @@
 
 
         <!-- =================================================
-             03. PHOTOGRAPHER INTRODUCTION
-             =================================================
-
-             DESKTOP:
-             Horizontal fullscreen video
-
-             MOBILE:
-             9:16 vertical reel
-
-             MOBILE VIDEO PATH:
-             vid/My movie 005.mp4
-
-             ================================================= -->
-
-        <!-- =================================================
-             03. MEET BHUSHAN (PHOTOGRAPHER)
+             04. MEET BHUSHAN (PHOTOGRAPHER)
              ================================================= -->
 
         <section
@@ -618,53 +748,7 @@
 
 
 
-        <!-- =================================================
-             04. PORTFOLIO PREVIEW
-             ================================================= -->
 
-        <section
-            id="portfolio-preview"
-            class="portfolio-preview-section"
-        >
-
-
-            <div
-                class="portfolio-preview-content"
-            >
-
-                <span
-                    class="section-eyebrow"
-                >
-                    Selected Work
-                </span>
-
-                <h2>
-                    Photographer's Portfolio
-                </h2>
-
-                <p>
-                    Explore a collection of weddings,
-                    celebrations and stories captured
-                    by Gemray Studio.
-                </p>
-
-
-                <!-- =================================================
-                     REDIRECT TO NEW PORTFOLIO PAGE
-                     ================================================= -->
-
-                <a
-                    href="portfolio.html"
-                    class="portfolio-button"
-                >
-                    View Portfolio
-                </a>
-
-
-            </div>
-
-
-        </section>
 
 
 
@@ -1052,12 +1136,12 @@
                     Stories
                 </a>
 
-                <a href="#photographer">
-                    Photographer
+                <a href="#portfolio-preview">
+                    Portfolio
                 </a>
 
-                <a href="portfolio.html">
-                    Portfolio
+                <a href="#photographer">
+                    Meet Bhushan
                 </a>
 
                 <a href="#contact">

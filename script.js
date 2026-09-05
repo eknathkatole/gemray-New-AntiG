@@ -544,6 +544,413 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
+   12A. 3D LAYERED REAL STORIES CAROUSEL & SWIPER
+   ========================================================= */
+
+(function initStories3DCarousel() {
+    const container = document.getElementById("storiesStackContainer");
+    const deck = document.getElementById("storiesDeck");
+    const prevBtn = document.getElementById("storiesPrevBtn");
+    const nextBtn = document.getElementById("storiesNextBtn");
+    const soundBtn = document.getElementById("storySoundBtn");
+    const dots = document.querySelectorAll(".story-dot");
+
+    if (!deck) return;
+
+    const cards = Array.from(deck.querySelectorAll(".story-deck-card"));
+    if (cards.length === 0) return;
+
+    let currentIndex = 0;
+    let isStorySoundMuted = true;
+    let isTransitioning = false;
+
+    // Synchronize card classes (is-active, is-next, is-prev, is-hidden) and audio/video states
+    function updateStoryDeck() {
+        const total = cards.length;
+
+        cards.forEach((card, i) => {
+            const video = card.querySelector(".story-video");
+            card.classList.remove("is-active", "is-next", "is-prev", "is-hidden");
+
+            // Calculate relative offset from currentIndex in cyclic buffer
+            let offset = (i - currentIndex) % total;
+            if (offset < 0) offset += total;
+
+            if (offset === 0) {
+                // Front active card
+                card.classList.add("is-active");
+                if (video) {
+                    video.muted = isStorySoundMuted;
+                    video.volume = 1;
+                    safePlayVideo(video);
+                }
+            } else if (offset === 1) {
+                // Next card (middle layer stacked right behind)
+                card.classList.add("is-next");
+                if (video) {
+                    video.muted = true;
+                    safePlayVideo(video);
+                }
+            } else if (offset === total - 1) {
+                // Prev card (back layer stacked left behind)
+                card.classList.add("is-prev");
+                if (video) {
+                    video.muted = true;
+                    safePlayVideo(video);
+                }
+            } else {
+                // Additional cards hidden
+                card.classList.add("is-hidden");
+                if (video) {
+                    video.pause();
+                }
+            }
+        });
+
+        // Update dot pagination
+        dots.forEach((dot, idx) => {
+            if (idx === currentIndex) {
+                dot.classList.add("active");
+            } else {
+                dot.classList.remove("active");
+            }
+        });
+
+        updateStorySoundIcon();
+    }
+
+    function goToStory(index, direction = "next") {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        const total = cards.length;
+        currentIndex = (index + total) % total;
+        updateStoryDeck();
+
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 550);
+    }
+
+    function nextStory() {
+        goToStory(currentIndex + 1, "next");
+    }
+
+    function prevStory() {
+        goToStory(currentIndex - 1, "prev");
+    }
+
+    // Button event listeners
+    if (nextBtn) {
+        nextBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            nextStory();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            prevStory();
+        });
+    }
+
+    // Direct card click interaction (clicking on next/prev card brings it to front)
+    cards.forEach((card, idx) => {
+        card.addEventListener("click", function (e) {
+            // Don't trigger if clicked on video controls or sound button
+            if (e.target.closest(".story-sound-btn") || e.target.closest(".stories-nav-btn")) return;
+
+            if (idx !== currentIndex) {
+                goToStory(idx);
+            }
+        });
+    });
+
+    // Pagination dots click
+    dots.forEach((dot) => {
+        dot.addEventListener("click", function () {
+            const targetIdx = parseInt(this.getAttribute("data-index"), 10);
+            if (!isNaN(targetIdx) && targetIdx !== currentIndex) {
+                goToStory(targetIdx);
+            }
+        });
+    });
+
+    // Touch swipe support (Up/Down for mobile, Left/Right for desktop/tablets)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let isSwiping = false;
+
+    deck.addEventListener("touchstart", function (e) {
+        if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isSwiping = true;
+        }
+    }, { passive: true });
+
+    deck.addEventListener("touchmove", function (e) {
+        if (!isSwiping || e.touches.length !== 1) return;
+        touchEndX = e.touches[0].clientX;
+        touchEndY = e.touches[0].clientY;
+    }, { passive: true });
+
+    deck.addEventListener("touchend", function () {
+        if (!isSwiping) return;
+        isSwiping = false;
+
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        const isMobileScreen = window.innerWidth <= 1000;
+
+        if (isMobileScreen) {
+            // Mobile: Vertical swipe gesture (Up / Down)
+            if (Math.abs(deltaY) > 35) {
+                if (deltaY < 0) {
+                    // Swiped Up -> Next video
+                    nextStory();
+                } else {
+                    // Swiped Down -> Previous video
+                    prevStory();
+                }
+            } else if (Math.abs(deltaX) > 40) {
+                // Also support horizontal swipe fallback
+                if (deltaX < 0) {
+                    nextStory();
+                } else {
+                    prevStory();
+                }
+            }
+        } else {
+            // Desktop: Horizontal swipe / drag gesture
+            if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX < 0) {
+                    nextStory();
+                } else {
+                    prevStory();
+                }
+            }
+        }
+        touchStartX = 0;
+        touchEndX = 0;
+        touchStartY = 0;
+        touchEndY = 0;
+    }, { passive: true });
+
+    // Desktop Mouse Drag / Swipe
+    let mouseStartX = 0;
+    let isMouseDown = false;
+
+    deck.addEventListener("mousedown", function (e) {
+        if (e.target.closest(".stories-nav-btn") || e.target.closest(".story-sound-btn")) return;
+        isMouseDown = true;
+        mouseStartX = e.clientX;
+        deck.classList.add("is-dragging");
+    });
+
+    window.addEventListener("mouseup", function (e) {
+        if (!isMouseDown) return;
+        isMouseDown = false;
+        deck.classList.remove("is-dragging");
+
+        const deltaX = e.clientX - mouseStartX;
+        if (Math.abs(deltaX) > 50) {
+            if (deltaX < 0) {
+                nextStory();
+            } else {
+                prevStory();
+            }
+        }
+    });
+
+    // Horizontal Trackpad / Wheel scroll support over the deck
+    let wheelTimeout = null;
+    deck.addEventListener("wheel", function (e) {
+        if (Math.abs(e.deltaX) > 30) {
+            e.preventDefault();
+            if (!wheelTimeout) {
+                if (e.deltaX > 0) {
+                    nextStory();
+                } else {
+                    prevStory();
+                }
+                wheelTimeout = setTimeout(() => {
+                    wheelTimeout = null;
+                }, 600);
+            }
+        }
+    }, { passive: false });
+
+    // Sound toggle function
+    function updateStorySoundIcon() {
+        if (!soundBtn) return;
+        const mutedIcon = soundBtn.querySelector(".sound-icon-muted");
+        const unmutedIcon = soundBtn.querySelector(".sound-icon-unmuted");
+
+        if (isStorySoundMuted) {
+            if (mutedIcon) mutedIcon.style.display = "block";
+            if (unmutedIcon) unmutedIcon.style.display = "none";
+            soundBtn.setAttribute("aria-label", "Unmute stories audio");
+        } else {
+            if (mutedIcon) mutedIcon.style.display = "none";
+            if (unmutedIcon) unmutedIcon.style.display = "block";
+            soundBtn.setAttribute("aria-label", "Mute stories audio");
+        }
+    }
+
+    if (soundBtn) {
+        soundBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            isStorySoundMuted = !isStorySoundMuted;
+            const activeCard = cards[currentIndex];
+            if (activeCard) {
+                const activeVideo = activeCard.querySelector(".story-video");
+                if (activeVideo) {
+                    activeVideo.muted = isStorySoundMuted;
+                    activeVideo.volume = 1;
+                    if (!isStorySoundMuted) {
+                        const p = activeVideo.play();
+                        if (p !== undefined) {
+                            p.catch(() => {
+                                activeVideo.muted = true;
+                                isStorySoundMuted = true;
+                                updateStorySoundIcon();
+                            });
+                        }
+                    }
+                }
+            }
+            updateStorySoundIcon();
+        });
+    }
+
+    // Pause story videos when scrolled out of view to save power/CPU
+    if ("IntersectionObserver" in window && container) {
+        const storiesObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    cards.forEach(card => {
+                        const vid = card.querySelector(".story-video");
+                        if (vid) vid.pause();
+                    });
+                } else {
+                    const activeCard = cards[currentIndex];
+                    if (activeCard) {
+                        const vid = activeCard.querySelector(".story-video");
+                        if (vid) safePlayVideo(vid);
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        storiesObserver.observe(container);
+    }
+
+    // Initialize initial state
+    updateStoryDeck();
+})();
+
+
+/* =========================================================
+   12B. PORTFOLIO PREVIEW GLASS COLLAGE ROTATOR & REDIRECT
+   ========================================================= */
+
+(function initPortfolioPreviewCollage() {
+    const collage = document.getElementById("portfolioGlassCollage");
+    const exploreBtn = document.getElementById("portfolioExploreBtn");
+    if (!collage) return;
+
+    // Full curated pool of 100% verified existing wedding & prewedding photos
+    const photoPool = [
+        "photos/photo1.jpg",
+        "photos/photo2.jpg",
+        "photos/photo3.jpg",
+        "photos/photo4.jpg",
+        "photos/photo5.jpg",
+        "photos/photo6.jpg",
+        "photos/photo7.jpg",
+        "photos/photo8.jpg",
+        "photos/photo9.jpg",
+        "photos/photo10.jpg",
+        "photos/photo11.jpg",
+        "photos/photo12.jpg",
+        "photos/photo13.jpg",
+        "photos/photo20.jpg",
+        "photos/prewedding/photo14.jpg",
+        "photos/prewedding/photo15.jpg",
+        "photos/prewedding/photo16.jpg",
+        "photos/prewedding/photo17.jpg",
+        "photos/prewedding/photo18.jpg",
+        "photos/prewedding/photo19.jpg"
+    ];
+
+    const cards = Array.from(collage.querySelectorAll(".portfolio-glass-card"));
+    if (cards.length === 0) return;
+
+    let poolIndex = cards.length;
+
+    // Periodically pick one random glass card and cross-fade its image with a new photo from the pool
+    function swapCollagePhoto() {
+        if (document.hidden) return;
+
+        const randomCardIdx = Math.floor(Math.random() * cards.length);
+        const targetCard = cards[randomCardIdx];
+        if (!targetCard) return;
+
+        const img = targetCard.querySelector(".glass-photo");
+        if (!img) return;
+
+        const nextSrc = photoPool[poolIndex % photoPool.length];
+        poolIndex++;
+
+        // Preload next image before swapping to prevent empty placeholder flashes
+        const preloader = new Image();
+        preloader.src = nextSrc;
+        preloader.onload = () => {
+            img.style.opacity = "0.3";
+            img.style.transform = "scale(0.94)";
+
+            setTimeout(() => {
+                img.src = nextSrc;
+                img.style.opacity = "1";
+                img.style.transform = "scale(1)";
+            }, 300);
+        };
+        preloader.onerror = () => {
+            img.style.opacity = "1";
+            img.style.transform = "scale(1)";
+        };
+    }
+
+    // Interval swapping every 3.5 seconds
+    const swapTimer = setInterval(swapCollagePhoto, 3500);
+
+    // Smooth page exit transition when clicking "Explore More"
+    if (exploreBtn) {
+        exploreBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const targetHref = this.getAttribute("href") || "portfolio.html";
+
+            // Visual feedback
+            exploreBtn.style.transform = "scale(0.95)";
+            document.body.style.transition = "opacity 0.45s ease, filter 0.45s ease";
+            document.body.style.opacity = "0";
+            document.body.style.filter = "blur(8px)";
+
+            setTimeout(() => {
+                window.location.href = targetHref;
+            }, 450);
+        });
+    }
+})();
+
+
+/* =========================================================
    12B. PORTFOLIO MOBILE MENU TOGGLE
    ========================================================= */
 
@@ -698,106 +1105,320 @@ applyGalleryFilterAndLimit();
 
 
 /* =========================================================
-   14. LIGHTBOX WITH MOBILE SWIPE & COUNTER
+   14. LIGHTBOX & FULLSCREEN MOBILE REELS VIEWER
    ========================================================= */
 
 const lightbox = document.getElementById("lightbox");
 const lbImg = document.getElementById("lbImg");
+const lbVideo = document.getElementById("lbVideo");
 const lbClose = document.getElementById("lbClose");
 const lbPrev = document.getElementById("lbPrev");
 const lbNext = document.getElementById("lbNext");
 const lbCounter = document.getElementById("lbCounter");
 
-let visibleImages = [];
-let lbIndex = 0;
+const mobileReelsModal = document.getElementById("mobileReelsModal");
+const mobileReelsContainer = document.getElementById("mobileReelsContainer");
+const reelsCounter = document.getElementById("reelsCounter");
+const reelsCloseBtn = document.getElementById("reelsCloseBtn");
 
+let visibleGalleryItems = [];
+let currentMediaIndex = 0;
+let reelsObserver = null;
 
-/* =========================================================
-   15. GET CURRENT VISIBLE IMAGES
-   ========================================================= */
-
-function getVisibleImages() {
-    return [...document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit) img")];
+function getVisibleGalleryItems() {
+    return [...document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)")];
 }
 
 function updateLightboxCounter() {
-    if (lbCounter && visibleImages.length > 0) {
-        lbCounter.textContent = `${lbIndex + 1} / ${visibleImages.length}`;
+    if (lbCounter && visibleGalleryItems.length > 0) {
+        lbCounter.textContent = `${currentMediaIndex + 1} / ${visibleGalleryItems.length}`;
     }
 }
 
 
 /* =========================================================
-   16. OPEN LIGHTBOX
+   15. DESKTOP LIGHTBOX
    ========================================================= */
 
-function openLightbox(image) {
-    if (!lightbox || !lbImg) return;
+function openLightbox(item) {
+    if (!lightbox) return;
 
-    visibleImages = getVisibleImages();
-    lbIndex = visibleImages.indexOf(image);
+    visibleGalleryItems = getVisibleGalleryItems();
+    currentMediaIndex = visibleGalleryItems.indexOf(item);
+    if (currentMediaIndex === -1) return;
 
-    if (lbIndex === -1) return;
+    const img = item.querySelector("img");
+    const video = item.querySelector("video");
 
-    lbImg.src = image.currentSrc || image.src;
-    lbImg.alt = image.alt || "Wedding photograph full view";
+    if (video) {
+        if (lbImg) lbImg.style.display = "none";
+        if (lbVideo) {
+            lbVideo.style.display = "block";
+            lbVideo.src = video.currentSrc || video.src;
+            lbVideo.play().catch(() => {});
+        }
+    } else if (img) {
+        if (lbVideo) {
+            lbVideo.pause();
+            lbVideo.style.display = "none";
+        }
+        if (lbImg) {
+            lbImg.style.display = "block";
+            lbImg.src = img.currentSrc || img.src;
+            lbImg.alt = img.alt || "Wedding photograph full view";
+        }
+    }
 
     updateLightboxCounter();
-
     lightbox.classList.add("active");
     lightbox.setAttribute("aria-hidden", "false");
-
-    // Prevent page scrolling while lightbox is open
     document.body.style.overflow = "hidden";
 }
 
-
-/* =========================================================
-   17. CLOSE LIGHTBOX
-   ========================================================= */
-
 function closeLightbox() {
     if (!lightbox) return;
-
+    if (lbVideo) {
+        lbVideo.pause();
+        lbVideo.src = "";
+    }
     lightbox.classList.remove("active");
     lightbox.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
 }
 
-
-/* =========================================================
-   18. LIGHTBOX SLIDE
-   ========================================================= */
-
 function showSlide(direction) {
-    if (!lbImg || visibleImages.length === 0) return;
+    if (visibleGalleryItems.length === 0) return;
+    currentMediaIndex = (currentMediaIndex + direction + visibleGalleryItems.length) % visibleGalleryItems.length;
+    const item = visibleGalleryItems[currentMediaIndex];
+    const img = item.querySelector("img");
+    const video = item.querySelector("video");
 
-    lbIndex = (lbIndex + direction + visibleImages.length) % visibleImages.length;
-    const image = visibleImages[lbIndex];
-
-    lbImg.src = image.currentSrc || image.src;
-    lbImg.alt = image.alt || "Wedding photograph full view";
+    if (video) {
+        if (lbImg) lbImg.style.display = "none";
+        if (lbVideo) {
+            lbVideo.style.display = "block";
+            lbVideo.src = video.currentSrc || video.src;
+            lbVideo.play().catch(() => {});
+        }
+    } else if (img) {
+        if (lbVideo) {
+            lbVideo.pause();
+            lbVideo.style.display = "none";
+        }
+        if (lbImg) {
+            lbImg.style.display = "block";
+            lbImg.src = img.currentSrc || img.src;
+            lbImg.alt = img.alt || "Wedding photograph full view";
+        }
+    }
 
     updateLightboxCounter();
 }
 
 
 /* =========================================================
-   19. GALLERY IMAGE EVENTS
+   16. MOBILE FULLSCREEN REELS VIEWER (REELS LIKE SCROLLING)
+   ========================================================= */
+
+function openMobileReels(clickedItem) {
+    if (!mobileReelsModal || !mobileReelsContainer) return;
+
+    visibleGalleryItems = getVisibleGalleryItems();
+    const startIndex = visibleGalleryItems.indexOf(clickedItem);
+    if (startIndex === -1) return;
+
+    // Build reels slides dynamically from currently visible filtered items
+    mobileReelsContainer.innerHTML = "";
+
+    visibleGalleryItems.forEach((item, idx) => {
+        const slide = document.createElement("div");
+        slide.className = "mobile-reel-slide";
+        slide.dataset.index = idx;
+
+        const img = item.querySelector("img");
+        const video = item.querySelector("video");
+
+        if (video) {
+            slide.classList.add("reel-video-slide");
+            const src = video.currentSrc || video.src;
+            slide.innerHTML = `
+                <div class="reel-ambient-bg-wrap">
+                    <video src="${src}" muted loop playsinline class="reel-ambient-video"></video>
+                </div>
+                <div class="reel-media-wrapper">
+                    <video src="${src}" loop playsinline webkit-playsinline class="reel-main-video" preload="metadata"></video>
+                    <button class="reel-sound-toggle-btn" type="button" aria-label="Toggle Sound">
+                        <svg class="reel-icon-muted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <line x1="23" y1="9" x2="17" y2="15"></line>
+                            <line x1="17" y1="9" x2="23" y2="15"></line>
+                        </svg>
+                        <svg class="reel-icon-unmuted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                        </svg>
+                    </button>
+                    <div class="reel-video-play-indicator">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="rgba(255,255,255,0.9)"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </div>
+                </div>
+            `;
+        } else if (img) {
+            const src = img.currentSrc || img.src;
+            const alt = img.alt || "Wedding moment";
+            slide.innerHTML = `
+                <div class="reel-ambient-bg-wrap">
+                    <img src="${src}" alt="" class="reel-ambient-photo" aria-hidden="true">
+                </div>
+                <div class="reel-media-wrapper">
+                    <img src="${src}" alt="${alt}" class="reel-main-photo">
+                </div>
+            `;
+        }
+
+        mobileReelsContainer.appendChild(slide);
+    });
+
+    // Update counter
+    if (reelsCounter) {
+        reelsCounter.textContent = `${startIndex + 1} / ${visibleGalleryItems.length}`;
+    }
+
+    mobileReelsModal.classList.add("active");
+    mobileReelsModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    // Instant scroll to selected slide
+    const targetSlide = mobileReelsContainer.children[startIndex];
+    if (targetSlide) {
+        mobileReelsContainer.scrollTop = targetSlide.offsetTop;
+    }
+
+    // Initialize IntersectionObserver to handle active slide, counter, video autoplay
+    if (reelsObserver) {
+        reelsObserver.disconnect();
+    }
+
+    reelsObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            const slide = entry.target;
+            const mainVideo = slide.querySelector(".reel-main-video");
+            const ambientVideo = slide.querySelector(".reel-ambient-video");
+
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+                const idx = parseInt(slide.dataset.index, 10);
+                if (reelsCounter && !isNaN(idx)) {
+                    reelsCounter.textContent = `${idx + 1} / ${visibleGalleryItems.length}`;
+                }
+
+                if (mainVideo) {
+                    mainVideo.play().catch(() => {});
+                    if (ambientVideo) ambientVideo.play().catch(() => {});
+                }
+            } else {
+                if (mainVideo) {
+                    mainVideo.pause();
+                }
+                if (ambientVideo) {
+                    ambientVideo.pause();
+                }
+            }
+        });
+    }, {
+        root: mobileReelsContainer,
+        threshold: 0.55
+    });
+
+    Array.from(mobileReelsContainer.children).forEach((slide) => {
+        reelsObserver.observe(slide);
+    });
+
+    // Video sound and play/pause tap handlers in reels
+    mobileReelsContainer.querySelectorAll(".reel-video-slide").forEach((videoSlide) => {
+        const v = videoSlide.querySelector(".reel-main-video");
+        const soundBtn = videoSlide.querySelector(".reel-sound-toggle-btn");
+        const mutedIcon = videoSlide.querySelector(".reel-icon-muted");
+        const unmutedIcon = videoSlide.querySelector(".reel-icon-unmuted");
+        const playIndicator = videoSlide.querySelector(".reel-video-play-indicator");
+
+        if (soundBtn && v) {
+            soundBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                v.muted = !v.muted;
+                if (v.muted) {
+                    mutedIcon.style.display = "block";
+                    unmutedIcon.style.display = "none";
+                } else {
+                    mutedIcon.style.display = "none";
+                    unmutedIcon.style.display = "block";
+                }
+            });
+        }
+
+        if (v) {
+            v.addEventListener("click", () => {
+                if (v.paused) {
+                    v.play().catch(() => {});
+                    if (playIndicator) {
+                        playIndicator.classList.remove("show");
+                    }
+                } else {
+                    v.pause();
+                    if (playIndicator) {
+                        playIndicator.classList.add("show");
+                    }
+                }
+            });
+        }
+    });
+}
+
+function closeMobileReels() {
+    if (!mobileReelsModal) return;
+
+    if (reelsObserver) {
+        reelsObserver.disconnect();
+    }
+
+    if (mobileReelsContainer) {
+        mobileReelsContainer.querySelectorAll("video").forEach((v) => {
+            v.pause();
+            v.src = "";
+        });
+        mobileReelsContainer.innerHTML = "";
+    }
+
+    mobileReelsModal.classList.remove("active");
+    mobileReelsModal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+}
+
+if (reelsCloseBtn) {
+    reelsCloseBtn.addEventListener("click", closeMobileReels);
+}
+
+
+/* =========================================================
+   17. GALLERY ITEM CLICK EVENTS (MOBILE REELS VS DESKTOP LIGHTBOX)
    ========================================================= */
 
 galleryItems.forEach(function (item) {
-    const image = item.querySelector("img");
-    if (!image) return;
+    item.addEventListener("click", function (e) {
+        if (e.target.closest("a")) return;
 
-    image.addEventListener("click", function () {
-        openLightbox(image);
+        const isMobile = window.innerWidth <= 768 || window.matchMedia("(max-width: 768px)").matches;
+        if (isMobile) {
+            openMobileReels(item);
+        } else {
+            openLightbox(item);
+        }
     });
 });
 
 
 /* =========================================================
-   20. LIGHTBOX CONTROLS & TOUCH SWIPE GESTURES
+   18. LIGHTBOX CONTROLS & TOUCH SWIPE GESTURES
    ========================================================= */
 
 if (lbClose) {
@@ -825,45 +1446,6 @@ if (lightbox) {
             closeLightbox();
         }
     });
-
-    // Touch Swipe Navigation on Mobile
-    let lbTouchStartX = 0;
-    let lbTouchStartY = 0;
-    let lbTouchEndX = 0;
-    let lbTouchEndY = 0;
-
-    lightbox.addEventListener("touchstart", function (e) {
-        if (e.touches && e.touches.length === 1) {
-            lbTouchStartX = e.touches[0].clientX;
-            lbTouchStartY = e.touches[0].clientY;
-        }
-    }, { passive: true });
-
-    lightbox.addEventListener("touchend", function (e) {
-        if (e.changedTouches && e.changedTouches.length === 1) {
-            lbTouchEndX = e.changedTouches[0].clientX;
-            lbTouchEndY = e.changedTouches[0].clientY;
-
-            const diffX = lbTouchEndX - lbTouchStartX;
-            const diffY = lbTouchEndY - lbTouchStartY;
-            const absDiffX = Math.abs(diffX);
-            const absDiffY = Math.abs(diffY);
-
-            // Horizontal swipe (threshold: 40px)
-            if (absDiffX > 40 && absDiffX > absDiffY) {
-                if (diffX < 0) {
-                    // Swiped Left -> Next image
-                    showSlide(1);
-                } else {
-                    // Swiped Right -> Previous image
-                    showSlide(-1);
-                }
-            } else if (diffY > 75 && absDiffY > absDiffX) {
-                // Swiped Downwards -> Close Lightbox
-                closeLightbox();
-            }
-        }
-    }, { passive: true });
 }
 
 
