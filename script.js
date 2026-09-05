@@ -80,51 +80,30 @@ function tryUnmuteHero() {
     }
 }
 
-// Track touch gestures so scrolling NEVER triggers unmute or pauses the video
-let touchStartX = 0;
-let touchStartY = 0;
-let touchMoved = false;
+// Universal audio unlock on ANY user gesture (touch, scroll, swipe, wheel, click, keydown)
+function unlockAudioOnFirstInteraction() {
+    if (hasUserInteractedForSound) return;
+    hasUserInteractedForSound = true;
 
-window.addEventListener("touchstart", (e) => {
-    if (e.touches && e.touches.length > 0) {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        touchMoved = false;
-    }
-}, { passive: true });
-
-window.addEventListener("touchmove", (e) => {
-    if (e.touches && e.touches.length > 0) {
-        const dx = Math.abs(e.touches[0].clientX - touchStartX);
-        const dy = Math.abs(e.touches[0].clientY - touchStartY);
-        // If finger moved more than 10px, it is a scroll gesture - NOT a tap!
-        if (dx > 10 || dy > 10) {
-            touchMoved = true;
-        }
-    }
-}, { passive: true });
-
-window.addEventListener("touchend", (e) => {
-    // Only unmute on a clean TAP (not a scroll/swipe) and only on first interaction
-    if (!touchMoved && !hasUserInteractedForSound) {
-        const target = e.target;
-        if (target && target.closest("button, a, input, select, textarea, form, .lightbox")) return;
-
-        hasUserInteractedForSound = true;
+    // Immediately trigger sound playback for the currently active/visible section
+    if (typeof window.triggerActiveSectionAudio === "function") {
+        window.triggerActiveSectionAudio();
+    } else {
         tryUnmuteHero();
     }
-}, { passive: true });
 
-// Desktop click anywhere to unmute (clean tap)
-window.addEventListener("click", (e) => {
-    if (!hasUserInteractedForSound) {
-        const target = e.target;
-        if (target && target.closest("button, a, input, select, textarea, form, .lightbox")) return;
+    // Clean up one-time listeners once audio is unlocked
+    ["touchstart", "touchmove", "scroll", "wheel", "click", "keydown", "pointerdown"].forEach(evt => {
+        window.removeEventListener(evt, unlockAudioOnFirstInteraction);
+        document.removeEventListener(evt, unlockAudioOnFirstInteraction);
+    });
+}
 
-        hasUserInteractedForSound = true;
-        tryUnmuteHero();
-    }
-}, { passive: true });
+// Attach to all user touch, scroll, and interaction events
+["touchstart", "touchmove", "scroll", "wheel", "click", "keydown", "pointerdown"].forEach(evt => {
+    window.addEventListener(evt, unlockAudioOnFirstInteraction, { passive: true });
+    document.addEventListener(evt, unlockAudioOnFirstInteraction, { passive: true });
+});
 
 // Sound button toggle functionality
 if (soundBtn && bgVideo) {
@@ -1216,6 +1195,25 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         }, {
             threshold: [0.1, 0.25, 0.5, 0.75]
         });
+
+        // Expose global trigger for instantaneous scroll audio unlocking
+        window.triggerActiveSectionAudio = function () {
+            let topCandidate = "hero";
+            let highestRatio = 0;
+
+            sections.forEach(s => {
+                const rect = s.el.getBoundingClientRect();
+                const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+                const ratio = visibleHeight / window.innerHeight;
+                if (ratio > highestRatio) {
+                    highestRatio = ratio;
+                    topCandidate = s.id;
+                }
+            });
+
+            currentActiveId = topCandidate;
+            orchestrateSectionAudio(currentActiveId);
+        };
 
         sections.forEach(s => observer.observe(s.el));
     }
