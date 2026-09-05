@@ -2815,6 +2815,44 @@ section {
     z-index: 2;
 }
 
+.portfolio-sound-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 10;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 90, 0.5);
+    background: rgba(6, 42, 35, 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.portfolio-sound-btn:hover {
+    background: rgba(212, 175, 90, 0.25);
+    border-color: var(--gold);
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.portfolio-sound-btn:active {
+    transform: scale(0.95);
+}
+
+.portfolio-sound-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
 @keyframes liquidGlassSheenVideo {
     0% { background-position: 0% 0%; }
     50% { background-position: 100% 100%; }

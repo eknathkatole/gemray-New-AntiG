@@ -1000,6 +1000,220 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
+   12C. SEAMLESS SCROLL SECTION AUDIO ORCHESTRATOR
+   Automatically switches and un-mutes video audio as user
+   scrolls into Hero, Stories/Review, Portfolio Preview,
+   or Meet Photographer, ensuring only 1 audio plays at a time.
+   ========================================================= */
+
+(function initSeamlessSectionAudioOrchestrator() {
+    const heroElem = document.getElementById("hero");
+    const storiesElem = document.getElementById("stories");
+    const portfolioElem = document.getElementById("portfolio-preview");
+    const photographerElem = document.getElementById("photographer");
+
+    const portfolioShowcaseVideo = document.getElementById("portfolioShowcaseVideo");
+    const portfolioSoundBtn = document.getElementById("portfolioSoundBtn");
+
+    function updatePortfolioSoundIcon() {
+        if (!portfolioSoundBtn || !portfolioShowcaseVideo) return;
+        const mutedIcon = portfolioSoundBtn.querySelector(".portfolio-muted-icon");
+        const unmutedIcon = portfolioSoundBtn.querySelector(".portfolio-unmuted-icon");
+        if (portfolioShowcaseVideo.muted) {
+            if (mutedIcon) mutedIcon.style.display = "inline-flex";
+            if (unmutedIcon) unmutedIcon.style.display = "none";
+            portfolioSoundBtn.setAttribute("aria-label", "Unmute portfolio video");
+        } else {
+            if (mutedIcon) mutedIcon.style.display = "none";
+            if (unmutedIcon) unmutedIcon.style.display = "inline-flex";
+            portfolioSoundBtn.setAttribute("aria-label", "Mute portfolio video");
+        }
+    }
+
+    if (portfolioSoundBtn && portfolioShowcaseVideo) {
+        portfolioSoundBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            hasUserInteractedForSound = true;
+            if (portfolioShowcaseVideo.muted) {
+                portfolioShowcaseVideo.muted = false;
+                portfolioShowcaseVideo.volume = 1;
+                const p = portfolioShowcaseVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
+                        portfolioShowcaseVideo.muted = true;
+                        safePlayVideo(portfolioShowcaseVideo);
+                        updatePortfolioSoundIcon();
+                    });
+                }
+            } else {
+                portfolioShowcaseVideo.muted = true;
+                safePlayVideo(portfolioShowcaseVideo);
+                updatePortfolioSoundIcon();
+            }
+        });
+    }
+
+    function orchestrateSectionAudio(activeSectionId) {
+        // 1. Hero Audio
+        if (bgVideo) {
+            if (activeSectionId === "hero") {
+                bgVideo.muted = false;
+                bgVideo.volume = 1;
+                const p = bgVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updateHeroSoundIcon()).catch(() => {
+                        bgVideo.muted = true;
+                        safePlayVideo(bgVideo);
+                        updateHeroSoundIcon();
+                    });
+                }
+            } else {
+                bgVideo.muted = true;
+                updateHeroSoundIcon();
+            }
+        }
+
+        // 2. Stories / Review Audio
+        const storiesDeck = document.getElementById("storiesDeck");
+        if (storiesDeck) {
+            const storyCards = Array.from(storiesDeck.querySelectorAll(".story-deck-card"));
+            storyCards.forEach((card) => {
+                const vid = card.querySelector(".story-video");
+                if (vid) {
+                    const isActive = card.classList.contains("is-active");
+                    if (activeSectionId === "stories" && isActive) {
+                        vid.muted = false;
+                        vid.volume = 1;
+                        const p = vid.play();
+                        if (p !== undefined) {
+                            p.then(() => {
+                                const storySoundBtn = document.getElementById("storySoundBtn");
+                                if (storySoundBtn) {
+                                    const m = storySoundBtn.querySelector(".sound-icon-muted");
+                                    const u = storySoundBtn.querySelector(".sound-icon-unmuted");
+                                    if (m) m.style.display = "none";
+                                    if (u) u.style.display = "block";
+                                }
+                            }).catch(() => {
+                                vid.muted = true;
+                                safePlayVideo(vid);
+                            });
+                        }
+                    } else {
+                        vid.muted = true;
+                        if (!isActive) vid.pause();
+                    }
+                }
+            });
+            if (activeSectionId !== "stories") {
+                const storySoundBtn = document.getElementById("storySoundBtn");
+                if (storySoundBtn) {
+                    const m = storySoundBtn.querySelector(".sound-icon-muted");
+                    const u = storySoundBtn.querySelector(".sound-icon-unmuted");
+                    if (m) m.style.display = "block";
+                    if (u) u.style.display = "none";
+                }
+            }
+        }
+
+        // 3. Portfolio Showcase Video Audio
+        if (portfolioShowcaseVideo) {
+            if (activeSectionId === "portfolio-preview") {
+                portfolioShowcaseVideo.muted = false;
+                portfolioShowcaseVideo.volume = 1;
+                const p = portfolioShowcaseVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
+                        portfolioShowcaseVideo.muted = true;
+                        safePlayVideo(portfolioShowcaseVideo);
+                        updatePortfolioSoundIcon();
+                    });
+                }
+            } else {
+                portfolioShowcaseVideo.muted = true;
+                updatePortfolioSoundIcon();
+            }
+        }
+
+        // 4. Meet Photographer Audio
+        const isMobile = window.innerWidth <= 768;
+
+        if (photographerDesktopVideo) {
+            if (activeSectionId === "photographer" && !isMobile) {
+                photographerDesktopVideo.muted = false;
+                photographerDesktopVideo.volume = 1;
+                const p = photographerDesktopVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn)).catch(() => {
+                        photographerDesktopVideo.muted = true;
+                        safePlayVideo(photographerDesktopVideo);
+                        updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
+                    });
+                }
+            } else {
+                photographerDesktopVideo.muted = true;
+                updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
+            }
+        }
+
+        if (photographerMobileVideo) {
+            if (activeSectionId === "photographer" && isMobile) {
+                photographerMobileVideo.muted = false;
+                photographerMobileVideo.volume = 1;
+                const p = photographerMobileVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn)).catch(() => {
+                        photographerMobileVideo.muted = true;
+                        safePlayVideo(photographerMobileVideo);
+                        updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
+                    });
+                }
+            } else {
+                photographerMobileVideo.muted = true;
+                updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
+            }
+        }
+    }
+
+    if ("IntersectionObserver" in window) {
+        const sections = [
+            { id: "hero", el: heroElem },
+            { id: "stories", el: storiesElem },
+            { id: "portfolio-preview", el: portfolioElem },
+            { id: "photographer", el: photographerElem }
+        ].filter(item => item.el !== null);
+
+        let currentActiveId = null;
+
+        const observer = new IntersectionObserver((entries) => {
+            let topCandidate = null;
+            let highestRatio = 0;
+
+            sections.forEach(s => {
+                const rect = s.el.getBoundingClientRect();
+                const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+                const ratio = visibleHeight / window.innerHeight;
+                if (ratio > highestRatio) {
+                    highestRatio = ratio;
+                    topCandidate = s.id;
+                }
+            });
+
+            if (topCandidate && highestRatio >= 0.25 && topCandidate !== currentActiveId) {
+                currentActiveId = topCandidate;
+                orchestrateSectionAudio(currentActiveId);
+            }
+        }, {
+            threshold: [0.1, 0.25, 0.5, 0.75]
+        });
+
+        sections.forEach(s => observer.observe(s.el));
+    }
+})();
+
+
+/* =========================================================
    12B. PORTFOLIO MOBILE MENU TOGGLE
    ========================================================= */
 
