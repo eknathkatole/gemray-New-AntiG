@@ -2001,7 +2001,7 @@ if (customDateWrapper && datePickerTrigger && customCalendarPopup && calDaysGrid
             nativeDateInput.dispatchEvent(new Event("change", { bubbles: true }));
         }
         if (dateDisplayValue) {
-            dateDisplayValue.textContent = "Select Wedding Date";
+            dateDisplayValue.textContent = "Select your date";
             dateDisplayValue.classList.remove("has-value");
         }
         renderCalendar();
