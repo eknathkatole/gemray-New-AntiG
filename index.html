@@ -51,7 +51,7 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=2.3"
+        href="style.css?v=2.4"
     >
 
 </head>
@@ -439,6 +439,7 @@
                     <div class="portfolio-video-window-frame">
                         <video
                             class="portfolio-showcase-video"
+                            id="portfolioShowcaseVideo"
                             src="photos/wedding/Vivek Pooja Love Story.mp4"
                             autoplay
                             muted
@@ -449,6 +450,21 @@
                         ></video>
                         <div class="portfolio-video-overlay-glow"></div>
                         <div class="portfolio-video-liquid-sheen"></div>
+                        <button
+                            class="portfolio-sound-btn"
+                            id="portfolioSoundBtn"
+                            aria-label="Toggle portfolio video sound"
+                        >
+                            <svg class="portfolio-muted-icon sound-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                <line x1="23" y1="9" x2="17" y2="15"/>
+                                <line x1="17" y1="9" x2="23" y2="15"/>
+                            </svg>
+                            <svg class="portfolio-unmuted-icon sound-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
@@ -1299,7 +1315,7 @@
          script.js
          ===================================================== -->
 
-    <script src="script.js?v=2.3"></script>
+    <script src="script.js?v=2.4"></script>
 
 
 </body>
