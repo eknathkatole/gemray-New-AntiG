@@ -124,6 +124,18 @@
             display: none;
         }
 
+        /* Mobile Right Actions (Meet Bhushan + Hamburger) */
+        .portfolio-nav-actions {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1002;
+        }
+
+        .portfolio-nav-photographer-btn {
+            display: none;
+        }
+
         /* Hamburger Button (Liquid Glass) */
         .portfolio-nav-toggle {
             display: none;
@@ -757,9 +769,43 @@
             }
 
             .portfolio-nav-logo img {
-                height: 46px;
+                height: 44px;
                 width: auto;
-                max-height: 46px;
+                max-height: 44px;
+            }
+
+            .portfolio-nav-actions {
+                display: flex;
+            }
+
+            .portfolio-nav-photographer-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 14px;
+                background: linear-gradient(135deg, rgba(212, 175, 90, 0.22) 0%, rgba(6, 42, 35, 0.85) 100%);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(212, 175, 90, 0.55);
+                border-radius: 999px;
+                color: var(--gold-light);
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                text-decoration: none;
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+                transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                -webkit-tap-highlight-color: transparent;
+                white-space: nowrap;
+            }
+
+            .portfolio-nav-photographer-btn:active {
+                transform: scale(0.95);
+                background: linear-gradient(135deg, rgba(212, 175, 90, 0.4) 0%, rgba(6, 42, 35, 0.95) 100%);
+                border-color: var(--gold);
+                color: #ffffff;
             }
 
             .portfolio-nav-toggle {
@@ -936,6 +982,29 @@
 
         /* SMALL MOBILE (< 400px) */
         @media (max-width: 400px) {
+            .portfolio-nav {
+                padding: 0 12px;
+            }
+
+            .portfolio-nav-logo img {
+                height: 38px;
+            }
+
+            .portfolio-nav-actions {
+                gap: 6px;
+            }
+
+            .portfolio-nav-photographer-btn {
+                padding: 5px 10px;
+                font-size: 0.67rem;
+                letter-spacing: 0.05em;
+            }
+
+            .portfolio-nav-toggle {
+                width: 38px;
+                height: 38px;
+            }
+
             .portfolio-full-grid {
                 width: calc(100% - 14px);
                 gap: 6px;
@@ -962,12 +1031,19 @@
                 <img src="photos/logo.png" alt="Gemray Studio Logo">
             </a>
 
-            <!-- Mobile Hamburger Toggle -->
-            <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-                <span class="hamburger-line"></span>
-            </button>
+            <!-- Mobile Right Actions: Meet Bhushan Button (Outside 3 lines) + Hamburger Toggle -->
+            <div class="portfolio-nav-actions">
+                <a href="index.html#photographer" class="portfolio-nav-photographer-btn">
+                    Meet Bhushan
+                </a>
+
+                <!-- Mobile Hamburger Toggle -->
+                <button class="portfolio-nav-toggle" id="portfolioNavToggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
 
             <!-- Navigation Links (Desktop Horizontal & Mobile Sliding Drawer) -->
             <div class="portfolio-nav-links" id="portfolioNavLinks">
