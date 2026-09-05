@@ -829,24 +829,60 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         });
     }
 
-    // Pause story videos when scrolled out of view to save power/CPU
+    // Smart IntersectionObserver: When hero is hidden and stories is viewed, hero audio mutes and review stories audio automatically plays!
     if ("IntersectionObserver" in window && container) {
         const storiesObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (!entry.isIntersecting) {
-                    cards.forEach(card => {
-                        const vid = card.querySelector(".story-video");
-                        if (vid) vid.pause();
-                    });
-                } else {
+                if (entry.isIntersecting) {
+                    // Mute hero video when entering stories / review section
+                    if (bgVideo) {
+                        bgVideo.muted = true;
+                        updateHeroSoundIcon();
+                    }
+
+                    // Automatically play the active story video with sound
                     const activeCard = cards[currentIndex];
                     if (activeCard) {
                         const vid = activeCard.querySelector(".story-video");
-                        if (vid) safePlayVideo(vid);
+                        if (vid) {
+                            vid.muted = false;
+                            isStorySoundMuted = false;
+                            updateStorySoundIcon();
+                            const p = vid.play();
+                            if (p !== undefined) {
+                                p.catch(() => {
+                                    // Fallback to muted if browser blocks autoplay audio
+                                    vid.muted = true;
+                                    isStorySoundMuted = true;
+                                    updateStorySoundIcon();
+                                    safePlayVideo(vid);
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    // Mute and pause stories when scrolled out of stories section
+                    cards.forEach(card => {
+                        const vid = card.querySelector(".story-video");
+                        if (vid) {
+                            vid.muted = true;
+                            vid.pause();
+                        }
+                    });
+                    isStorySoundMuted = true;
+                    updateStorySoundIcon();
+
+                    // If scrolled back up into hero area, restore hero audio
+                    const heroElem = document.getElementById("hero");
+                    if (heroElem) {
+                        const rect = heroElem.getBoundingClientRect();
+                        if (rect.bottom > window.innerHeight * 0.3 && hasUserInteractedForSound) {
+                            tryUnmuteHero();
+                        }
                     }
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.25 });
 
         storiesObserver.observe(container);
     }
@@ -865,28 +901,41 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     const exploreBtn = document.getElementById("portfolioExploreBtn");
     if (!collage) return;
 
-    // Full curated pool of 100% verified existing wedding & prewedding photos
+    // Full pool of new verified engagement & prewedding photos
     const photoPool = [
-        "photos/photo1.jpg",
-        "photos/photo2.jpg",
-        "photos/photo3.jpg",
-        "photos/photo4.jpg",
-        "photos/photo5.jpg",
-        "photos/photo6.jpg",
-        "photos/photo7.jpg",
-        "photos/photo8.jpg",
-        "photos/photo9.jpg",
-        "photos/photo10.jpg",
-        "photos/photo11.jpg",
-        "photos/photo12.jpg",
-        "photos/photo13.jpg",
-        "photos/photo20.jpg",
-        "photos/prewedding/photo14.jpg",
-        "photos/prewedding/photo15.jpg",
-        "photos/prewedding/photo16.jpg",
-        "photos/prewedding/photo17.jpg",
-        "photos/prewedding/photo18.jpg",
-        "photos/prewedding/photo19.jpg"
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-050.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-09.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-10.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-13.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-15.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-29.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-31.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-38.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-39.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-42.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-51.jpg",
+        "photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-54.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-006.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-016.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-019.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-024.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-035.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-036.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-054.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-055.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-076.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-078.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-085.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-100.jpg",
+        "photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-107.jpg",
+        "photos/engagement/Bhushan Pre-wedding photo-09.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-11.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-12.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-19.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-20.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-23.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-26.jpg.jpeg",
+        "photos/engagement/Bhushan Pre-wedding photo-27.jpg.jpeg"
     ];
 
     const cards = Array.from(collage.querySelectorAll(".portfolio-glass-card"));
