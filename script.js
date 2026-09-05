@@ -1,5 +1,5 @@
 /* =========================================================
-   01. HERO VIDEO & SOUND
+   01. HERO VIDEO & UNIVERSAL BROWSER AUDIO ENGINE
    ========================================================= */
 
 const bgVideo = document.getElementById("bgVideo");
@@ -8,6 +8,8 @@ const iconMuted = document.getElementById("iconMuted");
 const iconUnmuted = document.getElementById("iconUnmuted");
 
 let hasUserInteractedForSound = false;
+let globalAudioCtx = null;
+let currentActiveSectionId = "hero";
 
 function updateHeroSoundIcon() {
     if (!bgVideo || !soundBtn) return;
@@ -23,13 +25,12 @@ function updateHeroSoundIcon() {
     }
 }
 
-// Safely play video, with fallback to muted play if unmuted playback is restricted by mobile browser
+// Safely play video, with fallback to muted play if unmuted playback is restricted by browser policy
 function safePlayVideo(video) {
     if (!video) return;
     const playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.catch(() => {
-            // Revert to muted playback so video NEVER stops playing on mobile
             video.muted = true;
             video.play().catch(() => {});
             if (video === bgVideo) updateHeroSoundIcon();
@@ -44,9 +45,8 @@ if (bgVideo) {
     safePlayVideo(bgVideo);
     updateHeroSoundIcon();
 
-    // Auto-resume if video gets paused unexpectedly (e.g. browser policy or low-power mode)
     bgVideo.addEventListener("pause", () => {
-        if (!document.hidden && bgVideo) {
+        if (!document.hidden && bgVideo && currentActiveSectionId === "hero") {
             safePlayVideo(bgVideo);
         }
     });
@@ -54,12 +54,14 @@ if (bgVideo) {
 
 // Resume playback when returning to the tab/app
 document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && bgVideo) {
-        safePlayVideo(bgVideo);
+    if (!document.hidden) {
+        if (typeof window.syncActiveSectionSound === "function") {
+            window.syncActiveSectionSound();
+        }
     }
 });
 
-// Try unmuting hero video safely on user tap
+// Try unmuting hero video safely
 function tryUnmuteHero() {
     if (!bgVideo) return;
     bgVideo.muted = false;
@@ -70,7 +72,6 @@ function tryUnmuteHero() {
         playPromise.then(() => {
             updateHeroSoundIcon();
         }).catch(() => {
-            // If mobile browser blocks unmuted playback, immediately revert to muted so video continues uninterrupted
             bgVideo.muted = true;
             bgVideo.play().catch(() => {});
             updateHeroSoundIcon();
@@ -80,29 +81,44 @@ function tryUnmuteHero() {
     }
 }
 
-// Universal audio unlock on ANY user gesture (touch, scroll, swipe, wheel, click, keydown)
-function unlockAudioOnFirstInteraction() {
-    if (hasUserInteractedForSound) return;
-    hasUserInteractedForSound = true;
+// Global helper to prime all videos and Web Audio across Safari iOS / Android / Chrome
+function primeAllMediaElements() {
+    // 1. Resume Web Audio Context
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+            if (!globalAudioCtx) {
+                globalAudioCtx = new AudioCtx();
+            }
+            if (globalAudioCtx.state === "suspended") {
+                globalAudioCtx.resume();
+            }
+        }
+    } catch (e) {}
 
-    // Immediately trigger sound playback for the currently active/visible section
-    if (typeof window.triggerActiveSectionAudio === "function") {
-        window.triggerActiveSectionAudio();
-    } else {
-        tryUnmuteHero();
-    }
-
-    // Clean up one-time listeners once audio is unlocked
-    ["touchstart", "touchmove", "scroll", "wheel", "click", "keydown", "pointerdown"].forEach(evt => {
-        window.removeEventListener(evt, unlockAudioOnFirstInteraction);
-        document.removeEventListener(evt, unlockAudioOnFirstInteraction);
+    // 2. Prime media volumes
+    const allVideos = document.querySelectorAll("video");
+    allVideos.forEach(v => {
+        v.volume = 1;
     });
 }
 
-// Attach to all user touch, scroll, and interaction events
-["touchstart", "touchmove", "scroll", "wheel", "click", "keydown", "pointerdown"].forEach(evt => {
-    window.addEventListener(evt, unlockAudioOnFirstInteraction, { passive: true });
-    document.addEventListener(evt, unlockAudioOnFirstInteraction, { passive: true });
+// Universal interaction listener: un-mutes active section on ANY tap, scroll, swipe, touch
+function onAnyUserInteraction() {
+    hasUserInteractedForSound = true;
+    primeAllMediaElements();
+
+    if (typeof window.syncActiveSectionSound === "function") {
+        window.syncActiveSectionSound();
+    } else {
+        tryUnmuteHero();
+    }
+}
+
+// Attach to all user gesture and navigation events for instant sound activation
+["touchstart", "touchend", "pointerdown", "mousedown", "click", "keydown", "wheel"].forEach(evt => {
+    window.addEventListener(evt, onAnyUserInteraction, { passive: true });
+    document.addEventListener(evt, onAnyUserInteraction, { passive: true });
 });
 
 // Sound button toggle functionality
@@ -110,13 +126,11 @@ if (soundBtn && bgVideo) {
     soundBtn.addEventListener("click", function (event) {
         event.stopPropagation();
         event.preventDefault();
-        hasUserInteractedForSound = true; // Mark as interacted so general tap won't override
+        hasUserInteractedForSound = true;
 
         if (bgVideo.muted) {
-            // User wants to UNMUTE
             tryUnmuteHero();
         } else {
-            // User wants to MUTE
             bgVideo.muted = true;
             safePlayVideo(bgVideo);
             updateHeroSoundIcon();
@@ -795,6 +809,28 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         });
     }
 
+    // Expose story audio helpers to global audio orchestrator
+    window.setStorySoundState = function(unmute) {
+        isStorySoundMuted = !unmute;
+        updateStorySoundIcon();
+        const activeCard = cards[currentIndex];
+        if (activeCard) {
+            const activeVideo = activeCard.querySelector(".story-video");
+            if (activeVideo) {
+                activeVideo.muted = isStorySoundMuted;
+                activeVideo.volume = 1;
+                if (!isStorySoundMuted) {
+                    safePlayVideo(activeVideo);
+                }
+            }
+        }
+    };
+
+    window.getActiveStoryVideo = function() {
+        const activeCard = cards[currentIndex];
+        return activeCard ? activeCard.querySelector(".story-video") : null;
+    };
+
     // Initialize initial state
     updateStoryDeck();
 })();
@@ -965,6 +1001,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     }
 
     const firstVisitSections = new Set();
+    let currentActiveId = "hero";
 
     // Map section IDs to corresponding navbar selector
     const navLinkSelectors = {
@@ -1003,6 +1040,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     }
 
     function orchestrateSectionAudioAndMedia(activeSectionId) {
+        currentActiveId = activeSectionId;
+        currentActiveSectionId = activeSectionId;
+
         const isFirstVisit = !firstVisitSections.has(activeSectionId);
         if (isFirstVisit) {
             firstVisitSections.add(activeSectionId);
@@ -1019,7 +1059,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 if (isFirstVisit) {
                     try { bgVideo.currentTime = 0; } catch (e) {}
                 }
-                bgVideo.muted = false;
+                bgVideo.muted = !hasUserInteractedForSound;
                 bgVideo.volume = 1;
                 const p = bgVideo.play();
                 if (p !== undefined) {
@@ -1030,7 +1070,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                     });
                 }
             } else {
-                // Pause and mute offscreen video to free hardware GPU resources
                 bgVideo.muted = true;
                 bgVideo.pause();
                 updateHeroSoundIcon();
@@ -1041,38 +1080,54 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         const storiesDeck = document.getElementById("storiesDeck");
         if (storiesDeck) {
             const storyCards = Array.from(storiesDeck.querySelectorAll(".story-deck-card"));
-            storyCards.forEach((card) => {
-                const vid = card.querySelector(".story-video");
-                if (vid) {
-                    const isActive = card.classList.contains("is-active");
-                    if (activeSectionId === "stories" && isActive) {
-                        if (isFirstVisit) {
-                            try { vid.currentTime = 0; } catch (e) {}
+            if (activeSectionId === "stories") {
+                if (typeof window.setStorySoundState === "function") {
+                    window.setStorySoundState(hasUserInteractedForSound);
+                }
+                storyCards.forEach((card) => {
+                    const vid = card.querySelector(".story-video");
+                    if (vid) {
+                        const isActive = card.classList.contains("is-active");
+                        if (isActive) {
+                            if (isFirstVisit) {
+                                try { vid.currentTime = 0; } catch (e) {}
+                            }
+                            vid.muted = !hasUserInteractedForSound;
+                            vid.volume = 1;
+                            const p = vid.play();
+                            if (p !== undefined) {
+                                p.then(() => {
+                                    const storySoundBtn = document.getElementById("storySoundBtn");
+                                    if (storySoundBtn) {
+                                        const m = storySoundBtn.querySelector(".sound-icon-muted");
+                                        const u = storySoundBtn.querySelector(".sound-icon-unmuted");
+                                        if (hasUserInteractedForSound) {
+                                            if (m) m.style.display = "none";
+                                            if (u) u.style.display = "block";
+                                        }
+                                    }
+                                }).catch(() => {
+                                    vid.muted = true;
+                                    safePlayVideo(vid);
+                                });
+                            }
+                        } else {
+                            vid.muted = true;
+                            vid.pause();
                         }
-                        vid.muted = false;
-                        vid.volume = 1;
-                        const p = vid.play();
-                        if (p !== undefined) {
-                            p.then(() => {
-                                const storySoundBtn = document.getElementById("storySoundBtn");
-                                if (storySoundBtn) {
-                                    const m = storySoundBtn.querySelector(".sound-icon-muted");
-                                    const u = storySoundBtn.querySelector(".sound-icon-unmuted");
-                                    if (m) m.style.display = "none";
-                                    if (u) u.style.display = "block";
-                                }
-                            }).catch(() => {
-                                vid.muted = true;
-                                safePlayVideo(vid);
-                            });
-                        }
-                    } else {
+                    }
+                });
+            } else {
+                if (typeof window.setStorySoundState === "function") {
+                    window.setStorySoundState(false);
+                }
+                storyCards.forEach((card) => {
+                    const vid = card.querySelector(".story-video");
+                    if (vid) {
                         vid.muted = true;
                         vid.pause();
                     }
-                }
-            });
-            if (activeSectionId !== "stories") {
+                });
                 const storySoundBtn = document.getElementById("storySoundBtn");
                 if (storySoundBtn) {
                     const m = storySoundBtn.querySelector(".sound-icon-muted");
@@ -1089,7 +1144,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 if (isFirstVisit) {
                     try { portfolioShowcaseVideo.currentTime = 0; } catch (e) {}
                 }
-                portfolioShowcaseVideo.muted = false;
+                portfolioShowcaseVideo.muted = !hasUserInteractedForSound;
                 portfolioShowcaseVideo.volume = 1;
                 const p = portfolioShowcaseVideo.play();
                 if (p !== undefined) {
@@ -1112,7 +1167,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 if (isFirstVisit) {
                     try { photographerDesktopVideo.currentTime = 0; } catch (e) {}
                 }
-                photographerDesktopVideo.muted = false;
+                photographerDesktopVideo.muted = !hasUserInteractedForSound;
                 photographerDesktopVideo.volume = 1;
                 const p = photographerDesktopVideo.play();
                 if (p !== undefined) {
@@ -1134,7 +1189,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 if (isFirstVisit) {
                     try { photographerMobileVideo.currentTime = 0; } catch (e) {}
                 }
-                photographerMobileVideo.muted = false;
+                photographerMobileVideo.muted = !hasUserInteractedForSound;
                 photographerMobileVideo.volume = 1;
                 const p = photographerMobileVideo.play();
                 if (p !== undefined) {
@@ -1152,6 +1207,12 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         }
     }
 
+    // Expose sync helper for instant sound activation on user interaction
+    window.syncActiveSectionSound = function () {
+        if (!currentActiveId) currentActiveId = "hero";
+        orchestrateSectionAudioAndMedia(currentActiveId);
+    };
+
     if ("IntersectionObserver" in window) {
         const sections = [
             { id: "hero", el: heroElem },
@@ -1160,8 +1221,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             { id: "photographer", el: photographerElem },
             { id: "contact", el: contactElem }
         ].filter(item => item.el !== null);
-
-        let currentActiveId = null;
 
         const observer = new IntersectionObserver((entries) => {
             let topCandidate = null;
@@ -1178,8 +1237,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             });
 
             if (topCandidate && highestRatio >= 0.2 && topCandidate !== currentActiveId) {
-                currentActiveId = topCandidate;
-                orchestrateSectionAudioAndMedia(currentActiveId);
+                orchestrateSectionAudioAndMedia(topCandidate);
             }
         }, {
             threshold: [0.1, 0.2, 0.4, 0.6, 0.8]
@@ -1200,8 +1258,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             });
 
-            currentActiveId = topCandidate;
-            orchestrateSectionAudioAndMedia(currentActiveId);
+            orchestrateSectionAudioAndMedia(topCandidate);
         };
 
         sections.forEach(s => observer.observe(s.el));
