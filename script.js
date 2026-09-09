@@ -647,7 +647,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         }, { passive: false });
     }
 
-    // Direct card tap interaction (tapping any card advances or brings that video to front)
+    // Direct card tap interaction (tapping side cards brings them to front, tapping center card opens theater view)
     cards.forEach((card, idx) => {
         card.addEventListener("click", function (e) {
             // Don't trigger if clicked on sound button or nav buttons
@@ -656,8 +656,23 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             if (idx !== currentIndex) {
                 goToStory(idx);
             } else {
-                // Tapping active front card advances to next review video
-                nextStory();
+                // Tapping active center card opens the video in the luxury theater fullscreen view!
+                const vid = card.querySelector(".story-video");
+                const heading = card.querySelector(".story-video-content h3");
+                const sub = card.querySelector(".story-video-content span");
+                const titleText = heading ? heading.textContent : (sub ? sub.textContent : "Real Story");
+                if (vid && typeof window.openVideoTheater === "function") {
+                    window.openVideoTheater(
+                        vid.currentSrc || vid.src,
+                        vid.poster,
+                        titleText,
+                        vid.currentTime,
+                        vid.muted,
+                        vid
+                    );
+                } else {
+                    nextStory();
+                }
             }
         });
     });
@@ -2085,3 +2100,271 @@ window.addEventListener(
 
     }
 );
+
+
+/* =========================================================
+   25. LUXURY FULLSCREEN VIDEO THEATER CONTROLLER
+   ========================================================= */
+
+(function initVideoTheaterController() {
+    const modal = document.getElementById("videoTheaterModal");
+    const backdrop = document.getElementById("theaterBackdrop");
+    const closeBtn = document.getElementById("theaterCloseBtn");
+    const theaterVideo = document.getElementById("theaterVideo");
+    const theaterTitle = document.getElementById("theaterVideoTitle");
+    const videoStage = document.getElementById("theaterVideoStage");
+    const centerPlayBtn = document.getElementById("theaterCenterPlay");
+    const playToggle = document.getElementById("theaterPlayToggle");
+    const soundToggle = document.getElementById("theaterSoundToggle");
+    const currentTimeEl = document.getElementById("theaterCurrentTime");
+    const durationEl = document.getElementById("theaterDuration");
+    const progressWrapper = document.getElementById("theaterProgressWrapper");
+    const progressFill = document.getElementById("theaterProgressFill");
+    const progressHandle = document.getElementById("theaterProgressHandle");
+    const fullscreenBtn = document.getElementById("theaterFullscreenBtn");
+
+    if (!modal || !theaterVideo) return;
+
+    let isTheaterOpen = false;
+    let originalSourceVideo = null;
+
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds === Infinity) return "0:00";
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    function updatePlayState(isPlaying) {
+        const playIcons = modal.querySelectorAll(".theater-play-icon, .theater-ctrl-play");
+        const pauseIcons = modal.querySelectorAll(".theater-pause-icon, .theater-ctrl-pause");
+        if (isPlaying) {
+            playIcons.forEach(i => i.style.display = "none");
+            pauseIcons.forEach(i => i.style.display = "inline-block");
+            if (videoStage) videoStage.classList.remove("is-paused");
+        } else {
+            playIcons.forEach(i => i.style.display = "inline-block");
+            pauseIcons.forEach(i => i.style.display = "none");
+            if (videoStage) videoStage.classList.add("is-paused");
+        }
+    }
+
+    function updateSoundState() {
+        const onIcons = modal.querySelectorAll(".theater-ctrl-sound-on");
+        const offIcons = modal.querySelectorAll(".theater-ctrl-sound-off");
+        if (theaterVideo.muted) {
+            onIcons.forEach(i => i.style.display = "none");
+            offIcons.forEach(i => i.style.display = "inline-block");
+            if (soundToggle) soundToggle.setAttribute("aria-label", "Unmute audio");
+        } else {
+            onIcons.forEach(i => i.style.display = "inline-block");
+            offIcons.forEach(i => i.style.display = "none");
+            if (soundToggle) soundToggle.setAttribute("aria-label", "Mute audio");
+        }
+    }
+
+    window.openVideoTheater = function(src, poster, title, initialTime = 0, isMuted = false, sourceElem = null) {
+        if (!src) return;
+        isTheaterOpen = true;
+        originalSourceVideo = sourceElem;
+
+        // Pause background videos
+        const allPageVideos = document.querySelectorAll("video:not(#theaterVideo)");
+        allPageVideos.forEach(v => {
+            try { v.pause(); } catch (e) {}
+        });
+
+        theaterVideo.src = src;
+        if (poster) theaterVideo.poster = poster;
+        if (theaterTitle) theaterTitle.textContent = title || "Cinematic Film";
+        theaterVideo.muted = isMuted;
+        theaterVideo.volume = 1;
+
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+
+        theaterVideo.load();
+        try {
+            theaterVideo.currentTime = initialTime || 0;
+        } catch (e) {}
+
+        const p = theaterVideo.play();
+        if (p !== undefined) {
+            p.then(() => updatePlayState(true)).catch(() => {
+                theaterVideo.muted = true;
+                theaterVideo.play().catch(() => {});
+                updatePlayState(true);
+            });
+        }
+        updateSoundState();
+    };
+
+    function closeVideoTheater() {
+        if (!isTheaterOpen) return;
+        isTheaterOpen = false;
+
+        const stoppedTime = theaterVideo.currentTime;
+        theaterVideo.pause();
+        theaterVideo.src = "";
+
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+
+        // If source element exists, sync back currentTime
+        if (originalSourceVideo) {
+            try { originalSourceVideo.currentTime = stoppedTime; } catch (e) {}
+        }
+
+        // Resume active section sound and media
+        if (typeof window.syncActiveSectionSound === "function") {
+            window.syncActiveSectionSound();
+        }
+    }
+
+    window.closeVideoTheater = closeVideoTheater;
+
+    if (closeBtn) closeBtn.addEventListener("click", closeVideoTheater);
+    if (backdrop) backdrop.addEventListener("click", closeVideoTheater);
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && isTheaterOpen) {
+            closeVideoTheater();
+        }
+    });
+
+    // Toggle Play/Pause
+    function togglePlay() {
+        if (theaterVideo.paused) {
+            theaterVideo.play().then(() => updatePlayState(true)).catch(() => {});
+        } else {
+            theaterVideo.pause();
+            updatePlayState(false);
+        }
+    }
+
+    if (centerPlayBtn) centerPlayBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlay();
+    });
+
+    if (videoStage) videoStage.addEventListener("click", (e) => {
+        if (e.target.closest(".theater-controls-bar") || e.target.closest(".theater-top-bar")) return;
+        togglePlay();
+    });
+
+    if (playToggle) playToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        togglePlay();
+    });
+
+    // Sound toggle
+    if (soundToggle) {
+        soundToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            theaterVideo.muted = !theaterVideo.muted;
+            theaterVideo.volume = 1;
+            updateSoundState();
+        });
+    }
+
+    // Time & Progress Update
+    theaterVideo.addEventListener("timeupdate", () => {
+        const cur = theaterVideo.currentTime || 0;
+        const dur = theaterVideo.duration || 0;
+
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(cur);
+        if (durationEl && dur) durationEl.textContent = formatTime(dur);
+
+        if (dur > 0 && progressFill && progressHandle) {
+            const pct = (cur / dur) * 100;
+            progressFill.style.width = `${pct}%`;
+            progressHandle.style.left = `${pct}%`;
+        }
+    });
+
+    theaterVideo.addEventListener("loadedmetadata", () => {
+        if (durationEl && theaterVideo.duration) {
+            durationEl.textContent = formatTime(theaterVideo.duration);
+        }
+    });
+
+    theaterVideo.addEventListener("ended", () => {
+        updatePlayState(false);
+    });
+
+    // Progress bar seeking
+    if (progressWrapper) {
+        progressWrapper.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const rect = progressWrapper.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            if (theaterVideo.duration) {
+                theaterVideo.currentTime = Math.max(0, Math.min(pos * theaterVideo.duration, theaterVideo.duration));
+            }
+        });
+    }
+
+    // Native Fullscreen toggle
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (theaterVideo.requestFullscreen) {
+                    theaterVideo.requestFullscreen();
+                } else if (theaterVideo.webkitRequestFullscreen) {
+                    theaterVideo.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        });
+    }
+
+    // Attach click listeners to all non-hero videos on page to open theater
+    // 1. Portfolio showcase video
+    const portfolioVideo = document.getElementById("portfolioShowcaseVideo");
+    const portfolioFrame = document.querySelector(".portfolio-video-window-frame");
+    if (portfolioFrame && portfolioVideo) {
+        portfolioFrame.style.cursor = "pointer";
+        portfolioFrame.addEventListener("click", (e) => {
+            if (e.target.closest("#portfolioSoundBtn") || e.target.closest("#portfolioExploreBtn")) return;
+            window.openVideoTheater(
+                portfolioVideo.currentSrc || portfolioVideo.src,
+                portfolioVideo.poster,
+                "Vivek & Pooja - Love Story",
+                portfolioVideo.currentTime,
+                portfolioVideo.muted,
+                portfolioVideo
+            );
+        });
+    }
+
+    // 2. Meet photographer videos
+    const photogDesktop = document.getElementById("photographerVideoDesktop");
+    const photogMobile = document.getElementById("photographerVideoMobile");
+    const photogContainers = document.querySelectorAll(".photographer-desktop-video, .photographer-mobile-video, .photographer-video-frame");
+    photogContainers.forEach(container => {
+        container.style.cursor = "pointer";
+        container.addEventListener("click", (e) => {
+            if (e.target.closest(".photographer-sound-btn") || e.target.closest(".photographer-mobile-sound-btn")) return;
+            const isMobile = window.innerWidth <= 768;
+            const targetVid = isMobile ? photogMobile : photogDesktop;
+            if (targetVid) {
+                window.openVideoTheater(
+                    targetVid.currentSrc || targetVid.src,
+                    targetVid.poster,
+                    "Meet Bhushan - The Master Behind the Lens",
+                    targetVid.currentTime,
+                    targetVid.muted,
+                    targetVid
+                );
+            }
+        });
+    });
+})();
