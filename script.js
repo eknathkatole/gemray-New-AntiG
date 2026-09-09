@@ -620,149 +620,58 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         goToStory(currentIndex - 1, "prev");
     }
 
-    // Button event listeners
+    // Navigation button event listeners (Up/Down arrows)
     if (nextBtn) {
         nextBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            e.preventDefault();
             nextStory();
         });
+        nextBtn.addEventListener("touchend", (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            nextStory();
+        }, { passive: false });
     }
 
     if (prevBtn) {
         prevBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            e.preventDefault();
             prevStory();
         });
+        prevBtn.addEventListener("touchend", (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            prevStory();
+        }, { passive: false });
     }
 
-    // Direct card click interaction (clicking on next/prev card brings it to front)
+    // Direct card tap interaction (tapping any card advances or brings that video to front)
     cards.forEach((card, idx) => {
         card.addEventListener("click", function (e) {
-            // Don't trigger if clicked on video controls or sound button
+            // Don't trigger if clicked on sound button or nav buttons
             if (e.target.closest(".story-sound-btn") || e.target.closest(".stories-nav-btn")) return;
 
             if (idx !== currentIndex) {
                 goToStory(idx);
+            } else {
+                // Tapping active front card advances to next review video
+                nextStory();
             }
         });
     });
 
     // Pagination dots click
     dots.forEach((dot) => {
-        dot.addEventListener("click", function () {
+        dot.addEventListener("click", function (e) {
+            e.stopPropagation();
             const targetIdx = parseInt(this.getAttribute("data-index"), 10);
             if (!isNaN(targetIdx) && targetIdx !== currentIndex) {
                 goToStory(targetIdx);
             }
         });
     });
-
-    // Touch swipe support (Up/Down for mobile, Left/Right for desktop/tablets)
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    let isSwiping = false;
-
-    deck.addEventListener("touchstart", function (e) {
-        if (e.touches.length === 1) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            isSwiping = true;
-        }
-    }, { passive: true });
-
-    deck.addEventListener("touchmove", function (e) {
-        if (!isSwiping || e.touches.length !== 1) return;
-        touchEndX = e.touches[0].clientX;
-        touchEndY = e.touches[0].clientY;
-    }, { passive: true });
-
-    deck.addEventListener("touchend", function () {
-        if (!isSwiping) return;
-        isSwiping = false;
-
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
-        const isMobileScreen = window.innerWidth <= 1000;
-
-        if (isMobileScreen) {
-            // Mobile: Vertical swipe gesture (Up / Down)
-            if (Math.abs(deltaY) > 35) {
-                if (deltaY < 0) {
-                    // Swiped Up -> Next video
-                    nextStory();
-                } else {
-                    // Swiped Down -> Previous video
-                    prevStory();
-                }
-            } else if (Math.abs(deltaX) > 40) {
-                // Also support horizontal swipe fallback
-                if (deltaX < 0) {
-                    nextStory();
-                } else {
-                    prevStory();
-                }
-            }
-        } else {
-            // Desktop: Horizontal swipe / drag gesture
-            if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX < 0) {
-                    nextStory();
-                } else {
-                    prevStory();
-                }
-            }
-        }
-        touchStartX = 0;
-        touchEndX = 0;
-        touchStartY = 0;
-        touchEndY = 0;
-    }, { passive: true });
-
-    // Desktop Mouse Drag / Swipe
-    let mouseStartX = 0;
-    let isMouseDown = false;
-
-    deck.addEventListener("mousedown", function (e) {
-        if (e.target.closest(".stories-nav-btn") || e.target.closest(".story-sound-btn")) return;
-        isMouseDown = true;
-        mouseStartX = e.clientX;
-        deck.classList.add("is-dragging");
-    });
-
-    window.addEventListener("mouseup", function (e) {
-        if (!isMouseDown) return;
-        isMouseDown = false;
-        deck.classList.remove("is-dragging");
-
-        const deltaX = e.clientX - mouseStartX;
-        if (Math.abs(deltaX) > 50) {
-            if (deltaX < 0) {
-                nextStory();
-            } else {
-                prevStory();
-            }
-        }
-    });
-
-    // Horizontal Trackpad / Wheel scroll support over the deck
-    let wheelTimeout = null;
-    deck.addEventListener("wheel", function (e) {
-        if (Math.abs(e.deltaX) > 30) {
-            e.preventDefault();
-            if (!wheelTimeout) {
-                if (e.deltaX > 0) {
-                    nextStory();
-                } else {
-                    prevStory();
-                }
-                wheelTimeout = setTimeout(() => {
-                    wheelTimeout = null;
-                }, 600);
-            }
-        }
-    }, { passive: false });
 
     // Sound toggle function
     function updateStorySoundIcon() {
