@@ -51,7 +51,7 @@
 
     <link
         rel="stylesheet"
-        href="style.css?v=2.9"
+        href="style.css?v=3.0"
     >
 
 </head>
@@ -313,6 +313,18 @@
                 id="storiesStackContainer"
             >
 
+                <!-- UP ARROW BUTTON (CENTERED PARALLEL DIRECTLY ABOVE VIDEOS) -->
+                <button
+                    class="stories-nav-btn stories-nav-top"
+                    id="storiesPrevBtn"
+                    type="button"
+                    aria-label="Previous Review Video"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                </button>
+
                 <div
                     class="stories-deck"
                     id="storiesDeck"
@@ -394,19 +406,17 @@
 
                 </div>
 
-                <!-- VERTICAL UP / DOWN REVIEW CONTROLS -->
-                <div class="stories-vertical-nav" id="storiesVerticalNav" aria-label="Review video navigation">
-                    <button class="stories-nav-btn stories-nav-prev" id="storiesPrevBtn" type="button" aria-label="Previous Review Video">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="18 15 12 9 6 15"></polyline>
-                        </svg>
-                    </button>
-                    <button class="stories-nav-btn stories-nav-next" id="storiesNextBtn" type="button" aria-label="Next Review Video">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
-                </div>
+                <!-- DOWN ARROW BUTTON (CENTERED PARALLEL DIRECTLY BELOW VIDEOS IN PLACE OF 3 DOTS) -->
+                <button
+                    class="stories-nav-btn stories-nav-bottom"
+                    id="storiesNextBtn"
+                    type="button"
+                    aria-label="Next Review Video"
+                >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
 
                 <!-- GLOBAL SOUND CONTROL FOR ACTIVE STORY VIDEO -->
                 <button
@@ -424,13 +434,6 @@
                         <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
                     </svg>
                 </button>
-
-                <!-- PAGINATION INDICATORS -->
-                <div class="stories-pagination" id="storiesPagination">
-                        <span class="story-dot active" data-index="0"></span>
-                    <span class="story-dot" data-index="1"></span>
-                    <span class="story-dot" data-index="2"></span>
-                </div>
 
             </div>
         </section>
@@ -1318,6 +1321,96 @@
     </div>
 
 
+    <!-- =====================================================
+         LUXURY FULLSCREEN VIDEO THEATER MODAL (EXPANDED VIEW)
+         ===================================================== -->
+    <div id="videoTheaterModal" class="video-theater-modal" aria-hidden="true" role="dialog" aria-label="Expanded Video Player">
+        <div class="theater-backdrop" id="theaterBackdrop"></div>
+        
+        <div class="theater-container">
+            <!-- TOP BAR -->
+            <div class="theater-top-bar">
+                <div class="theater-title-badge">
+                    <span class="theater-glow-dot"></span>
+                    <span class="theater-video-title" id="theaterVideoTitle">Cinematic Film</span>
+                </div>
+                <button id="theaterCloseBtn" class="theater-close-btn" type="button" aria-label="Close Theater View">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- VIDEO STAGE -->
+            <div class="theater-video-stage" id="theaterVideoStage">
+                <video id="theaterVideo" class="theater-video" playsinline webkit-playsinline preload="auto"></video>
+                
+                <!-- CENTER PLAY / PAUSE BUTTON OVERLAY -->
+                <button class="theater-center-play" id="theaterCenterPlay" type="button" aria-label="Play or Pause">
+                    <svg class="theater-play-icon" viewBox="0 0 24 24" width="34" height="34" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <svg class="theater-pause-icon" viewBox="0 0 24 24" width="34" height="34" fill="currentColor" style="display:none;">
+                        <rect x="6" y="4" width="4" height="16"></rect>
+                        <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- BOTTOM CUSTOM LUXURY CONTROLS BAR -->
+            <div class="theater-controls-bar">
+                <!-- PROGRESS TIMELINE -->
+                <div class="theater-progress-wrapper" id="theaterProgressWrapper">
+                    <div class="theater-progress-bar" id="theaterProgressBar">
+                        <div class="theater-progress-fill" id="theaterProgressFill"></div>
+                        <div class="theater-progress-handle" id="theaterProgressHandle"></div>
+                    </div>
+                </div>
+
+                <!-- CONTROLS ROW -->
+                <div class="theater-controls-row">
+                    <div class="theater-controls-left">
+                        <button id="theaterPlayToggle" class="theater-control-btn" type="button" aria-label="Play / Pause">
+                            <svg class="theater-ctrl-play" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            <svg class="theater-ctrl-pause" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display:none;">
+                                <rect x="6" y="4" width="4" height="16"></rect>
+                                <rect x="14" y="4" width="4" height="16"></rect>
+                            </svg>
+                        </button>
+                        
+                        <button id="theaterSoundToggle" class="theater-control-btn" type="button" aria-label="Mute / Unmute">
+                            <svg class="theater-ctrl-sound-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            </svg>
+                            <svg class="theater-ctrl-sound-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                                <line x1="23" y1="9" x2="17" y2="15"/>
+                                <line x1="17" y1="9" x2="23" y2="15"/>
+                            </svg>
+                        </button>
+
+                        <div class="theater-time-display">
+                            <span id="theaterCurrentTime">0:00</span> / <span id="theaterDuration">0:00</span>
+                        </div>
+                    </div>
+
+                    <div class="theater-controls-right">
+                        <button id="theaterFullscreenBtn" class="theater-control-btn" type="button" aria-label="Toggle Fullscreen">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- =====================================================
          JAVASCRIPT
@@ -1326,7 +1419,7 @@
          script.js
          ===================================================== -->
 
-    <script src="script.js?v=2.9"></script>
+    <script src="script.js?v=3.0"></script>
 
 
 </body>
