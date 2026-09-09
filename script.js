@@ -2087,59 +2087,73 @@ window.addEventListener(
 
 (function initProductCategoryTabs() {
     const tabs = document.querySelectorAll(".product-category-tab");
-    const cards = document.querySelectorAll(".product-card");
+    const panes = document.querySelectorAll(".product-category-pane");
     const gridContainer = document.querySelector(".product-grid-container");
     if (!tabs || tabs.length === 0) return;
 
+    function activateCategory(targetFilter, shouldScroll = false) {
+        // Normalize filter name
+        const cleanFilter = targetFilter.replace("#", "").trim();
+
+        // 1. Update Tab styling
+        tabs.forEach(t => {
+            const filterAttr = t.getAttribute("data-filter") || t.getAttribute("href")?.replace("#", "");
+            if (filterAttr === cleanFilter) {
+                t.classList.add("active");
+            } else {
+                t.classList.remove("active");
+            }
+        });
+
+        // 2. Switch Pane Visibility
+        let foundPane = false;
+        panes.forEach(pane => {
+            const paneCat = pane.getAttribute("data-category") || pane.id;
+            if (paneCat === cleanFilter) {
+                pane.classList.add("active");
+                pane.style.display = "block";
+                foundPane = true;
+            } else {
+                pane.classList.remove("active");
+                pane.style.display = "none";
+            }
+        });
+
+        // 3. Smooth scroll to grid container if user clicked
+        if (shouldScroll && gridContainer) {
+            const headerOffset = 90;
+            const gridPos = gridContainer.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+            window.scrollTo({
+                top: Math.max(0, gridPos),
+                behavior: "smooth"
+            });
+        }
+    }
+
     tabs.forEach(tab => {
         tab.addEventListener("click", function (e) {
-            const targetId = this.getAttribute("href");
-            const filterType = this.getAttribute("data-filter");
-
-            if (targetId && targetId.startsWith("#")) {
+            const href = this.getAttribute("href");
+            const filterType = this.getAttribute("data-filter") || (href ? href.replace("#", "") : "");
+            
+            if (filterType) {
                 e.preventDefault();
-                tabs.forEach(t => t.classList.remove("active"));
-                this.classList.add("active");
-
-                if (filterType === "wedding-story" || targetId === "#wedding-story") {
-                    // Show all 3 cards for Wedding Story
-                    cards.forEach(card => {
-                        card.style.display = "flex";
-                        card.style.opacity = "1";
-                    });
-
-                    if (gridContainer) {
-                        const headerOffset = 100;
-                        const gridPos = gridContainer.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-                        window.scrollTo({
-                            top: gridPos,
-                            behavior: "smooth"
-                        });
-                    }
-                } else {
-                    const targetCard = document.querySelector(targetId);
-                    if (targetCard) {
-                        cards.forEach(card => {
-                            card.style.display = "flex";
-                            card.style.opacity = "1";
-                        });
-
-                        const headerOffset = 110;
-                        const cardPos = targetCard.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-                        window.scrollTo({
-                            top: cardPos,
-                            behavior: "smooth"
-                        });
-
-                        // Highlight target card with gold glow pulse
-                        targetCard.style.transition = "transform 0.4s ease, box-shadow 0.4s ease";
-                        targetCard.style.boxShadow = "0 0 50px rgba(212, 175, 90, 0.6)";
-                        setTimeout(() => {
-                            targetCard.style.boxShadow = "";
-                        }, 1400);
-                    }
+                activateCategory(filterType, true);
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, null, "#" + filterType);
                 }
             }
         });
     });
+
+    // Check URL hash on initial page load
+    const initialHash = window.location.hash ? window.location.hash.replace("#", "") : "";
+    if (initialHash) {
+        const matchingTab = Array.from(tabs).find(t => {
+            const f = t.getAttribute("data-filter") || t.getAttribute("href")?.replace("#", "");
+            return f === initialHash;
+        });
+        if (matchingTab) {
+            activateCategory(initialHash, false);
+        }
+    }
 })();
