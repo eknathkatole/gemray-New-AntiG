@@ -7067,4 +7067,549 @@ html {
 .portfolio-nav-links {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   34. HOMEPAGE COLLECTION & PRICING TEASER SECTION
+   ========================================================= */
+
+.collection-teaser-section {
+    position: relative;
+    width: 100%;
+    padding: clamp(70px, 10vw, 120px) 20px;
+    background: radial-gradient(circle at 50% 50%, rgba(6, 42, 35, 0.95) 0%, #01140f 100%);
+    border-top: 1px solid rgba(212, 175, 90, 0.22);
+    border-bottom: 1px solid rgba(212, 175, 90, 0.22);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.collection-teaser-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80vw;
+    max-width: 900px;
+    height: 350px;
+    background: radial-gradient(ellipse, rgba(212, 175, 90, 0.12) 0%, rgba(2, 18, 14, 0) 70%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.collection-teaser-container {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1000px);
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(36px, 6vw, 64px) clamp(20px, 4vw, 48px);
+    background: rgba(4, 26, 21, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 90, 0.35);
+    border-radius: 28px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(212, 175, 90, 0.15);
+}
+
+.collection-teaser-title {
+    font-family: "Cinzel Decorative", "Playfair Display", serif;
+    font-size: clamp(1.8rem, 3.8vw, 3rem);
+    font-weight: 700;
+    color: var(--gold-light, #f4e8c1);
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    margin: 12px 0 16px;
+    text-shadow: 0 0 24px rgba(212, 175, 90, 0.35);
+}
+
+.collection-teaser-desc {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 0 32px;
+}
+
+.collection-teaser-highlights {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(12px, 2.5vw, 24px);
+    margin-bottom: 38px;
+    width: 100%;
+}
+
+.teaser-highlight-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(212, 175, 90, 0.2);
+    transition: all 0.3s ease;
+}
+
+.teaser-highlight-item:hover,
+.teaser-highlight-item.featured {
+    background: rgba(212, 175, 90, 0.12);
+    border-color: var(--gold, #d4af5a);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 90, 0.2);
+}
+
+.teaser-highlight-item .highlight-title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.teaser-highlight-item .highlight-price {
+    font-family: "Playfair Display", serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gold-light, #f4e8c1);
+}
+
+.teaser-highlight-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(212, 175, 90, 0.25);
+    display: block;
+}
+
+@media (max-width: 640px) {
+    .teaser-highlight-divider {
+        display: none;
+    }
+}
+
+.collection-explore-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 36px;
+    background: linear-gradient(135deg, #d4af5a 0%, #b89344 100%);
+    color: #02120e;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(212, 175, 90, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.collection-explore-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 35px rgba(212, 175, 90, 0.7);
+    color: #000000;
+    background: linear-gradient(135deg, #f4e8c1 0%, #d4af5a 100%);
+}
+
+.collection-explore-btn svg {
+    transition: transform 0.3s ease;
+}
+
+.collection-explore-btn:hover svg {
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   35. PRODUCT / COLLECTIONS PAGE (PRODUCT.HTML)
+   ========================================================= */
+
+.product-page-main {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: #01140f;
+}
+
+.product-hero {
+    position: relative;
+    padding: clamp(50px, 8vw, 90px) 20px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.product-hero .section-eyebrow {
+    margin-bottom: 12px;
+}
+
+.product-hero-title {
+    font-family: "Cinzel Decorative", "Playfair Display", serif;
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 700;
+    color: var(--gold-light, #f4e8c1);
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    text-shadow: 0 0 30px rgba(212, 175, 90, 0.3);
+}
+
+.product-hero-subtitle {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto 36px;
+}
+
+/* CATEGORY SELECTOR PILLS */
+.product-category-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 2vw, 18px);
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+
+.product-category-tab {
+    padding: 10px 24px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 175, 90, 0.3);
+    color: rgba(255, 255, 255, 0.85);
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.product-category-tab:hover,
+.product-category-tab.active {
+    background: linear-gradient(135deg, rgba(212, 175, 90, 0.25) 0%, rgba(6, 42, 35, 0.9) 100%);
+    border-color: var(--gold, #d4af5a);
+    color: var(--gold-light, #f4e8c1);
+    box-shadow: 0 0 20px rgba(212, 175, 90, 0.25);
+    transform: translateY(-2px);
+}
+
+/* PRODUCT PACKAGES GRID */
+.product-grid-container {
+    width: min(100% - 40px, 1280px);
+    margin: 0 auto clamp(60px, 8vw, 100px);
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3vw, 36px);
+    align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+/* LUXURY PRODUCT CARD */
+.product-card {
+    position: relative;
+    background: rgba(4, 26, 21, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 90, 0.35);
+    border-radius: 24px;
+    padding: clamp(32px, 4vw, 44px) clamp(24px, 3vw, 34px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 90, 0.6), transparent);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--gold, #d4af5a);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), 0 0 35px rgba(212, 175, 90, 0.22);
+}
+
+.product-card:hover::before {
+    opacity: 1;
+    background: linear-gradient(90deg, transparent, var(--gold, #d4af5a), transparent);
+}
+
+/* FEATURED / SIGNATURE CARD */
+.product-card.featured-card {
+    background: linear-gradient(180deg, rgba(6, 42, 35, 0.95) 0%, rgba(3, 20, 16, 0.98) 100%);
+    border: 1.5px solid var(--gold, #d4af5a);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(212, 175, 90, 0.25);
+}
+
+.product-card.featured-card::before {
+    height: 4px;
+    background: linear-gradient(90deg, #d4af5a, #f4e8c1, #d4af5a);
+    opacity: 1;
+}
+
+/* CARD BADGE */
+.product-card-badge {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(212, 175, 90, 0.15);
+    border: 1px solid rgba(212, 175, 90, 0.4);
+    color: var(--gold-light, #f4e8c1);
+}
+
+.product-card.featured-card .product-card-badge {
+    background: linear-gradient(135deg, #d4af5a 0%, #b89344 100%);
+    color: #02120e;
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(212, 175, 90, 0.6);
+}
+
+/* CARD HEADER */
+.product-card-header {
+    margin-bottom: 24px;
+}
+
+.product-card-tag {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold, #d4af5a);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.product-card-title {
+    font-family: "Cinzel Decorative", "Playfair Display", serif;
+    font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.06em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+}
+
+.product-card-price-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.product-card-price {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 3.2vw, 2.6rem);
+    font-weight: 700;
+    color: var(--gold-light, #f4e8c1);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 20px rgba(212, 175, 90, 0.35);
+}
+
+.product-card-price-period {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* CARD BODY */
+.product-card-tagline {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold-light, #f4e8c1);
+    line-height: 1.45;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(212, 175, 90, 0.2);
+}
+
+.product-card-desc {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.65;
+    margin-bottom: 28px;
+}
+
+/* CARD FEATURES */
+.product-card-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.product-card-features li {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.4;
+}
+
+.product-card-features li svg {
+    flex-shrink: 0;
+    color: var(--gold, #d4af5a);
+}
+
+/* CARD FOOTER & CTA */
+.product-card-footer {
+    margin-top: auto;
+}
+
+.product-interested-btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 24px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(212, 175, 90, 0.18) 0%, rgba(6, 42, 35, 0.85) 100%);
+    border: 1px solid rgba(212, 175, 90, 0.45);
+    color: var(--gold-light, #f4e8c1);
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.product-interested-btn:hover {
+    background: linear-gradient(135deg, #d4af5a 0%, #b89344 100%);
+    border-color: var(--gold-light, #f4e8c1);
+    color: #02120e;
+    font-weight: 700;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212, 175, 90, 0.4);
+}
+
+.product-card.featured-card .product-interested-btn {
+    background: linear-gradient(135deg, #d4af5a 0%, #b89344 100%);
+    color: #02120e;
+    font-weight: 700;
+    border-color: #ffffff;
+    box-shadow: 0 6px 25px rgba(212, 175, 90, 0.4);
+}
+
+.product-card.featured-card .product-interested-btn:hover {
+    background: linear-gradient(135deg, #f4e8c1 0%, #d4af5a 100%);
+    color: #000000;
+    box-shadow: 0 10px 35px rgba(212, 175, 90, 0.6);
+}
+
+/* PRODUCT ASSURANCE SECTION */
+.product-assurance {
+    width: min(100% - 40px, 1000px);
+    margin: 0 auto clamp(60px, 8vw, 100px);
+    padding: clamp(32px, 5vw, 48px) clamp(20px, 4vw, 40px);
+    background: rgba(4, 26, 21, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(212, 175, 90, 0.25);
+    border-radius: 20px;
+    text-align: center;
+}
+
+.product-assurance h3 {
+    font-family: "Cinzel Decorative", "Playfair Display", serif;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    color: var(--gold-light, #f4e8c1);
+    margin-bottom: 12px;
+}
+
+.product-assurance p {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.65;
+    max-width: 720px;
+    margin: 0 auto 24px;
+}
+
+.product-assurance-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gold, #d4af5a);
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+}
+
+.product-assurance-contact:hover {
+    color: var(--gold-light, #f4e8c1);
 }

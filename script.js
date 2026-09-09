@@ -2079,3 +2079,41 @@ window.addEventListener(
 
     }
 );
+
+
+/* =========================================================
+   25. PRODUCT / COLLECTION CATEGORY TABS
+   ========================================================= */
+
+(function initProductCategoryTabs() {
+    const tabs = document.querySelectorAll(".product-category-tab");
+    if (!tabs || tabs.length === 0) return;
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function (e) {
+            const targetId = this.getAttribute("href");
+            if (targetId && targetId.startsWith("#")) {
+                const targetCard = document.querySelector(targetId);
+                if (targetCard) {
+                    e.preventDefault();
+                    tabs.forEach(t => t.classList.remove("active"));
+                    this.classList.add("active");
+
+                    const headerOffset = 110;
+                    const cardPos = targetCard.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: cardPos,
+                        behavior: "smooth"
+                    });
+
+                    // Highlight card momentarily
+                    targetCard.style.transition = "transform 0.4s ease, box-shadow 0.4s ease";
+                    targetCard.style.boxShadow = "0 0 50px rgba(212, 175, 90, 0.5)";
+                    setTimeout(() => {
+                        targetCard.style.boxShadow = "";
+                    }, 1200);
+                }
+            }
+        });
+    });
+})();
