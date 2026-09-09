@@ -2087,31 +2087,57 @@ window.addEventListener(
 
 (function initProductCategoryTabs() {
     const tabs = document.querySelectorAll(".product-category-tab");
+    const cards = document.querySelectorAll(".product-card");
+    const gridContainer = document.querySelector(".product-grid-container");
     if (!tabs || tabs.length === 0) return;
 
     tabs.forEach(tab => {
         tab.addEventListener("click", function (e) {
             const targetId = this.getAttribute("href");
-            if (targetId && targetId.startsWith("#")) {
-                const targetCard = document.querySelector(targetId);
-                if (targetCard) {
-                    e.preventDefault();
-                    tabs.forEach(t => t.classList.remove("active"));
-                    this.classList.add("active");
+            const filterType = this.getAttribute("data-filter");
 
-                    const headerOffset = 110;
-                    const cardPos = targetCard.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-                    window.scrollTo({
-                        top: cardPos,
-                        behavior: "smooth"
+            if (targetId && targetId.startsWith("#")) {
+                e.preventDefault();
+                tabs.forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
+
+                if (filterType === "wedding-story" || targetId === "#wedding-story") {
+                    // Show all 3 cards for Wedding Story
+                    cards.forEach(card => {
+                        card.style.display = "flex";
+                        card.style.opacity = "1";
                     });
 
-                    // Highlight card momentarily
-                    targetCard.style.transition = "transform 0.4s ease, box-shadow 0.4s ease";
-                    targetCard.style.boxShadow = "0 0 50px rgba(212, 175, 90, 0.5)";
-                    setTimeout(() => {
-                        targetCard.style.boxShadow = "";
-                    }, 1200);
+                    if (gridContainer) {
+                        const headerOffset = 100;
+                        const gridPos = gridContainer.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                        window.scrollTo({
+                            top: gridPos,
+                            behavior: "smooth"
+                        });
+                    }
+                } else {
+                    const targetCard = document.querySelector(targetId);
+                    if (targetCard) {
+                        cards.forEach(card => {
+                            card.style.display = "flex";
+                            card.style.opacity = "1";
+                        });
+
+                        const headerOffset = 110;
+                        const cardPos = targetCard.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                        window.scrollTo({
+                            top: cardPos,
+                            behavior: "smooth"
+                        });
+
+                        // Highlight target card with gold glow pulse
+                        targetCard.style.transition = "transform 0.4s ease, box-shadow 0.4s ease";
+                        targetCard.style.boxShadow = "0 0 50px rgba(212, 175, 90, 0.6)";
+                        setTimeout(() => {
+                            targetCard.style.boxShadow = "";
+                        }, 1400);
+                    }
                 }
             }
         });
