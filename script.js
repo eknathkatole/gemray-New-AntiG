@@ -1755,16 +1755,11 @@ if (customServiceSelect && serviceSelectTrigger && serviceDropdown && nativeServ
     if (parentForm) {
         parentForm.addEventListener("reset", function () {
             if (triggerValue) {
-                triggerValue.textContent = "Select a service";
+                triggerValue.textContent = "Select Service";
             }
-            options.forEach(function (opt, idx) {
-                if (idx === 0) {
-                    opt.classList.add("selected");
-                    opt.setAttribute("aria-selected", "true");
-                } else {
-                    opt.classList.remove("selected");
-                    opt.setAttribute("aria-selected", "false");
-                }
+            options.forEach(function (opt) {
+                opt.classList.remove("selected");
+                opt.setAttribute("aria-selected", "false");
             });
         });
     }
