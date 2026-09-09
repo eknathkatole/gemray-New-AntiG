@@ -1974,7 +1974,7 @@ section {
     -webkit-backdrop-filter: blur(14px);
     border: 1.5px solid rgba(212, 175, 90, 0.65);
     color: var(--gold-light, #f4e8c1);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -1984,6 +1984,12 @@ section {
     padding: 0;
     z-index: 20;
     pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    .stories-nav-btn {
+        display: flex;
+    }
 }
 
 .stories-nav-btn.stories-nav-top {
