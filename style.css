@@ -5154,19 +5154,20 @@ section {
         linear-gradient(
             135deg,
             rgba(255, 255, 255, 0.22) 0%,
-            rgba(6, 42, 35, 0.58) 42%,
-            rgba(11, 61, 50, 0.76) 100%
+            rgba(255, 255, 255, 0.06) 45%,
+            rgba(15, 25, 22, 0.35) 75%,
+            rgba(6, 20, 16, 0.45) 100%
         );
 
     backdrop-filter:
-        blur(32px)
-        saturate(220%)
-        brightness(110%);
+        blur(28px)
+        saturate(170%)
+        brightness(108%);
 
     -webkit-backdrop-filter:
-        blur(32px)
-        saturate(220%)
-        brightness(110%);
+        blur(28px)
+        saturate(170%)
+        brightness(108%);
 
     font-family:
         "Montserrat",
@@ -5189,17 +5190,17 @@ section {
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.22);
+        rgba(255, 255, 255, 0.28);
 
     border-color:
-        rgba(255, 255, 255, 0.3)
-        rgba(212, 175, 90, 0.35)
-        rgba(212, 175, 90, 0.35)
-        rgba(255, 255, 255, 0.3);
+        rgba(255, 255, 255, 0.45)
+        rgba(255, 255, 255, 0.2)
+        rgba(255, 255, 255, 0.12)
+        rgba(255, 255, 255, 0.35);
 
     box-shadow: 
-        0 12px 32px rgba(0, 0, 0, 0.42),
-        inset 0 1px 1px rgba(255, 255, 255, 0.45),
+        0 10px 30px rgba(0, 0, 0, 0.38),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.6),
         inset 0 -1px 1px rgba(0, 0, 0, 0.25);
 
     overflow:
@@ -5253,8 +5254,7 @@ section {
         linear-gradient(
             90deg,
             transparent 0%,
-            rgba(255, 255, 255, 0.35) 45%,
-            rgba(212, 175, 90, 0.25) 55%,
+            rgba(255, 255, 255, 0.4) 50%,
             transparent 100%
         );
 
@@ -5291,17 +5291,17 @@ section {
     0%, 100% {
         transform: translateY(0);
         box-shadow: 
-            0 10px 28px rgba(0, 0, 0, 0.38),
-            inset 0 1px 1px rgba(255, 255, 255, 0.45),
-            inset 0 -1px 1px rgba(0, 0, 0, 0.25);
+            0 8px 24px rgba(0, 0, 0, 0.35),
+            inset 0 1.5px 1px rgba(255, 255, 255, 0.55),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.22);
     }
 
     50% {
         transform: translateY(-4px);
         box-shadow: 
-            0 14px 34px rgba(0, 0, 0, 0.48),
-            inset 0 1px 1px rgba(255, 255, 255, 0.55),
-            inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+            0 12px 30px rgba(0, 0, 0, 0.44),
+            inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.28);
     }
 
 }
@@ -5316,21 +5316,22 @@ section {
     background:
         linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.28) 0%,
-            rgba(6, 42, 35, 0.68) 42%,
-            rgba(11, 61, 50, 0.88) 100%
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.1) 45%,
+            rgba(15, 25, 22, 0.45) 75%,
+            rgba(6, 20, 16, 0.55) 100%
         );
 
     border-color:
-        rgba(255, 255, 255, 0.45)
-        var(--gold)
-        var(--gold)
-        rgba(255, 255, 255, 0.45);
+        rgba(255, 255, 255, 0.6)
+        rgba(255, 255, 255, 0.3)
+        rgba(255, 255, 255, 0.2)
+        rgba(255, 255, 255, 0.5);
 
     box-shadow: 
-        0 16px 38px rgba(0, 0, 0, 0.55),
-        inset 0 1px 1.5px rgba(255, 255, 255, 0.7),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+        0 14px 34px rgba(0, 0, 0, 0.48),
+        inset 0 1.5px 1.5px rgba(255, 255, 255, 0.8),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.35);
 
 }
 
@@ -5371,32 +5372,34 @@ section {
         background:
             linear-gradient(
                 135deg,
-                rgba(255, 255, 255, 0.12) 0%,
-                rgba(6, 42, 35, 0.78) 45%,
-                rgba(11, 61, 50, 0.88) 100%
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(255, 255, 255, 0.05) 45%,
+                rgba(12, 20, 18, 0.42) 80%,
+                rgba(6, 16, 14, 0.55) 100%
             );
 
         backdrop-filter:
             blur(24px)
-            saturate(180%);
+            saturate(160%);
 
         -webkit-backdrop-filter:
             blur(24px)
-            saturate(180%);
+            saturate(160%);
 
         border:
             1px solid
-            rgba(255, 255, 255, 0.18);
+            rgba(255, 255, 255, 0.25);
 
         border-color:
-            rgba(255, 255, 255, 0.24)
-            rgba(212, 175, 90, 0.28)
-            rgba(212, 175, 90, 0.28)
-            rgba(255, 255, 255, 0.24);
+            rgba(255, 255, 255, 0.38)
+            rgba(255, 255, 255, 0.18)
+            rgba(255, 255, 255, 0.12)
+            rgba(255, 255, 255, 0.3);
 
         box-shadow: 
-            0 6px 20px rgba(0, 0, 0, 0.4),
-            inset 0 1px 1px rgba(255, 255, 255, 0.35);
+            0 6px 20px rgba(0, 0, 0, 0.36),
+            inset 0 1px 1px rgba(255, 255, 255, 0.5),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.2);
 
         animation:
             none;
