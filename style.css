@@ -345,55 +345,11 @@ section {
    ========================================================= */
 
 .hero-overlay {
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    z-index:
-        2;
-
-    pointer-events:
-        none;
-
-    background:
-
-        linear-gradient(
-            180deg,
-
-            rgba(0, 0, 0, .35),
-
-            rgba(11, 61, 50, .12) 35%,
-
-            rgba(0, 0, 0, .22) 65%,
-
-            rgba(0, 0, 0, .65)
-        );
-
-}
-
-
-.hero-overlay::after {
-
-    content:
-        "";
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    background:
-
-        radial-gradient(
-            ellipse at center,
-            transparent 25%,
-            rgba(0, 0, 0, .45) 100%
-        );
-
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 
