@@ -38,8 +38,26 @@ function safePlayVideo(video) {
     }
 }
 
+function updateHeroVideoSource() {
+    if (!bgVideo) return;
+    const isMobile = window.innerWidth <= 768;
+    const targetSrc = isMobile ? "vid/Virtical Hero video C.mp4" : "vid/Horizontal Hero Video C.mp4";
+    const currentSrc = bgVideo.currentSrc || bgVideo.getAttribute("src") || "";
+
+    if (!currentSrc.includes(encodeURI(targetSrc)) && !currentSrc.includes(targetSrc) && !currentSrc.endsWith(targetSrc)) {
+        const wasMuted = bgVideo.muted;
+        bgVideo.src = targetSrc;
+        bgVideo.load();
+        bgVideo.muted = wasMuted;
+        if (currentActiveSectionId === "hero") {
+            safePlayVideo(bgVideo);
+        }
+    }
+}
+
 // Initial video setup
 if (bgVideo) {
+    updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
     safePlayVideo(bgVideo);
@@ -49,6 +67,13 @@ if (bgVideo) {
         if (!document.hidden && bgVideo && currentActiveSectionId === "hero") {
             safePlayVideo(bgVideo);
         }
+    });
+
+    window.addEventListener("resize", () => {
+        updateHeroVideoSource();
+    });
+    window.addEventListener("orientationchange", () => {
+        setTimeout(updateHeroVideoSource, 200);
     });
 }
 
