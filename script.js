@@ -569,7 +569,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     let isTransitioning = false;
 
     // Synchronize card classes (is-active, is-next, is-prev, is-hidden) and audio/video states
-    function updateStoryDeck() {
+    function updateStoryDeck(shouldPlay = (currentActiveSectionId === "stories")) {
         const total = cards.length;
 
         cards.forEach((card, i) => {
@@ -587,21 +587,27 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                     try { video.currentTime = 0; } catch (e) {}
                     video.muted = isStorySoundMuted;
                     video.volume = 1;
-                    safePlayVideo(video);
+                    if (shouldPlay) {
+                        safePlayVideo(video);
+                    }
                 }
             } else if (offset === 1) {
                 // Next card (middle layer stacked right behind)
                 card.classList.add("is-next");
                 if (video) {
                     video.muted = true;
-                    safePlayVideo(video);
+                    if (shouldPlay) {
+                        safePlayVideo(video);
+                    }
                 }
             } else if (offset === total - 1) {
                 // Prev card (back layer stacked left behind)
                 card.classList.add("is-prev");
                 if (video) {
                     video.muted = true;
-                    safePlayVideo(video);
+                    if (shouldPlay) {
+                        safePlayVideo(video);
+                    }
                 }
             } else {
                 // Additional cards hidden
@@ -630,7 +636,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
         const total = cards.length;
         currentIndex = (index + total) % total;
-        updateStoryDeck();
+        updateStoryDeck(true);
 
         setTimeout(() => {
             isTransitioning = false;
@@ -1351,6 +1357,26 @@ if (galleryExploreBtn) {
 
 // Initial gallery filter and limit setup
 applyGalleryFilterAndLimit();
+
+// Lazy video playback observer for portfolio grid items (saves bandwidth & battery)
+const gridVideos = document.querySelectorAll(".portfolio-grid-video");
+if (gridVideos.length > 0 && "IntersectionObserver" in window) {
+    const gridVideoObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            const vid = entry.target;
+            if (entry.isIntersecting) {
+                safePlayVideo(vid);
+            } else {
+                vid.pause();
+            }
+        });
+    }, {
+        rootMargin: "150px 0px 150px 0px",
+        threshold: 0.05
+    });
+
+    gridVideos.forEach((vid) => gridVideoObserver.observe(vid));
+}
 
 
 /* =========================================================
