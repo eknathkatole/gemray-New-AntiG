@@ -293,6 +293,9 @@ section {
     background:
         var(--green);
 
+    -webkit-tap-highlight-color:
+        transparent;
+
 }
 
 
@@ -328,6 +331,18 @@ section {
 
     opacity:
         0;
+
+    pointer-events:
+        none;
+
+    user-select:
+        none;
+
+    -webkit-user-select:
+        none;
+
+    -webkit-tap-highlight-color:
+        transparent;
 
     animation:
         heroVideoFade 2s ease forwards 0.1s;

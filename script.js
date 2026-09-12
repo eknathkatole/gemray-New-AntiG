@@ -128,22 +128,23 @@ function primeAllMediaElements() {
     });
 }
 
-// Universal interaction listener: un-mutes active section on ANY tap, scroll, swipe, touch
+// Universal interaction listener: un-mutes active section on ANY initial tap, scroll, swipe, touch
 function onAnyUserInteraction() {
-    hasUserInteractedForSound = true;
-    primeAllMediaElements();
+    if (!hasUserInteractedForSound) {
+        hasUserInteractedForSound = true;
+        primeAllMediaElements();
 
-    if (typeof window.syncActiveSectionSound === "function") {
-        window.syncActiveSectionSound();
-    } else {
-        tryUnmuteHero();
+        if (typeof window.syncActiveSectionSound === "function") {
+            window.syncActiveSectionSound();
+        } else {
+            tryUnmuteHero();
+        }
     }
 }
 
 // Attach to all user gesture and navigation events for instant sound activation
-["touchstart", "touchend", "pointerdown", "mousedown", "click", "keydown", "wheel"].forEach(evt => {
+["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel"].forEach(evt => {
     window.addEventListener(evt, onAnyUserInteraction, { passive: true });
-    document.addEventListener(evt, onAnyUserInteraction, { passive: true });
 });
 
 // Sound button toggle functionality
@@ -995,19 +996,12 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         // 1. Hero Audio & Playback
         if (bgVideo) {
             if (activeSectionId === "hero") {
-                if (isFirstVisit) {
-                    try { bgVideo.currentTime = 0; } catch (e) {}
-                }
                 bgVideo.muted = !hasUserInteractedForSound;
                 bgVideo.volume = 1;
-                const p = bgVideo.play();
-                if (p !== undefined) {
-                    p.then(() => updateHeroSoundIcon()).catch(() => {
-                        bgVideo.muted = true;
-                        safePlayVideo(bgVideo);
-                        updateHeroSoundIcon();
-                    });
+                if (bgVideo.paused) {
+                    safePlayVideo(bgVideo);
                 }
+                updateHeroSoundIcon();
             } else {
                 bgVideo.muted = true;
                 bgVideo.pause();
