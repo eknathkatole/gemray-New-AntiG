@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <!-- 1. HOME PAGE -->
+  <url>
+    <loc>https://www.gemraystudio.com/</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/logo.png</image:loc>
+      <image:title>Gemray Studio - Luxury Wedding Photography and Cinematography</image:title>
+      <image:caption>Gemray Studio brand logo</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/pre%20wedding/prewedding1/Bhushan%20Pre-wedding%20photo-050.jpg</image:loc>
+      <image:title>Wedding Story - Vivek and Pooja</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/pre%20wedding/prewedding2/Bhushan%20Pre-wedding%20photo-006.jpg</image:loc>
+      <image:title>Pre-Wedding Romance - Bhushan and Siddhi</image:title>
+    </image:image>
+  </url>
+
+  <!-- 2. PORTFOLIO PAGE -->
+  <url>
+    <loc>https://www.gemraystudio.com/portfolio.html</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/pre%20wedding/prewedding1/Bhushan%20Pre-wedding%20photo-050.jpg</image:loc>
+      <image:title>Pre-Wedding Photography - Gemray Studio</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/engagement/Bhushan%20Pre-wedding%20photo-09.jpg.jpeg</image:loc>
+      <image:title>Engagement Ceremony - Gemray Studio</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.gemraystudio.com/photos/pre%20wedding/prewedding2/Bhushan%20Pre-wedding%20photo-006.jpg</image:loc>
+      <image:title>Pre-Wedding Portraits - Gemray Studio</image:title>
+    </image:image>
+  </url>
+
+  <!-- 3. COLLECTIONS & PRICING PAGE -->
+  <url>
+    <loc>https://www.gemraystudio.com/product.html</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
