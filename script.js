@@ -47,7 +47,6 @@ function updateHeroVideoSource() {
     if (!currentSrc.includes(encodeURI(targetSrc)) && !currentSrc.includes(targetSrc) && !currentSrc.endsWith(targetSrc)) {
         const wasMuted = bgVideo.muted;
         bgVideo.src = targetSrc;
-        bgVideo.load();
         bgVideo.muted = wasMuted;
         if (currentActiveSectionId === "hero") {
             safePlayVideo(bgVideo);
@@ -57,7 +56,6 @@ function updateHeroVideoSource() {
 
 // Initial video setup
 if (bgVideo) {
-    updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
     safePlayVideo(bgVideo);
@@ -69,12 +67,11 @@ if (bgVideo) {
         }
     });
 
+    let resizeTimer = null;
     window.addEventListener("resize", () => {
-        updateHeroVideoSource();
-    });
-    window.addEventListener("orientationchange", () => {
-        setTimeout(updateHeroVideoSource, 200);
-    });
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateHeroVideoSource, 150);
+    }, { passive: true });
 }
 
 // Resume playback when returning to the tab/app
@@ -235,7 +232,7 @@ if (brandNameWrapper) {
             if (goldTimer) clearTimeout(goldTimer);
             startGoldReflection();
         }
-    });
+    }, { passive: true });
 
     brandNameWrapper.addEventListener("click", function () {
         if (!goldAnimationRunning) {
@@ -247,14 +244,14 @@ if (brandNameWrapper) {
 
 
 /* =========================================================
-   03. AMBIENT GOLD DUST / STARDUST PARTICLE CANVAS
+   03. AMBIENT GOLD DUST / STARDUST PARTICLE CANVAS (60/120FPS JITTER-FREE)
    ========================================================= */
 
 function initHeroParticles() {
     const canvas = document.getElementById("heroParticles");
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let particles = [];
@@ -271,26 +268,29 @@ function initHeroParticles() {
 
     function createParticles() {
         particles = [];
-        // Dense enough to be magical, light enough to be 60/120fps smooth
-        const count = Math.min(Math.floor(width * 0.035), 45);
+        // Optimized count for silky 60/120fps performance
+        const count = Math.min(Math.floor(width * 0.028), 35);
 
         for (let i = 0; i < count; i++) {
             particles.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
-                radius: Math.random() * 1.6 + 0.5,
-                alpha: Math.random() * 0.6 + 0.2,
+                radius: Math.random() * 1.5 + 0.6,
+                alpha: Math.random() * 0.6 + 0.25,
                 speedY: -(Math.random() * 0.35 + 0.15),
-                speedX: (Math.random() - 0.5) * 0.25,
+                speedX: (Math.random() - 0.5) * 0.2,
                 pulse: Math.random() * Math.PI * 2,
-                pulseSpeed: Math.random() * 0.025 + 0.01,
-                color: Math.random() > 0.3 ? "212, 175, 90" : "255, 235, 175" // Warm gold / Pale starlight
+                pulseSpeed: Math.random() * 0.02 + 0.01,
+                color: Math.random() > 0.3 ? "212, 175, 90" : "255, 235, 175"
             });
         }
     }
 
     function draw() {
-        if (!isVisible) return;
+        if (!isVisible) {
+            animationFrameId = null;
+            return;
+        }
 
         ctx.clearRect(0, 0, width, height);
 
@@ -303,8 +303,6 @@ function initHeroParticles() {
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(${p.color}, ${currentAlpha})`;
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = `rgba(${p.color}, 0.8)`;
             ctx.fill();
 
             // Movement
@@ -328,7 +326,7 @@ function initHeroParticles() {
     resize();
     draw();
 
-    // Pause animation when hero is off-screen to preserve battery
+    // Pause animation when hero is off-screen to preserve battery & CPU
     if ("IntersectionObserver" in window) {
         const heroSection = document.getElementById("hero");
         if (heroSection) {
@@ -339,7 +337,7 @@ function initHeroParticles() {
                         draw();
                     }
                 });
-            }, { threshold: 0.05 });
+            }, { threshold: 0.02 });
             observer.observe(heroSection);
         }
     }
@@ -569,7 +567,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     let isStorySoundMuted = true;
     let isTransitioning = false;
 
-    // Synchronize card classes (is-active, is-next, is-prev, is-hidden) and audio/video states
+    // Synchronize card classes and ensure ONLY 1 active video decodes/plays at a time for optimal 60/120fps
     function updateStoryDeck(shouldPlay = (currentActiveSectionId === "stories")) {
         const total = cards.length;
 
@@ -582,33 +580,30 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             if (offset < 0) offset += total;
 
             if (offset === 0) {
-                // Front active card
+                // Front active card - THE ONLY PLAYING VIDEO
                 card.classList.add("is-active");
                 if (video) {
-                    try { video.currentTime = 0; } catch (e) {}
                     video.muted = isStorySoundMuted;
                     video.volume = 1;
                     if (shouldPlay) {
                         safePlayVideo(video);
+                    } else {
+                        video.pause();
                     }
                 }
             } else if (offset === 1) {
-                // Next card (middle layer stacked right behind)
+                // Next card (middle layer stacked right behind) - PAUSED to eliminate GPU decode lag
                 card.classList.add("is-next");
                 if (video) {
                     video.muted = true;
-                    if (shouldPlay) {
-                        safePlayVideo(video);
-                    }
+                    video.pause();
                 }
             } else if (offset === total - 1) {
-                // Prev card (back layer stacked left behind)
+                // Prev card (back layer stacked left behind) - PAUSED
                 card.classList.add("is-prev");
                 if (video) {
                     video.muted = true;
-                    if (shouldPlay) {
-                        safePlayVideo(video);
-                    }
+                    video.pause();
                 }
             } else {
                 // Additional cards hidden
@@ -679,10 +674,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         }, { passive: false });
     }
 
-    // Direct card tap interaction (tapping side cards brings them to front, tapping center card advances to next)
+    // Direct card tap interaction
     cards.forEach((card, idx) => {
         card.addEventListener("click", function (e) {
-            // Don't trigger if clicked on sound button or nav buttons
             if (e.target.closest(".story-sound-btn") || e.target.closest(".stories-nav-btn")) return;
 
             if (idx !== currentIndex) {
@@ -783,7 +777,21 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 (function initPortfolioPreviewCollage() {
     const collage = document.getElementById("portfolioGlassCollage");
     const exploreBtn = document.getElementById("portfolioExploreBtn");
+    const previewSection = document.getElementById("portfolio-preview");
     if (!collage) return;
+
+    let isSectionVisible = false;
+
+    if ("IntersectionObserver" in window && previewSection) {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                isSectionVisible = entry.isIntersecting;
+            });
+        }, { threshold: 0.05 });
+        obs.observe(previewSection);
+    } else {
+        isSectionVisible = true;
+    }
 
     // Full pool of new verified engagement & prewedding photos
     const photoPool = [
@@ -827,9 +835,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
     let poolIndex = cards.length;
 
-    // Periodically pick one random glass card and cross-fade its image with a new photo from the pool
+    // Only swap when section is on-screen
     function swapCollagePhoto() {
-        if (document.hidden) return;
+        if (document.hidden || !isSectionVisible) return;
 
         const randomCardIdx = Math.floor(Math.random() * cards.length);
         const targetCard = cards[randomCardIdx];
@@ -841,8 +849,8 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         const nextSrc = photoPool[poolIndex % photoPool.length];
         poolIndex++;
 
-        // Preload next image before swapping to prevent empty placeholder flashes
         const preloader = new Image();
+        preloader.decoding = "async";
         preloader.src = nextSrc;
         preloader.onload = () => {
             img.style.opacity = "0.3";
@@ -869,7 +877,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             e.preventDefault();
             const targetHref = this.getAttribute("href") || "portfolio.html";
 
-            // Visual feedback
             exploreBtn.style.transform = "scale(0.95)";
             document.body.style.transition = "opacity 0.45s ease, filter 0.45s ease";
             document.body.style.opacity = "0";
@@ -885,9 +892,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 /* =========================================================
    12C. SEAMLESS SCROLL SECTION AUDIO & NAV HIGHLIGHT ORCHESTRATOR
-   - Automatically switches & un-mutes video audio for active section
-   - Pauses all off-screen videos to ensure 60fps/120fps butter-smooth scrolling
-   - Updates active nav link pill and auto-scrolls mobile navbar container
+   - ONLY ONE VIDEO ACTIVELY PLAYS AT ANY TIME (Zero lag/jitter)
+   - Pauses all off-screen videos instantly
+   - Smoothly keeps active nav pill synchronized
    ========================================================= */
 
 (function initSeamlessSectionAudioAndNav() {
@@ -943,6 +950,16 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     const firstVisitSections = new Set();
     let currentActiveId = "hero";
 
+    // Helper: Pause all videos across the page except the specified active video
+    function pauseAllOtherVideos(exceptVideo) {
+        const allVideos = document.querySelectorAll("video:not(.reel-main-video):not(.reel-ambient-video)");
+        allVideos.forEach(v => {
+            if (v !== exceptVideo && !v.paused) {
+                v.pause();
+            }
+        });
+    }
+
     // Map section IDs to corresponding navbar selector
     const navLinkSelectors = {
         "hero": 'a[href="index.html"], a[href="#hero"]',
@@ -962,7 +979,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             const targetLink = navLinksContainer.querySelector(selector);
             if (targetLink) {
                 targetLink.classList.add("active");
-                // Auto-scroll the mobile horizontally scrollable nav container to keep active link centered
                 if (window.innerWidth <= 768) {
                     try {
                         const containerWidth = navLinksContainer.offsetWidth;
@@ -988,92 +1004,81 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             firstVisitSections.add(activeSectionId);
         }
 
-        // Update active navigation item
         updateActiveNavLink(activeSectionId);
-
         const isMobile = window.innerWidth <= 768;
 
-        // 1. Hero Audio & Playback
-        if (bgVideo) {
-            if (activeSectionId === "hero") {
+        // 1. HERO ACTIVE
+        if (activeSectionId === "hero") {
+            if (bgVideo) {
+                pauseAllOtherVideos(bgVideo);
                 bgVideo.muted = !hasUserInteractedForSound;
                 bgVideo.volume = 1;
                 if (bgVideo.paused) {
                     safePlayVideo(bgVideo);
                 }
                 updateHeroSoundIcon();
-            } else {
+            }
+            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
+            return;
+        }
+
+        // 2. STORIES ACTIVE
+        if (activeSectionId === "stories") {
+            const storiesDeck = document.getElementById("storiesDeck");
+            let activeVid = null;
+            if (storiesDeck) {
+                const activeCard = storiesDeck.querySelector(".story-deck-card.is-active") || storiesDeck.querySelector(".story-deck-card");
+                if (activeCard) {
+                    activeVid = activeCard.querySelector(".story-video");
+                }
+            }
+
+            pauseAllOtherVideos(activeVid);
+
+            if (bgVideo) {
                 bgVideo.muted = true;
                 bgVideo.pause();
                 updateHeroSoundIcon();
             }
-        }
 
-        // 2. Stories / Review Audio & Playback
-        const storiesDeck = document.getElementById("storiesDeck");
-        if (storiesDeck) {
-            const storyCards = Array.from(storiesDeck.querySelectorAll(".story-deck-card"));
-            if (activeSectionId === "stories") {
-                if (typeof window.setStorySoundState === "function") {
-                    window.setStorySoundState(hasUserInteractedForSound);
-                }
-                storyCards.forEach((card) => {
-                    const vid = card.querySelector(".story-video");
-                    if (vid) {
-                        const isActive = card.classList.contains("is-active");
-                        if (isActive) {
-                            if (isFirstVisit) {
-                                try { vid.currentTime = 0; } catch (e) {}
-                            }
-                            vid.muted = !hasUserInteractedForSound;
-                            vid.volume = 1;
-                            const p = vid.play();
-                            if (p !== undefined) {
-                                p.then(() => {
-                                    const storySoundBtn = document.getElementById("storySoundBtn");
-                                    if (storySoundBtn) {
-                                        const m = storySoundBtn.querySelector(".sound-icon-muted");
-                                        const u = storySoundBtn.querySelector(".sound-icon-unmuted");
-                                        if (hasUserInteractedForSound) {
-                                            if (m) m.style.display = "none";
-                                            if (u) u.style.display = "block";
-                                        }
-                                    }
-                                }).catch(() => {
-                                    vid.muted = true;
-                                    safePlayVideo(vid);
-                                });
-                            }
-                        } else {
-                            vid.muted = true;
-                            vid.pause();
+            if (typeof window.setStorySoundState === "function") {
+                window.setStorySoundState(hasUserInteractedForSound);
+            }
+
+            if (activeVid) {
+                activeVid.muted = !hasUserInteractedForSound;
+                activeVid.volume = 1;
+                const p = activeVid.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        const storySoundBtn = document.getElementById("storySoundBtn");
+                        if (storySoundBtn && hasUserInteractedForSound) {
+                            const m = storySoundBtn.querySelector(".sound-icon-muted");
+                            const u = storySoundBtn.querySelector(".sound-icon-unmuted");
+                            if (m) m.style.display = "none";
+                            if (u) u.style.display = "block";
                         }
-                    }
-                });
-            } else {
-                if (typeof window.setStorySoundState === "function") {
-                    window.setStorySoundState(false);
-                }
-                storyCards.forEach((card) => {
-                    const vid = card.querySelector(".story-video");
-                    if (vid) {
-                        vid.muted = true;
-                        vid.pause();
-                    }
-                });
-                const storySoundBtn = document.getElementById("storySoundBtn");
-                if (storySoundBtn) {
-                    const m = storySoundBtn.querySelector(".sound-icon-muted");
-                    const u = storySoundBtn.querySelector(".sound-icon-unmuted");
-                    if (m) m.style.display = "block";
-                    if (u) u.style.display = "none";
+                    }).catch(() => {
+                        activeVid.muted = true;
+                        safePlayVideo(activeVid);
+                    });
                 }
             }
+            return;
         }
 
-        // 3. Portfolio Showcase Video Audio & Playback
-        if (portfolioShowcaseVideo) {
-            if (activeSectionId === "portfolio-preview") {
+        // 3. PORTFOLIO PREVIEW ACTIVE
+        if (activeSectionId === "portfolio-preview") {
+            pauseAllOtherVideos(portfolioShowcaseVideo);
+
+            if (bgVideo) {
+                bgVideo.muted = true;
+                bgVideo.pause();
+                updateHeroSoundIcon();
+            }
+            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
+
+            if (portfolioShowcaseVideo) {
                 if (isFirstVisit) {
                     try { portfolioShowcaseVideo.currentTime = 0; } catch (e) {}
                 }
@@ -1087,57 +1092,50 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                         updatePortfolioSoundIcon();
                     });
                 }
-            } else {
-                portfolioShowcaseVideo.muted = true;
-                portfolioShowcaseVideo.pause();
-                updatePortfolioSoundIcon();
             }
+            return;
         }
 
-        // 4. Meet Photographer Video Audio & Playback
-        if (photographerDesktopVideo) {
-            if (activeSectionId === "photographer" && !isMobile) {
+        // 4. PHOTOGRAPHER ACTIVE
+        if (activeSectionId === "photographer") {
+            const targetPhotographerVid = isMobile ? photographerMobileVideo : photographerDesktopVideo;
+            const targetSoundBtn = isMobile ? photographerMobileSoundBtn : photographerSoundBtn;
+
+            pauseAllOtherVideos(targetPhotographerVid);
+
+            if (bgVideo) {
+                bgVideo.muted = true;
+                bgVideo.pause();
+                updateHeroSoundIcon();
+            }
+            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
+
+            if (targetPhotographerVid) {
                 if (isFirstVisit) {
-                    try { photographerDesktopVideo.currentTime = 0; } catch (e) {}
+                    try { targetPhotographerVid.currentTime = 0; } catch (e) {}
                 }
-                photographerDesktopVideo.muted = !hasUserInteractedForSound;
-                photographerDesktopVideo.volume = 1;
-                const p = photographerDesktopVideo.play();
+                targetPhotographerVid.muted = !hasUserInteractedForSound;
+                targetPhotographerVid.volume = 1;
+                const p = targetPhotographerVid.play();
                 if (p !== undefined) {
-                    p.then(() => updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn)).catch(() => {
-                        photographerDesktopVideo.muted = true;
-                        safePlayVideo(photographerDesktopVideo);
-                        updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
+                    p.then(() => updatePhotographerSoundIcon(targetPhotographerVid, targetSoundBtn)).catch(() => {
+                        targetPhotographerVid.muted = true;
+                        safePlayVideo(targetPhotographerVid);
+                        updatePhotographerSoundIcon(targetPhotographerVid, targetSoundBtn);
                     });
                 }
-            } else {
-                photographerDesktopVideo.muted = true;
-                photographerDesktopVideo.pause();
-                updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
             }
+            return;
         }
 
-        if (photographerMobileVideo) {
-            if (activeSectionId === "photographer" && isMobile) {
-                if (isFirstVisit) {
-                    try { photographerMobileVideo.currentTime = 0; } catch (e) {}
-                }
-                photographerMobileVideo.muted = !hasUserInteractedForSound;
-                photographerMobileVideo.volume = 1;
-                const p = photographerMobileVideo.play();
-                if (p !== undefined) {
-                    p.then(() => updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn)).catch(() => {
-                        photographerMobileVideo.muted = true;
-                        safePlayVideo(photographerMobileVideo);
-                        updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
-                    });
-                }
-            } else {
-                photographerMobileVideo.muted = true;
-                photographerMobileVideo.pause();
-                updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
-            }
+        // 5. CONTACT / OTHER SECTION (ALL VIDEOS PAUSED)
+        pauseAllOtherVideos(null);
+        if (bgVideo) {
+            bgVideo.muted = true;
+            bgVideo.pause();
+            updateHeroSoundIcon();
         }
+        if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
     }
 
     // Expose sync helper for instant sound activation on user interaction
@@ -1169,14 +1167,13 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                 }
             });
 
-            if (topCandidate && highestRatio >= 0.2 && topCandidate !== currentActiveId) {
+            if (topCandidate && highestRatio >= 0.18 && topCandidate !== currentActiveId) {
                 orchestrateSectionAudioAndMedia(topCandidate);
             }
         }, {
-            threshold: [0.1, 0.2, 0.4, 0.6, 0.8]
+            threshold: [0.1, 0.25, 0.5, 0.75]
         });
 
-        // Expose global trigger for instantaneous scroll audio unlocking
         window.triggerActiveSectionAudio = function () {
             let topCandidate = "hero";
             let highestRatio = 0;
