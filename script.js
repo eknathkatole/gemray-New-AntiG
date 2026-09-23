@@ -38,9 +38,14 @@ function safePlayVideo(video) {
     }
 }
 
+let currentIsMobile = window.innerWidth <= 768;
+
 function updateHeroVideoSource() {
     if (!bgVideo) return;
     const isMobile = window.innerWidth <= 768;
+    if (isMobile === currentIsMobile && bgVideo.currentSrc) return;
+    currentIsMobile = isMobile;
+
     const targetSrc = isMobile ? "vid/Vertical Hero video C.mp4" : "vid/Horizontal Hero Video C.mp4";
     const currentSrc = bgVideo.currentSrc || bgVideo.getAttribute("src") || "";
 
@@ -70,7 +75,7 @@ if (bgVideo) {
     let resizeTimer = null;
     window.addEventListener("resize", () => {
         if (resizeTimer) clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(updateHeroVideoSource, 150);
+        resizeTimer = setTimeout(updateHeroVideoSource, 200);
     }, { passive: true });
 }
 
@@ -893,8 +898,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 /* =========================================================
    12C. SEAMLESS SCROLL SECTION AUDIO & NAV HIGHLIGHT ORCHESTRATOR
    - ONLY ONE VIDEO ACTIVELY PLAYS AT ANY TIME (Zero lag/jitter)
-   - Pauses all off-screen videos instantly
-   - Smoothly keeps active nav pill synchronized
+   - Intelligent predictive preloading (600px rootMargin)
+   - Zero getBoundingClientRect layout thrashing during scroll
+   - Off-screen videos pause without buffer drop; resume immediately
    ========================================================= */
 
 (function initSeamlessSectionAudioAndNav() {
@@ -907,6 +913,35 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     const portfolioShowcaseVideo = document.getElementById("portfolioShowcaseVideo");
     const portfolioSoundBtn = document.getElementById("portfolioSoundBtn");
     const navLinksContainer = document.getElementById("portfolioNavLinks");
+
+    // PREDICTIVE VIDEO PRELOADER: Wakes up and buffers videos 600px before user arrives
+    if ("IntersectionObserver" in window) {
+        const videoPreloadObserver = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const vid = entry.target;
+                    if (vid && vid.dataset.preloaded !== "true") {
+                        vid.dataset.preloaded = "true";
+                        vid.preload = "metadata";
+                        // Touch the media element if not yet loaded to let Safari pre-buffer metadata
+                        if (vid.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+                            try { vid.load(); } catch (e) {}
+                        }
+                    }
+                    obs.unobserve(vid);
+                }
+            });
+        }, {
+            rootMargin: "600px 0px 600px 0px",
+            threshold: 0.01
+        });
+
+        document.querySelectorAll("video").forEach(v => {
+            if (v !== bgVideo) {
+                videoPreloadObserver.observe(v);
+            }
+        });
+    }
 
     function updatePortfolioSoundIcon() {
         if (!portfolioSoundBtn || !portfolioShowcaseVideo) return;
@@ -947,10 +982,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         });
     }
 
-    const firstVisitSections = new Set();
     let currentActiveId = "hero";
 
-    // Helper: Pause all videos across the page except the specified active video
+    // Helper: Pause all off-screen videos without clearing sources (preserves cache/buffer)
     function pauseAllOtherVideos(exceptVideo) {
         const allVideos = document.querySelectorAll("video:not(.reel-main-video):not(.reel-ambient-video)");
         allVideos.forEach(v => {
@@ -964,10 +998,12 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     const navLinkSelectors = {
         "hero": 'a[href="index.html"], a[href="#hero"]',
         "stories": 'a[href="#stories"]',
-        "portfolio-preview": 'a[href="portfolio.html"], a[href="#portfolio-preview"]',
         "photographer": 'a[href="#photographer"]',
+        "portfolio-preview": 'a[href="portfolio.html"], a[href="#portfolio-preview"]',
         "contact": 'a[href="#contact"]'
     };
+
+    let navRafId = null;
 
     function updateActiveNavLink(activeSectionId) {
         if (!navLinksContainer) return;
@@ -980,16 +1016,19 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             if (targetLink) {
                 targetLink.classList.add("active");
                 if (window.innerWidth <= 768) {
-                    try {
-                        const containerWidth = navLinksContainer.offsetWidth;
-                        const linkLeft = targetLink.offsetLeft;
-                        const linkWidth = targetLink.offsetWidth;
-                        const scrollTo = linkLeft - (containerWidth / 2) + (linkWidth / 2);
-                        navLinksContainer.scrollTo({
-                            left: Math.max(0, scrollTo),
-                            behavior: "smooth"
-                        });
-                    } catch (e) {}
+                    if (navRafId) cancelAnimationFrame(navRafId);
+                    navRafId = requestAnimationFrame(() => {
+                        try {
+                            const containerWidth = navLinksContainer.clientWidth;
+                            const linkLeft = targetLink.offsetLeft;
+                            const linkWidth = targetLink.clientWidth;
+                            const scrollTo = linkLeft - (containerWidth / 2) + (linkWidth / 2);
+                            navLinksContainer.scrollTo({
+                                left: Math.max(0, scrollTo),
+                                behavior: "auto"
+                            });
+                        } catch (e) {}
+                    });
                 }
             }
         }
@@ -998,11 +1037,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     function orchestrateSectionAudioAndMedia(activeSectionId) {
         currentActiveId = activeSectionId;
         currentActiveSectionId = activeSectionId;
-
-        const isFirstVisit = !firstVisitSections.has(activeSectionId);
-        if (isFirstVisit) {
-            firstVisitSections.add(activeSectionId);
-        }
 
         updateActiveNavLink(activeSectionId);
         const isMobile = window.innerWidth <= 768;
@@ -1067,36 +1101,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             return;
         }
 
-        // 3. PORTFOLIO PREVIEW ACTIVE
-        if (activeSectionId === "portfolio-preview") {
-            pauseAllOtherVideos(portfolioShowcaseVideo);
-
-            if (bgVideo) {
-                bgVideo.muted = true;
-                bgVideo.pause();
-                updateHeroSoundIcon();
-            }
-            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
-
-            if (portfolioShowcaseVideo) {
-                if (isFirstVisit) {
-                    try { portfolioShowcaseVideo.currentTime = 0; } catch (e) {}
-                }
-                portfolioShowcaseVideo.muted = !hasUserInteractedForSound;
-                portfolioShowcaseVideo.volume = 1;
-                const p = portfolioShowcaseVideo.play();
-                if (p !== undefined) {
-                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
-                        portfolioShowcaseVideo.muted = true;
-                        safePlayVideo(portfolioShowcaseVideo);
-                        updatePortfolioSoundIcon();
-                    });
-                }
-            }
-            return;
-        }
-
-        // 4. PHOTOGRAPHER ACTIVE
+        // 3. PHOTOGRAPHER ACTIVE
         if (activeSectionId === "photographer") {
             const targetPhotographerVid = isMobile ? photographerMobileVideo : photographerDesktopVideo;
             const targetSoundBtn = isMobile ? photographerMobileSoundBtn : photographerSoundBtn;
@@ -1111,9 +1116,6 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
 
             if (targetPhotographerVid) {
-                if (isFirstVisit) {
-                    try { targetPhotographerVid.currentTime = 0; } catch (e) {}
-                }
                 targetPhotographerVid.muted = !hasUserInteractedForSound;
                 targetPhotographerVid.volume = 1;
                 const p = targetPhotographerVid.play();
@@ -1122,6 +1124,32 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
                         targetPhotographerVid.muted = true;
                         safePlayVideo(targetPhotographerVid);
                         updatePhotographerSoundIcon(targetPhotographerVid, targetSoundBtn);
+                    });
+                }
+            }
+            return;
+        }
+
+        // 4. PORTFOLIO PREVIEW ACTIVE
+        if (activeSectionId === "portfolio-preview") {
+            pauseAllOtherVideos(portfolioShowcaseVideo);
+
+            if (bgVideo) {
+                bgVideo.muted = true;
+                bgVideo.pause();
+                updateHeroSoundIcon();
+            }
+            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
+
+            if (portfolioShowcaseVideo) {
+                portfolioShowcaseVideo.muted = !hasUserInteractedForSound;
+                portfolioShowcaseVideo.volume = 1;
+                const p = portfolioShowcaseVideo.play();
+                if (p !== undefined) {
+                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
+                        portfolioShowcaseVideo.muted = true;
+                        safePlayVideo(portfolioShowcaseVideo);
+                        updatePortfolioSoundIcon();
                     });
                 }
             }
@@ -1153,38 +1181,38 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
             { id: "contact", el: contactElem }
         ].filter(item => item.el !== null);
 
-        const observer = new IntersectionObserver((entries) => {
-            let topCandidate = null;
-            let highestRatio = 0;
+        const sectionVisibilityMap = new Map();
 
-            sections.forEach(s => {
-                const rect = s.el.getBoundingClientRect();
-                const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
-                const ratio = visibleHeight / window.innerHeight;
-                if (ratio > highestRatio) {
-                    highestRatio = ratio;
-                    topCandidate = s.id;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                sectionVisibilityMap.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+            });
+
+            let topCandidate = currentActiveId;
+            let maxRatio = 0;
+
+            sectionVisibilityMap.forEach((ratio, id) => {
+                if (ratio > maxRatio) {
+                    maxRatio = ratio;
+                    topCandidate = id;
                 }
             });
 
-            if (topCandidate && highestRatio >= 0.18 && topCandidate !== currentActiveId) {
+            if (topCandidate && maxRatio >= 0.20 && topCandidate !== currentActiveId) {
                 orchestrateSectionAudioAndMedia(topCandidate);
             }
         }, {
-            threshold: [0.1, 0.25, 0.5, 0.75]
+            threshold: [0, 0.15, 0.35, 0.55, 0.75]
         });
 
         window.triggerActiveSectionAudio = function () {
             let topCandidate = "hero";
-            let highestRatio = 0;
+            let maxRatio = 0;
 
-            sections.forEach(s => {
-                const rect = s.el.getBoundingClientRect();
-                const visibleHeight = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
-                const ratio = visibleHeight / window.innerHeight;
-                if (ratio > highestRatio) {
-                    highestRatio = ratio;
-                    topCandidate = s.id;
+            sectionVisibilityMap.forEach((ratio, id) => {
+                if (ratio > maxRatio) {
+                    maxRatio = ratio;
+                    topCandidate = id;
                 }
             });
 
