@@ -1621,7 +1621,7 @@ section {
         translate3d(62%, 0, -95px) scale(0.82) rotate(4.5deg);
 
     opacity:
-        0.80;
+        0.75;
 
     pointer-events:
         auto;
@@ -1636,8 +1636,8 @@ section {
 
 .story-deck-card.is-next .story-video-wrapper {
 
-    filter:
-        blur(3px) brightness(0.68);
+    opacity:
+        0.85;
 
 }
 
@@ -1652,7 +1652,7 @@ section {
         translate3d(-62%, 0, -95px) scale(0.82) rotate(-4.5deg);
 
     opacity:
-        0.80;
+        0.75;
 
     pointer-events:
         auto;
@@ -1667,8 +1667,8 @@ section {
 
 .story-deck-card.is-prev .story-video-wrapper {
 
-    filter:
-        blur(3px) brightness(0.68);
+    opacity:
+        0.85;
 
 }
 
