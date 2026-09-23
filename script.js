@@ -1148,8 +1148,8 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         const sections = [
             { id: "hero", el: heroElem },
             { id: "stories", el: storiesElem },
-            { id: "portfolio-preview", el: portfolioElem },
             { id: "photographer", el: photographerElem },
+            { id: "portfolio-preview", el: portfolioElem },
             { id: "contact", el: contactElem }
         ].filter(item => item.el !== null);
 
