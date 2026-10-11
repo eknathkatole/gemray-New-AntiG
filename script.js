@@ -1304,7 +1304,7 @@ const YOUTUBE_FILMS = [
 function extractYouTubeId(urlOrId) {
     if (!urlOrId) return "";
     const trimmed = String(urlOrId).trim();
-    const match = trimmed.match(/(?:youtu.be/|youtube.com/(?:embed/|v/|watch?v=|watch?.+&v=))([w-]{11})/);
+    const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
     return match ? match[1] : (trimmed.length === 11 ? trimmed : "");
 }
 
@@ -1317,23 +1317,60 @@ function extractYouTubeId(urlOrId) {
 
     if (!tabFilmsBtn || !tabFramesBtn || !filmsSection || !framesSection) return;
 
-    const ytPlayers = new Map(); // videoId -> YT.Player
-    let currentlyPlayingId = null;
-    const progressIntervals = new Map();
+    let currentlyPlayingCard = null;
 
-    function pauseAllYouTubePlayers() {
-        ytPlayers.forEach((player, id) => {
-            try {
-                if (player && typeof player.pauseVideo === "function") {
-                    player.pauseVideo();
-                }
-            } catch (err) {}
-            const card = document.querySelector(`.film-card[data-video-id="${id}"]`);
-            if (card) {
-                updateCustomPlayIcon(card, false);
-            }
+    function stopAllFilms() {
+        document.querySelectorAll(".film-card.is-playing").forEach(card => {
+            card.classList.remove("is-playing");
+            const slot = card.querySelector(".film-iframe-slot");
+            if (slot) slot.innerHTML = "";
+            const controls = card.querySelector(".film-custom-controls");
+            if (controls) controls.style.display = "none";
         });
-        currentlyPlayingId = null;
+        currentlyPlayingCard = null;
+    }
+
+    function stopFilmCard(card) {
+        if (!card) return;
+        card.classList.remove("is-playing");
+        const slot = card.querySelector(".film-iframe-slot");
+        if (slot) slot.innerHTML = "";
+        const controls = card.querySelector(".film-custom-controls");
+        if (controls) controls.style.display = "none";
+        if (currentlyPlayingCard === card) {
+            currentlyPlayingCard = null;
+        }
+    }
+
+    function playFilmCard(card) {
+        const videoId = card.dataset.videoId;
+        if (!videoId) return;
+
+        if (card.classList.contains("is-playing") && currentlyPlayingCard === card) return;
+
+        stopAllFilms();
+
+        card.classList.add("is-playing");
+        currentlyPlayingCard = card;
+
+        const slot = card.querySelector(".film-iframe-slot");
+        if (slot) {
+            const videoTitle = card.dataset.title || "Wedding Film";
+            slot.innerHTML = `<iframe 
+                src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1" 
+                title="${videoTitle}" 
+                loading="eager"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>`;
+        }
+
+        const controlsBar = card.querySelector(".film-custom-controls");
+        if (controlsBar) {
+            controlsBar.style.display = "flex";
+        }
     }
 
     // Switch between Films and Frames tabs
@@ -1351,8 +1388,7 @@ function extractYouTubeId(urlOrId) {
                 subtitleText.textContent = "Timeless Moments & Fine-Art Wedding Photography";
             }
 
-            // Pause any playing films
-            pauseAllYouTubePlayers();
+            stopAllFilms();
 
             if (history.replaceState) {
                 history.replaceState(null, "", "#frames");
@@ -1379,254 +1415,17 @@ function extractYouTubeId(urlOrId) {
     tabFilmsBtn.addEventListener("click", () => switchPortfolioMode("films"));
     tabFramesBtn.addEventListener("click", () => switchPortfolioMode("frames"));
 
-    // Hash navigation support
+    // Hash navigation support on initial load
     if (window.location.hash === "#frames") {
         switchPortfolioMode("frames");
     }
 
-    // Load YouTube IFrame Player API
-    if (!window.YT) {
-        const ytTag = document.createElement("script");
-        ytTag.src = "https://www.youtube.com/iframe_api";
-        const firstScript = document.getElementsByTagName("script")[0];
-        if (firstScript && firstScript.parentNode) {
-            firstScript.parentNode.insertBefore(ytTag, firstScript);
-        } else {
-            document.head.appendChild(ytTag);
-        }
-    }
-
-    function formatTime(seconds) {
-        if (!seconds || isNaN(seconds)) return "0:00";
-        const m = Math.floor(seconds / 60);
-        const s = Math.floor(seconds % 60);
-        return `${m}:${s < 10 ? "0" : ""}${s}`;
-    }
-
-    function updateCustomPlayIcon(card, isPlaying) {
-        const pauseIcon = card.querySelector(".icon-pause");
-        const playIcon = card.querySelector(".icon-play");
-        const playBtn = card.querySelector(".film-play-btn");
-        if (pauseIcon && playIcon) {
-            if (isPlaying) {
-                pauseIcon.style.display = "inline";
-                playIcon.style.display = "none";
-                if (playBtn) playBtn.setAttribute("aria-label", "Pause video");
-            } else {
-                pauseIcon.style.display = "none";
-                playIcon.style.display = "inline";
-                if (playBtn) playBtn.setAttribute("aria-label", "Play video");
-            }
-        }
-    }
-
-    function setupCustomControls(card, player, videoId) {
-        const controlsBar = card.querySelector(".film-custom-controls");
-        if (!controlsBar) return;
-
-        controlsBar.style.display = "flex";
-
-        const seekBar = controlsBar.querySelector(".film-seek-bar");
-        const timeText = controlsBar.querySelector(".film-time-text");
-        const playBtn = controlsBar.querySelector(".film-play-btn");
-        const rewindBtn = controlsBar.querySelector(".film-rewind-btn");
-        const forwardBtn = controlsBar.querySelector(".film-forward-btn");
-        const muteBtn = controlsBar.querySelector(".film-mute-btn");
-        const fullscreenBtn = controlsBar.querySelector(".film-fullscreen-btn");
-        const closeBtn = controlsBar.querySelector(".film-close-btn");
-
-        if (progressIntervals.has(videoId)) {
-            clearInterval(progressIntervals.get(videoId));
-        }
-
-        const interval = setInterval(() => {
-            try {
-                if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
-                    const current = player.getCurrentTime() || 0;
-                    const duration = player.getDuration() || 0;
-                    if (timeText) {
-                        timeText.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
-                    }
-                    if (seekBar && duration > 0 && !seekBar.matches(":active")) {
-                        seekBar.value = (current / duration) * 100;
-                    }
-                }
-            } catch (e) {}
-        }, 500);
-        progressIntervals.set(videoId, interval);
-
-        if (seekBar) {
-            seekBar.oninput = function () {
-                try {
-                    const duration = player.getDuration() || 0;
-                    if (duration > 0) {
-                        const targetTime = (seekBar.value / 100) * duration;
-                        player.seekTo(targetTime, true);
-                    }
-                } catch (e) {}
-            };
-        }
-
-        if (playBtn) {
-            playBtn.onclick = function () {
-                try {
-                    const state = player.getPlayerState();
-                    if (state === 1) {
-                        player.pauseVideo();
-                        updateCustomPlayIcon(card, false);
-                    } else {
-                        pauseAllYouTubePlayers();
-                        player.playVideo();
-                        currentlyPlayingId = videoId;
-                        updateCustomPlayIcon(card, true);
-                    }
-                } catch (e) {}
-            };
-        }
-
-        if (rewindBtn) {
-            rewindBtn.onclick = function () {
-                try {
-                    const current = player.getCurrentTime() || 0;
-                    player.seekTo(Math.max(0, current - 10), true);
-                } catch (e) {}
-            };
-        }
-
-        if (forwardBtn) {
-            forwardBtn.onclick = function () {
-                try {
-                    const current = player.getCurrentTime() || 0;
-                    const duration = player.getDuration() || 0;
-                    player.seekTo(Math.min(duration, current + 10), true);
-                } catch (e) {}
-            };
-        }
-
-        if (muteBtn) {
-            const volHighIcon = muteBtn.querySelector(".icon-vol-high");
-            const volMutedIcon = muteBtn.querySelector(".icon-vol-muted");
-
-            muteBtn.onclick = function () {
-                try {
-                    if (player.isMuted()) {
-                        player.unMute();
-                        if (volHighIcon) volHighIcon.style.display = "inline";
-                        if (volMutedIcon) volMutedIcon.style.display = "none";
-                        muteBtn.setAttribute("aria-label", "Mute video");
-                    } else {
-                        player.mute();
-                        if (volHighIcon) volHighIcon.style.display = "none";
-                        if (volMutedIcon) volMutedIcon.style.display = "inline";
-                        muteBtn.setAttribute("aria-label", "Unmute video");
-                    }
-                } catch (e) {}
-            };
-        }
-
-        if (fullscreenBtn) {
-            fullscreenBtn.onclick = function () {
-                const container = card.querySelector(".film-player-container");
-                if (container) {
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen().catch(() => {});
-                    } else if (container.requestFullscreen) {
-                        container.requestFullscreen().catch(() => {});
-                    } else if (container.webkitRequestFullscreen) {
-                        container.webkitRequestFullscreen();
-                    }
-                }
-            };
-        }
-
-        if (closeBtn) {
-            closeBtn.onclick = function () {
-                try {
-                    player.stopVideo();
-                } catch (e) {}
-                card.classList.remove("is-playing");
-                controlsBar.style.display = "none";
-                if (progressIntervals.has(videoId)) {
-                    clearInterval(progressIntervals.get(videoId));
-                    progressIntervals.delete(videoId);
-                }
-                if (currentlyPlayingId === videoId) {
-                    currentlyPlayingId = null;
-                }
-            };
-        }
-    }
-
-    function playFilmCard(card) {
-        const videoId = card.dataset.videoId;
-        if (!videoId) return;
-
-        pauseAllYouTubePlayers();
-        card.classList.add("is-playing");
-
-        const slotId = `yt-slot-${videoId}`;
-
-        if (ytPlayers.has(videoId)) {
-            const player = ytPlayers.get(videoId);
-            try {
-                player.playVideo();
-                currentlyPlayingId = videoId;
-                updateCustomPlayIcon(card, true);
-                setupCustomControls(card, player, videoId);
-            } catch (e) {}
-            return;
-        }
-
-        function createPlayer() {
-            if (!window.YT || !window.YT.Player) {
-                setTimeout(createPlayer, 150);
-                return;
-            }
-
-            new YT.Player(slotId, {
-                videoId: videoId,
-                host: "https://www.youtube-nocookie.com",
-                playerVars: {
-                    autoplay: 1,
-                    controls: 1,
-                    rel: 0,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    enablejsapi: 1,
-                    origin: window.location.origin
-                },
-                events: {
-                    onReady: function (event) {
-                        try {
-                            event.target.setPlaybackQuality("hd1080");
-                            event.target.playVideo();
-                        } catch (err) {}
-                        ytPlayers.set(videoId, event.target);
-                        currentlyPlayingId = videoId;
-                        updateCustomPlayIcon(card, true);
-                        setupCustomControls(card, event.target, videoId);
-                    },
-                    onStateChange: function (event) {
-                        if (event.data === 1) {
-                            currentlyPlayingId = videoId;
-                            updateCustomPlayIcon(card, true);
-                        } else if (event.data === 2 || event.data === 0) {
-                            updateCustomPlayIcon(card, false);
-                        }
-                    },
-                    onError: function (event) {
-                        console.warn("YouTube player error for video: " + videoId, event);
-                    }
-                }
-            });
-        }
-
-        createPlayer();
-    }
-
+    // Bind click events on film cards
     document.querySelectorAll(".film-card").forEach(card => {
         const trigger = card.querySelector(".film-play-trigger");
         const posterWrap = card.querySelector(".film-poster-wrapper");
+        const closeBtn = card.querySelector(".film-close-btn");
+        const fullscreenBtn = card.querySelector(".film-fullscreen-btn");
 
         if (trigger) {
             trigger.addEventListener("click", (e) => {
@@ -1638,6 +1437,29 @@ function extractYouTubeId(urlOrId) {
         if (posterWrap) {
             posterWrap.addEventListener("click", () => {
                 playFilmCard(card);
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                stopFilmCard(card);
+            });
+        }
+
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const container = card.querySelector(".film-player-container");
+                if (container) {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen().catch(() => {});
+                    } else if (container.requestFullscreen) {
+                        container.requestFullscreen().catch(() => {});
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    }
+                }
             });
         }
     });
