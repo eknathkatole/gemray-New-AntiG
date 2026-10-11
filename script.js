@@ -46,7 +46,7 @@ function updateHeroVideoSource() {
     if (isMobile === currentIsMobile && bgVideo.currentSrc) return;
     currentIsMobile = isMobile;
 
-    const targetSrc = isMobile ? "vid/Vertical Hero video C.mp4" : "vid/Horizontal Hero Video C.mp4";
+    const targetSrc = isMobile ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4" : "media/New Website Content/Hero videos/Horizontal Hero video 02.mp4";
     const currentSrc = bgVideo.currentSrc || bgVideo.getAttribute("src") || "";
 
     if (!currentSrc.includes(encodeURI(targetSrc)) && !currentSrc.includes(targetSrc) && !currentSrc.endsWith(targetSrc)) {
@@ -1269,134 +1269,396 @@ if (portfolioNavToggle && portfolioNavLinks) {
 
 
 /* =========================================================
-   13. GALLERY FILTER, 20-ITEM LIMIT & EXPLORE MORE
+   13. PORTFOLIO REDESIGN: FILMS & FRAMES INTERACTIVE CONTROLLER
    ========================================================= */
 
-const galleryTabs = document.querySelectorAll(".gallery-tabs .tab");
-const galleryItems = document.querySelectorAll(".g-item");
-const galleryCountNumber = document.getElementById("galleryCountNumber");
-const galleryExploreContainer = document.getElementById("galleryExploreContainer");
-const galleryExploreBtn = document.getElementById("galleryExploreBtn");
-const exploreRemainingCount = document.getElementById("exploreRemainingCount");
+// YouTube Films Configuration list (easily add new YouTube films here)
+const YOUTUBE_FILMS = [
+    {
+        id: "27GvMIU-ggw",
+        title: "Link 1 — The Feelings | Wedding Film",
+        tag: "Wedding Cinema",
+        url: "https://youtu.be/27GvMIU-ggw?si=ThxrqpHOfekSzUr6"
+    },
+    {
+        id: "tW82JeeTcbQ",
+        title: "Pooja & Vivek",
+        tag: "Wedding Story",
+        url: "https://youtu.be/tW82JeeTcbQ?si=Zv1U0zRvf38EK5Mc"
+    },
+    {
+        id: "YMGI_TckZRE",
+        title: "Siddhi & Bhushan",
+        tag: "Cinematic Film",
+        url: "https://youtu.be/YMGI_TckZRE?si=reKSyJ-kFNU01GhD"
+    },
+    {
+        id: "itVlkgsShzA",
+        title: "Pre-Wedding Film — Siddhi & Bhushan",
+        tag: "Pre-Wedding Film",
+        url: "https://youtu.be/itVlkgsShzA?si=C3ac54GEghyEXsXt"
+    }
+];
 
-const GALLERY_LIMIT = 20;
-let currentGalleryFilter = "all";
-let isGalleryExpanded = false;
+// Helper to extract clean 11-char YouTube ID from any URL or ID
+function extractYouTubeId(urlOrId) {
+    if (!urlOrId) return "";
+    const trimmed = String(urlOrId).trim();
+    const match = trimmed.match(/(?:youtu.be/|youtube.com/(?:embed/|v/|watch?v=|watch?.+&v=))([w-]{11})/);
+    return match ? match[1] : (trimmed.length === 11 ? trimmed : "");
+}
 
-function applyGalleryFilterAndLimit() {
-    let matchingIndex = 0;
-    let totalMatching = 0;
+(function initPortfolioFilmsAndFrames() {
+    const tabFilmsBtn = document.getElementById("tabFilmsBtn");
+    const tabFramesBtn = document.getElementById("tabFramesBtn");
+    const filmsSection = document.getElementById("filmsSection");
+    const framesSection = document.getElementById("framesSection");
+    const subtitleText = document.getElementById("portfolioSubtitleText");
 
-    galleryItems.forEach(function (item) {
-        const category = item.dataset.cat;
-        const matchesFilter = (currentGalleryFilter === "all" || category === currentGalleryFilter);
+    if (!tabFilmsBtn || !tabFramesBtn || !filmsSection || !framesSection) return;
 
-        if (matchesFilter) {
-            item.classList.remove("hidden");
-            totalMatching++;
+    const ytPlayers = new Map(); // videoId -> YT.Player
+    let currentlyPlayingId = null;
+    const progressIntervals = new Map();
 
-            if (!isGalleryExpanded && matchingIndex >= GALLERY_LIMIT) {
-                item.classList.add("g-item-hidden-limit");
-                item.classList.remove("g-item-reveal");
-            } else {
-                item.classList.remove("g-item-hidden-limit");
+    function pauseAllYouTubePlayers() {
+        ytPlayers.forEach((player, id) => {
+            try {
+                if (player && typeof player.pauseVideo === "function") {
+                    player.pauseVideo();
+                }
+            } catch (err) {}
+            const card = document.querySelector(`.film-card[data-video-id="${id}"]`);
+            if (card) {
+                updateCustomPlayIcon(card, false);
             }
-            matchingIndex++;
-        } else {
-            item.classList.add("hidden");
-            item.classList.remove("g-item-hidden-limit");
-            item.classList.remove("g-item-reveal");
-        }
-    });
+        });
+        currentlyPlayingId = null;
+    }
 
-    // Update Explore More button visibility and remaining count
-    if (galleryExploreContainer) {
-        if (!isGalleryExpanded && totalMatching > GALLERY_LIMIT) {
-            galleryExploreContainer.classList.remove("hidden");
-            if (exploreRemainingCount) {
-                exploreRemainingCount.textContent = `+${totalMatching - GALLERY_LIMIT}`;
+    // Switch between Films and Frames tabs
+    function switchPortfolioMode(mode) {
+        if (mode === "frames") {
+            tabFilmsBtn.classList.remove("active");
+            tabFilmsBtn.setAttribute("aria-selected", "false");
+            tabFramesBtn.classList.add("active");
+            tabFramesBtn.setAttribute("aria-selected", "true");
+
+            filmsSection.style.display = "none";
+            framesSection.style.display = "block";
+
+            if (subtitleText) {
+                subtitleText.textContent = "Timeless Moments & Fine-Art Wedding Photography";
+            }
+
+            // Pause any playing films
+            pauseAllYouTubePlayers();
+
+            if (history.replaceState) {
+                history.replaceState(null, "", "#frames");
             }
         } else {
-            galleryExploreContainer.classList.add("hidden");
+            tabFramesBtn.classList.remove("active");
+            tabFramesBtn.setAttribute("aria-selected", "false");
+            tabFilmsBtn.classList.add("active");
+            tabFilmsBtn.setAttribute("aria-selected", "true");
+
+            framesSection.style.display = "none";
+            filmsSection.style.display = "block";
+
+            if (subtitleText) {
+                subtitleText.textContent = "Cinematic Wedding & Pre-Wedding Films";
+            }
+
+            if (history.replaceState) {
+                history.replaceState(null, "", "#films");
+            }
         }
     }
 
-    if (galleryCountNumber) {
-        const visibleCount = document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)").length;
-        galleryCountNumber.textContent = visibleCount;
+    tabFilmsBtn.addEventListener("click", () => switchPortfolioMode("films"));
+    tabFramesBtn.addEventListener("click", () => switchPortfolioMode("frames"));
+
+    // Hash navigation support
+    if (window.location.hash === "#frames") {
+        switchPortfolioMode("frames");
     }
-}
 
-// Tab Click Events
-galleryTabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-        galleryTabs.forEach(function (item) {
-            item.classList.remove("active");
-            item.setAttribute("aria-selected", "false");
-        });
-
-        tab.classList.add("active");
-        tab.setAttribute("aria-selected", "true");
-
-        currentGalleryFilter = tab.dataset.filter || "all";
-        isGalleryExpanded = false; // Reset pagination upon tab change
-
-        applyGalleryFilterAndLimit();
-    });
-});
-
-// Explore More Click Event
-if (galleryExploreBtn) {
-    galleryExploreBtn.addEventListener("click", function () {
-        isGalleryExpanded = true;
-        let revealedIndex = 0;
-
-        galleryItems.forEach(function (item) {
-            const category = item.dataset.cat;
-            const matchesFilter = (currentGalleryFilter === "all" || category === currentGalleryFilter);
-
-            if (matchesFilter && item.classList.contains("g-item-hidden-limit")) {
-                item.classList.remove("g-item-hidden-limit");
-                item.classList.add("g-item-reveal");
-                item.style.animationDelay = `${revealedIndex * 40}ms`;
-                revealedIndex++;
-            }
-        });
-
-        if (galleryExploreContainer) {
-            galleryExploreContainer.classList.add("hidden");
+    // Load YouTube IFrame Player API
+    if (!window.YT) {
+        const ytTag = document.createElement("script");
+        ytTag.src = "https://www.youtube.com/iframe_api";
+        const firstScript = document.getElementsByTagName("script")[0];
+        if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(ytTag, firstScript);
+        } else {
+            document.head.appendChild(ytTag);
         }
+    }
 
-        if (galleryCountNumber) {
-            const visibleCount = document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)").length;
-            galleryCountNumber.textContent = visibleCount;
-        }
-    });
-}
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return "0:00";
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${m}:${s < 10 ? "0" : ""}${s}`;
+    }
 
-// Initial gallery filter and limit setup
-applyGalleryFilterAndLimit();
-
-// Lazy video playback observer for portfolio grid items (saves bandwidth & battery)
-const gridVideos = document.querySelectorAll(".portfolio-grid-video");
-if (gridVideos.length > 0 && "IntersectionObserver" in window) {
-    const gridVideoObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            const vid = entry.target;
-            if (entry.isIntersecting) {
-                safePlayVideo(vid);
+    function updateCustomPlayIcon(card, isPlaying) {
+        const pauseIcon = card.querySelector(".icon-pause");
+        const playIcon = card.querySelector(".icon-play");
+        const playBtn = card.querySelector(".film-play-btn");
+        if (pauseIcon && playIcon) {
+            if (isPlaying) {
+                pauseIcon.style.display = "inline";
+                playIcon.style.display = "none";
+                if (playBtn) playBtn.setAttribute("aria-label", "Pause video");
             } else {
-                vid.pause();
+                pauseIcon.style.display = "none";
+                playIcon.style.display = "inline";
+                if (playBtn) playBtn.setAttribute("aria-label", "Play video");
             }
-        });
-    }, {
-        rootMargin: "150px 0px 150px 0px",
-        threshold: 0.05
+        }
+    }
+
+    function setupCustomControls(card, player, videoId) {
+        const controlsBar = card.querySelector(".film-custom-controls");
+        if (!controlsBar) return;
+
+        controlsBar.style.display = "flex";
+
+        const seekBar = controlsBar.querySelector(".film-seek-bar");
+        const timeText = controlsBar.querySelector(".film-time-text");
+        const playBtn = controlsBar.querySelector(".film-play-btn");
+        const rewindBtn = controlsBar.querySelector(".film-rewind-btn");
+        const forwardBtn = controlsBar.querySelector(".film-forward-btn");
+        const muteBtn = controlsBar.querySelector(".film-mute-btn");
+        const fullscreenBtn = controlsBar.querySelector(".film-fullscreen-btn");
+        const closeBtn = controlsBar.querySelector(".film-close-btn");
+
+        if (progressIntervals.has(videoId)) {
+            clearInterval(progressIntervals.get(videoId));
+        }
+
+        const interval = setInterval(() => {
+            try {
+                if (player && typeof player.getCurrentTime === "function" && typeof player.getDuration === "function") {
+                    const current = player.getCurrentTime() || 0;
+                    const duration = player.getDuration() || 0;
+                    if (timeText) {
+                        timeText.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+                    }
+                    if (seekBar && duration > 0 && !seekBar.matches(":active")) {
+                        seekBar.value = (current / duration) * 100;
+                    }
+                }
+            } catch (e) {}
+        }, 500);
+        progressIntervals.set(videoId, interval);
+
+        if (seekBar) {
+            seekBar.oninput = function () {
+                try {
+                    const duration = player.getDuration() || 0;
+                    if (duration > 0) {
+                        const targetTime = (seekBar.value / 100) * duration;
+                        player.seekTo(targetTime, true);
+                    }
+                } catch (e) {}
+            };
+        }
+
+        if (playBtn) {
+            playBtn.onclick = function () {
+                try {
+                    const state = player.getPlayerState();
+                    if (state === 1) {
+                        player.pauseVideo();
+                        updateCustomPlayIcon(card, false);
+                    } else {
+                        pauseAllYouTubePlayers();
+                        player.playVideo();
+                        currentlyPlayingId = videoId;
+                        updateCustomPlayIcon(card, true);
+                    }
+                } catch (e) {}
+            };
+        }
+
+        if (rewindBtn) {
+            rewindBtn.onclick = function () {
+                try {
+                    const current = player.getCurrentTime() || 0;
+                    player.seekTo(Math.max(0, current - 10), true);
+                } catch (e) {}
+            };
+        }
+
+        if (forwardBtn) {
+            forwardBtn.onclick = function () {
+                try {
+                    const current = player.getCurrentTime() || 0;
+                    const duration = player.getDuration() || 0;
+                    player.seekTo(Math.min(duration, current + 10), true);
+                } catch (e) {}
+            };
+        }
+
+        if (muteBtn) {
+            const volHighIcon = muteBtn.querySelector(".icon-vol-high");
+            const volMutedIcon = muteBtn.querySelector(".icon-vol-muted");
+
+            muteBtn.onclick = function () {
+                try {
+                    if (player.isMuted()) {
+                        player.unMute();
+                        if (volHighIcon) volHighIcon.style.display = "inline";
+                        if (volMutedIcon) volMutedIcon.style.display = "none";
+                        muteBtn.setAttribute("aria-label", "Mute video");
+                    } else {
+                        player.mute();
+                        if (volHighIcon) volHighIcon.style.display = "none";
+                        if (volMutedIcon) volMutedIcon.style.display = "inline";
+                        muteBtn.setAttribute("aria-label", "Unmute video");
+                    }
+                } catch (e) {}
+            };
+        }
+
+        if (fullscreenBtn) {
+            fullscreenBtn.onclick = function () {
+                const container = card.querySelector(".film-player-container");
+                if (container) {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen().catch(() => {});
+                    } else if (container.requestFullscreen) {
+                        container.requestFullscreen().catch(() => {});
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    }
+                }
+            };
+        }
+
+        if (closeBtn) {
+            closeBtn.onclick = function () {
+                try {
+                    player.stopVideo();
+                } catch (e) {}
+                card.classList.remove("is-playing");
+                controlsBar.style.display = "none";
+                if (progressIntervals.has(videoId)) {
+                    clearInterval(progressIntervals.get(videoId));
+                    progressIntervals.delete(videoId);
+                }
+                if (currentlyPlayingId === videoId) {
+                    currentlyPlayingId = null;
+                }
+            };
+        }
+    }
+
+    function playFilmCard(card) {
+        const videoId = card.dataset.videoId;
+        if (!videoId) return;
+
+        pauseAllYouTubePlayers();
+        card.classList.add("is-playing");
+
+        const slotId = `yt-slot-${videoId}`;
+
+        if (ytPlayers.has(videoId)) {
+            const player = ytPlayers.get(videoId);
+            try {
+                player.playVideo();
+                currentlyPlayingId = videoId;
+                updateCustomPlayIcon(card, true);
+                setupCustomControls(card, player, videoId);
+            } catch (e) {}
+            return;
+        }
+
+        function createPlayer() {
+            if (!window.YT || !window.YT.Player) {
+                setTimeout(createPlayer, 150);
+                return;
+            }
+
+            new YT.Player(slotId, {
+                videoId: videoId,
+                host: "https://www.youtube-nocookie.com",
+                playerVars: {
+                    autoplay: 1,
+                    controls: 1,
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    enablejsapi: 1,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: function (event) {
+                        try {
+                            event.target.setPlaybackQuality("hd1080");
+                            event.target.playVideo();
+                        } catch (err) {}
+                        ytPlayers.set(videoId, event.target);
+                        currentlyPlayingId = videoId;
+                        updateCustomPlayIcon(card, true);
+                        setupCustomControls(card, event.target, videoId);
+                    },
+                    onStateChange: function (event) {
+                        if (event.data === 1) {
+                            currentlyPlayingId = videoId;
+                            updateCustomPlayIcon(card, true);
+                        } else if (event.data === 2 || event.data === 0) {
+                            updateCustomPlayIcon(card, false);
+                        }
+                    },
+                    onError: function (event) {
+                        console.warn("YouTube player error for video: " + videoId, event);
+                    }
+                }
+            });
+        }
+
+        createPlayer();
+    }
+
+    document.querySelectorAll(".film-card").forEach(card => {
+        const trigger = card.querySelector(".film-play-trigger");
+        const posterWrap = card.querySelector(".film-poster-wrapper");
+
+        if (trigger) {
+            trigger.addEventListener("click", (e) => {
+                e.stopPropagation();
+                playFilmCard(card);
+            });
+        }
+
+        if (posterWrap) {
+            posterWrap.addEventListener("click", () => {
+                playFilmCard(card);
+            });
+        }
     });
 
-    gridVideos.forEach((vid) => gridVideoObserver.observe(vid));
-}
-
+    // FRAMES MASONRY LIGHTBOX CLICK
+    document.querySelectorAll(".frame-card").forEach(card => {
+        card.addEventListener("click", () => {
+            if (typeof openLightbox === "function") {
+                openLightbox(card);
+            }
+        });
+        card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (typeof openLightbox === "function") {
+                    openLightbox(card);
+                }
+            }
+        });
+    });
+})();
 
 /* =========================================================
    14. LIGHTBOX & FULLSCREEN MOBILE REELS VIEWER
@@ -1420,6 +1682,8 @@ let currentMediaIndex = 0;
 let reelsObserver = null;
 
 function getVisibleGalleryItems() {
+    const frameCards = [...document.querySelectorAll(".frame-card")];
+    if (frameCards.length > 0) return frameCards;
     return [...document.querySelectorAll(".g-item:not(.hidden):not(.g-item-hidden-limit)")];
 }
 
@@ -1740,6 +2004,30 @@ if (lightbox) {
             closeLightbox();
         }
     });
+
+    // Mobile touch swipe gestures for lightbox
+    let lbTouchStartX = 0;
+    let lbTouchStartY = 0;
+    lightbox.addEventListener("touchstart", function (e) {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        lbTouchStartX = e.changedTouches[0].clientX;
+        lbTouchStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+
+    lightbox.addEventListener("touchend", function (e) {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const diffX = e.changedTouches[0].clientX - lbTouchStartX;
+        const diffY = e.changedTouches[0].clientY - lbTouchStartY;
+
+        // Ensure horizontal swipe is dominant and exceeds 40px
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+            if (diffX < 0) {
+                showSlide(1);
+            } else {
+                showSlide(-1);
+            }
+        }
+    }, { passive: true });
 }
 
 

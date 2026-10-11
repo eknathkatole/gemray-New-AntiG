@@ -227,10 +227,9 @@
             color: #ffffff;
         }
 
-
-        /* 2. HERO / FILTER SECTION */
+        /* 2. HERO & MODE TOGGLE */
         .portfolio-hero {
-            padding: 125px 20px 30px;
+            padding: 130px 20px 40px;
             text-align: center;
             background: linear-gradient(180deg, var(--green-dark) 0%, var(--green) 100%);
             position: relative;
@@ -243,253 +242,483 @@
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: min(800px, 100%);
-            height: 200px;
-            background: radial-gradient(ellipse at top, rgba(212, 175, 90, 0.12) 0%, transparent 70%);
+            width: min(900px, 100%);
+            height: 240px;
+            background: radial-gradient(ellipse at top, rgba(212, 175, 90, 0.16) 0%, transparent 70%);
             pointer-events: none;
         }
 
-        /* 3. FILTER TABS */
-        .gallery-tabs {
-            width: min(100%, 750px);
+        .portfolio-mode-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(6, 42, 35, 0.75);
+            padding: 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(212, 175, 90, 0.35);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             margin: 0 auto;
+            position: relative;
+            z-index: 5;
+        }
+
+        .portfolio-mode-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 38px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.75);
+            font-family: "Cinzel Decorative", serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .portfolio-mode-btn:hover {
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .portfolio-mode-btn.active {
+            color: var(--gold-light);
+            background: linear-gradient(135deg, rgba(212, 175, 90, 0.28) 0%, rgba(165, 121, 52, 0.45) 100%);
+            border-color: rgba(212, 175, 90, 0.6);
+            box-shadow: 0 4px 20px rgba(212, 175, 90, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .portfolio-hero-subtitle {
+            margin-top: 22px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(212, 175, 90, 0.85);
+            font-weight: 400;
+        }
+
+        /* 3. CONTENT AREA & FILMS VIEW */
+        .portfolio-content-area {
+            width: min(calc(100% - 32px), 1400px);
+            margin: 0 auto clamp(60px, 8vw, 100px);
+            min-height: 400px;
+        }
+
+        .portfolio-view {
+            width: 100%;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        .films-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(24px, 3.5vw, 40px);
+            width: 100%;
+        }
+
+        .film-card {
+            background: rgba(6, 42, 35, 0.65);
+            border: 1px solid rgba(212, 175, 90, 0.25);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .film-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(212, 175, 90, 0.6);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(212, 175, 90, 0.2);
+        }
+
+        .film-player-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #020b08;
+            overflow: hidden;
+        }
+
+        .film-poster-wrapper {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            cursor: pointer;
+            transition: opacity 0.35s ease;
+        }
+
+        .film-card.is-playing .film-poster-wrapper {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .film-poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .film-card:hover .film-poster {
+            transform: scale(1.04);
+        }
+
+        .film-poster-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(6, 42, 35, 0.4) 60%, rgba(0, 0, 0, 0.75) 100%);
+        }
+
+        .film-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 3;
+            background: rgba(6, 42, 35, 0.85);
+            border: 1px solid rgba(212, 175, 90, 0.4);
+            border-radius: 999px;
+            padding: 4px 12px;
+            color: var(--gold-light);
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            backdrop-filter: blur(8px);
+        }
+
+        .film-play-trigger {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(212, 175, 90, 0.95) 0%, rgba(165, 121, 52, 0.95) 100%);
+            border: 2px solid #ffffff;
+            color: #062a23;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(212, 175, 90, 0.6), 0 8px 24px rgba(0, 0, 0, 0.5);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .film-play-trigger svg {
+            margin-left: 4px;
+        }
+
+        .film-play-trigger:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            box-shadow: 0 0 45px rgba(212, 175, 90, 0.85), 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .play-pulse {
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(212, 175, 90, 0.7);
+            animation: playPulseAnim 2.2s infinite ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes playPulseAnim {
+            0% { transform: scale(0.9); opacity: 0.9; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .film-iframe-slot {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .film-iframe-slot iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .film-info {
+            padding: 20px 22px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .film-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .film-tag {
+            color: var(--gold);
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .film-quality-badge {
+            background: rgba(212, 175, 90, 0.15);
+            border: 1px solid rgba(212, 175, 90, 0.35);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            letter-spacing: 0.08em;
+        }
+
+        .film-title {
+            color: #ffffff;
+            font-family: "Cinzel Decorative", serif;
+            font-size: clamp(1rem, 1.35vw, 1.25rem);
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: 0.04em;
+            margin: 0;
+        }
+
+        /* Custom playback controls bar */
+        .film-custom-controls {
+            background: rgba(4, 25, 21, 0.95);
+            border-top: 1px solid rgba(212, 175, 90, 0.25);
+            padding: 10px 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: fadeInControls 0.3s ease;
+        }
+
+        @keyframes fadeInControls {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .film-progress-row {
+            width: 100%;
+        }
+
+        .film-seek-bar {
+            width: 100%;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .film-seek-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold-light);
+            box-shadow: 0 0 10px var(--gold);
+            cursor: pointer;
+            border: 2px solid #062a23;
+        }
+
+        .film-seek-bar::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold-light);
+            box-shadow: 0 0 10px var(--gold);
+            cursor: pointer;
+            border: 2px solid #062a23;
+        }
+
+        .film-buttons-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 10px;
         }
 
-        .tab {
-            padding: 10px 24px;
-            color: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            background: rgba(6, 42, 35, 0.55);
-            backdrop-filter: blur(20px) saturate(190%);
-            -webkit-backdrop-filter: blur(20px) saturate(190%);
-            border-radius: 999px;
-            font-family: "Montserrat", sans-serif;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+        .film-btn-group-left,
+        .film-btn-group-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .tab:hover {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.45);
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.45);
-            transform: translateY(-2px);
-        }
-
-        .tab.active {
-            color: var(--gold-light);
-            border-color: rgba(212, 175, 90, 0.6);
-            background: linear-gradient(135deg, rgba(212, 175, 90, 0.32) 0%, rgba(6, 42, 35, 0.75) 100%);
-            box-shadow: 0 0 20px rgba(212, 175, 90, 0.3), inset 0 1px 1.5px rgba(255, 255, 255, 0.6);
-            transform: translateY(-2px);
-        }
-
-        /* 4. GALLERY GRID */
-        .portfolio-full-grid {
-            width: min(calc(100% - 32px), 1400px);
-            margin: 0 auto clamp(60px, 10vw, 100px);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        .portfolio-item {
-            position: relative;
-            aspect-ratio: 4 / 5;
-            overflow: hidden;
+        .film-ctrl-btn {
+            background: rgba(6, 42, 35, 0.85);
+            border: 1px solid rgba(212, 175, 90, 0.3);
             border-radius: 6px;
-            background: var(--green-dark);
-            border: 1px solid rgba(212, 175, 90, 0.22);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.35s ease;
+            color: var(--gold-light);
+            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            transition: all 0.25s ease;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .portfolio-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
+        .film-ctrl-btn:hover {
+            background: rgba(212, 175, 90, 0.25);
+            border-color: var(--gold);
+            color: #ffffff;
         }
 
-        .portfolio-item video,
-        .portfolio-grid-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
+        .film-ctrl-btn svg {
+            flex-shrink: 0;
         }
 
-        /* Luxury View Overlay Hint on Hover */
-        .portfolio-item::after {
-            content: "VIEW";
+        .seek-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gold-light);
+        }
+
+        .film-time-text {
+            color: rgba(255, 255, 255, 0.75);
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.74rem;
+            letter-spacing: 0.05em;
+            margin-left: 6px;
+        }
+
+        /* 4. FRAMES PINTEREST MASONRY GALLERY */
+        .frames-masonry-grid {
+            column-count: 4;
+            column-gap: 20px;
+            width: 100%;
+        }
+
+        @media (max-width: 1200px) {
+            .frames-masonry-grid {
+                column-count: 3;
+                column-gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .frames-masonry-grid {
+                column-count: 2;
+                column-gap: 10px;
+            }
+        }
+
+        .frame-card {
+            break-inside: avoid;
+            margin-bottom: 20px;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #041c16;
+            border: 1px solid rgba(212, 175, 90, 0.22);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 768px) {
+            .frame-card {
+                margin-bottom: 10px;
+                border-radius: 6px;
+            }
+        }
+
+        .frame-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 90, 0.25);
+        }
+
+        .frame-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .frame-card:hover .frame-img {
+            transform: scale(1.04);
+        }
+
+        .frame-sheen {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(6, 42, 35, 0.65) 100%);
+            opacity: 0.8;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .frame-card:hover .frame-sheen {
+            opacity: 0.4;
+        }
+
+        .frame-view-badge {
             position: absolute;
             inset: 0;
             background: rgba(6, 42, 35, 0.55);
-            color: var(--gold-light);
-            font-family: "Cinzel Decorative", serif;
-            font-size: 0.85rem;
-            letter-spacing: 0.25em;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.35s ease;
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
         }
 
-        .portfolio-item:hover {
-            transform: translateY(-4px);
-            border-color: var(--gold);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 90, 0.2);
+        .frame-view-badge span {
+            color: var(--gold-light);
+            font-family: "Cinzel Decorative", serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.25em;
+            padding: 8px 18px;
+            border: 1px solid rgba(212, 175, 90, 0.5);
+            border-radius: 30px;
+            background: rgba(6, 42, 35, 0.85);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
         }
 
-        .portfolio-item:hover video {
-            transform: scale(1.06);
-        }
-
-        .portfolio-item:hover img {
-            transform: scale(1.06);
-        }
-
-        .portfolio-item:hover::after {
+        .frame-card:hover .frame-view-badge {
             opacity: 1;
         }
 
-        .portfolio-item.hidden {
-            display: none !important;
-        }
-
-        .portfolio-item.g-item-hidden-limit {
-            display: none !important;
-        }
-
-        @keyframes galleryFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px) scale(0.97);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .portfolio-item.g-item-reveal {
-            animation: galleryFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* 5. EXPLORE MORE GALLERY BUTTON */
-        .gallery-explore-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: -30px auto clamp(60px, 8vw, 90px);
-            width: 100%;
-            position: relative;
-            z-index: 10;
-        }
-
-        .gallery-explore-container.hidden {
-            display: none !important;
-        }
-
-        .gallery-explore-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 14px 34px;
-            background: rgba(6, 42, 35, 0.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 90, 0.45);
-            border-radius: 40px;
-            color: var(--gold-light);
-            font-family: "Cinzel Decorative", serif;
-            font-size: 0.88rem;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 90, 0.18);
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        .gallery-explore-btn:hover {
-            background: linear-gradient(135deg, rgba(212, 175, 90, 0.22) 0%, rgba(184, 134, 11, 0.38) 100%);
-            border-color: var(--gold);
-            color: #ffffff;
-            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6), 0 0 28px rgba(212, 175, 90, 0.4);
-            transform: translateY(-3px) scale(1.02);
-        }
-
-        .gallery-explore-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .explore-btn-sparkle {
-            color: var(--gold);
-            font-size: 1.05rem;
-            line-height: 1;
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-explore-btn:hover .explore-btn-sparkle {
-            transform: rotate(45deg) scale(1.15);
-            color: var(--gold-light);
-        }
-
-        .explore-btn-count {
-            background: rgba(212, 175, 90, 0.18);
-            border: 1px solid rgba(212, 175, 90, 0.4);
-            border-radius: 12px;
-            padding: 2px 9px;
-            font-family: "Montserrat", sans-serif;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            color: var(--gold-light);
-        }
-
-        .explore-btn-arrow {
-            display: inline-block;
-            font-size: 0.95rem;
-            transition: transform 0.3s ease;
-            animation: exploreArrowFloat 2s ease-in-out infinite;
-        }
-
-        @keyframes exploreArrowFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(3px);
-            }
-        }
-
-        /* 6. LIGHTBOX POSITION COUNTER */
+        /* 5. LIGHTBOX POSITION COUNTER & MODAL */
         .lightbox-counter {
             position: absolute;
             top: 25px;
@@ -517,455 +746,48 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
         }
 
-        /* =========================================================
-           7. FULLSCREEN MOBILE REELS VIEWER (MOBILE ONLY)
-           ========================================================= */
-        .mobile-reels-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 3000;
-            background: #020b08;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.35s ease, visibility 0.35s ease;
-        }
-
-        .mobile-reels-modal.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        /* Top Header Bar */
-        .mobile-reels-top-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 65px;
-            padding: max(12px, env(safe-area-inset-top, 12px)) 16px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 10;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 70%, transparent 100%);
-            pointer-events: none;
-        }
-
-        .reels-brand-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(6, 42, 35, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(212, 175, 90, 0.4);
-            border-radius: 999px;
-            padding: 6px 14px;
-            color: var(--gold-light);
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 0.78rem;
-            letter-spacing: 0.12em;
-            pointer-events: auto;
-        }
-
-        .reels-glow-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--gold);
-            box-shadow: 0 0 8px var(--gold);
-            animation: reelsDotPulse 1.8s ease-in-out infinite;
-        }
-
-        @keyframes reelsDotPulse {
-            0%, 100% { opacity: 0.6; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .reels-counter-badge {
-            color: rgba(255, 255, 255, 0.9);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.76rem;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 5px 12px;
-            border-radius: 999px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            pointer-events: auto;
-        }
-
-        .reels-close-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(6, 42, 35, 0.85);
-            border: 1px solid rgba(212, 175, 90, 0.45);
-            color: var(--gold-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            pointer-events: auto;
-            transition: transform 0.2s ease, background 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .reels-close-btn:active {
-            transform: scale(0.92);
-            background: rgba(212, 175, 90, 0.3);
-        }
-
-        /* Vertical Reel Container with Snapping */
-        .mobile-reels-container {
-            width: 100vw;
-            height: 100svh;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .mobile-reels-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Individual Reel Slide */
-        .mobile-reel-slide {
-            width: 100vw;
-            height: 100svh;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: #020b08;
-        }
-
-        /* Ambient Glass/Glow Background Blur */
-        .reel-ambient-bg-wrap {
-            position: absolute;
-            inset: -20px;
-            z-index: 1;
-            overflow: hidden;
-            filter: blur(45px) brightness(0.35) saturate(150%);
-            -webkit-filter: blur(45px) brightness(0.35) saturate(150%);
-            pointer-events: none;
-            transform: scale(1.15);
-        }
-
-        .reel-ambient-photo,
-        .reel-ambient-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Media Container */
-        .reel-media-wrapper {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .reel-main-photo {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 4px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-        }
-
-        .reel-main-video {
-            max-width: 100%;
-            max-height: 100%;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Sound Button in Reel */
-        .reel-sound-toggle-btn {
-            position: absolute;
-            bottom: max(30px, env(safe-area-inset-bottom, 30px));
-            right: 18px;
-            z-index: 8;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(6, 42, 35, 0.85);
-            border: 1px solid rgba(212, 175, 90, 0.6);
-            color: var(--gold-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .reel-sound-toggle-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* Center Play/Pause Pop Indicator */
-        .reel-video-play-indicator {
-            position: absolute;
-            inset: 0;
-            margin: auto;
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1.5px solid rgba(212, 175, 90, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold-light);
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.7);
-            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 5;
-        }
-
-        .reel-video-play-indicator.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* Bottom Swipe Guide */
-        .reels-bottom-info {
-            position: absolute;
-            bottom: max(14px, env(safe-area-inset-bottom, 14px));
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 7;
-            pointer-events: none;
-        }
-
-        .reels-swipe-guide {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 500;
-            letter-spacing: 0.08em;
-            color: rgba(255, 255, 255, 0.6);
-            background: rgba(0, 0, 0, 0.35);
-            padding: 4px 12px;
-            border-radius: 999px;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            animation: reelsSwipeBounce 2.4s ease-in-out infinite;
-        }
-
-        @keyframes reelsSwipeBounce {
-            0%, 100% { transform: translateY(0); opacity: 0.6; }
-            50% { transform: translateY(-4px); opacity: 0.95; color: var(--gold-light); }
-        }
-
-        /* =====================================================
-           RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
-           ===================================================== */
-        
-        /* TABLET (< 1024px) */
-        @media (max-width: 1024px) {
-            .portfolio-full-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 14px;
-            }
-        }
-
-        /* MOBILE (< 768px): HORIZONTAL SWIPEABLE NAVBAR */
+        /* 6. RESPONSIVE BREAKPOINTS */
         @media (max-width: 768px) {
-            .portfolio-nav {
-                height: 66px;
-                padding: 0 10px 0 14px;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 10px;
+            .films-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
 
-            .portfolio-nav-logo {
-                flex-shrink: 0;
-                margin-right: 2px;
-            }
-
-            .portfolio-nav-logo img {
-                height: 40px;
-                width: auto;
-                max-height: 40px;
-            }
-
-            .portfolio-nav-links {
-                flex: 1 1 auto;
-                min-width: 0;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 6px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                white-space: nowrap;
-                padding: 4px 6px 4px 2px;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
-                scroll-snap-type: x proximity;
-            }
-
-            .portfolio-nav-links::-webkit-scrollbar {
-                display: none;
-            }
-
-            .portfolio-nav-links a {
-                flex: 0 0 auto;
-                padding: 6px 13px;
-                font-size: 0.72rem;
-                letter-spacing: 0.08em;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(212, 175, 90, 0.22);
-                color: rgba(255, 255, 255, 0.88);
-                scroll-snap-align: start;
-                transition: all 0.2s ease;
-            }
-
-            .portfolio-nav-links a:hover,
-            .portfolio-nav-links a:active {
-                color: var(--gold-light);
-                border-color: rgba(212, 175, 90, 0.5);
-            }
-
-            .portfolio-nav-links a.active {
-                background: rgba(212, 175, 90, 0.2);
-                border-color: var(--gold);
-                color: var(--gold-light);
-                box-shadow: 0 0 12px rgba(212, 175, 90, 0.25);
-            }
-
-            .portfolio-nav-links a.portfolio-nav-wa-pill {
-                padding: 6px 13px;
-                border-color: rgba(212, 175, 90, 0.5);
-                font-weight: 600;
-            }
-
-            .portfolio-hero {
-                padding: 85px 16px 20px;
-            }
-
-            /* Gallery Grid on Mobile */
-            .portfolio-full-grid {
-                width: calc(100% - 20px);
-                grid-template-columns: repeat(2, 1fr);
+            .portfolio-mode-toggle {
+                padding: 6px;
                 gap: 8px;
-                margin-bottom: 70px;
             }
 
-            .portfolio-item {
-                border-radius: 5px;
+            .portfolio-mode-btn {
+                padding: 10px 24px;
+                font-size: 0.82rem;
+                letter-spacing: 0.16em;
             }
 
-            .portfolio-item:hover {
-                transform: none;
+            .film-title {
+                font-size: 1.05rem;
             }
 
-            .portfolio-item::after {
-                display: none; /* No hover overlay on touch */
+            .film-play-trigger {
+                width: 58px;
+                height: 58px;
             }
 
-            /* Filter Tabs Scrollable on Mobile */
-            .gallery-tabs {
-                justify-content: flex-start;
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                padding: 4px 6px 12px;
+            .film-play-trigger svg {
+                width: 26px;
+                height: 26px;
+            }
+
+            .film-buttons-row {
+                flex-wrap: wrap;
                 gap: 8px;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
             }
 
-            .gallery-tabs::-webkit-scrollbar {
-                display: none;
-            }
-
-            .tab {
-                flex: 0 0 auto;
-                padding: 8px 16px;
-                font-size: 0.74rem;
-                letter-spacing: 0.12em;
-            }
-
-            /* Lightbox Mobile Adjustments */
-            .lightbox {
-                padding: 10px;
-            }
-
-            .lightbox-counter {
-                top: max(16px, env(safe-area-inset-top, 16px));
-                font-size: 0.78rem;
-                padding: 4px 12px;
-            }
-
-            .lightbox-close {
-                top: max(12px, env(safe-area-inset-top, 12px));
-                right: max(12px, env(safe-area-inset-right, 12px));
-                width: 40px;
-                height: 40px;
-                font-size: 24px;
-                background: rgba(6, 42, 35, 0.85);
-                border: 1px solid rgba(212, 175, 90, 0.4);
-            }
-
-            .lightbox-prev {
-                left: 10px;
-                width: 40px;
-                height: 40px;
-                background: rgba(6, 42, 35, 0.75);
-                border: 1px solid rgba(212, 175, 90, 0.35);
-            }
-
-            .lightbox-next {
-                right: 10px;
-                width: 40px;
-                height: 40px;
-                background: rgba(6, 42, 35, 0.75);
-                border: 1px solid rgba(212, 175, 90, 0.35);
-            }
-
-            .lightbox-image-wrapper {
-                width: 95vw;
-                height: 75vh;
+            .film-time-text {
+                font-size: 0.70rem;
             }
         }
 
-        /* SMALL MOBILE (< 400px) */
         @media (max-width: 400px) {
             .portfolio-nav {
                 height: 62px;
@@ -989,19 +811,9 @@
                 letter-spacing: 0.06em;
             }
 
-            .portfolio-full-grid {
-                width: calc(100% - 14px);
-                gap: 6px;
-            }
-
-            .tab {
-                padding: 7px 13px;
-                font-size: 0.70rem;
-            }
-
-            .gallery-count-pill {
-                font-size: 0.70rem;
-                padding: 5px 14px;
+            .portfolio-mode-btn {
+                padding: 8px 18px;
+                font-size: 0.74rem;
             }
         }
     </style>
@@ -1029,227 +841,529 @@
             </div>
         </nav>
 
-        <!-- PORTFOLIO FILTER CONTROLS -->
+        <!-- PORTFOLIO MODE CONTROLS: FILMS & FRAMES -->
         <header class="portfolio-hero">
-            <!-- GALLERY FILTER TABS -->
-            <div class="gallery-tabs" role="tablist" aria-label="Gallery Categories">
-                <button class="tab active" data-filter="all" type="button" role="tab" aria-selected="true">
-                    All
+            <div class="portfolio-mode-toggle" role="tablist" aria-label="Portfolio Sections">
+                <button class="portfolio-mode-btn active" id="tabFilmsBtn" data-tab="films" type="button" role="tab" aria-selected="true" aria-controls="filmsSection">
+                    FILMS
                 </button>
-                <button class="tab" data-filter="wedding" type="button" role="tab" aria-selected="false">
-                    Wedding
+                <button class="portfolio-mode-btn" id="tabFramesBtn" data-tab="frames" type="button" role="tab" aria-selected="false" aria-controls="framesSection">
+                    FRAMES
                 </button>
-                <button class="tab" data-filter="prewedding" type="button" role="tab" aria-selected="false">
-                    Pre-Wedding
-                </button>
-                <button class="tab" data-filter="engagement" type="button" role="tab" aria-selected="false">
-                    Engagement
-                </button>
+            </div>
+            <div class="portfolio-hero-subtitle">
+                <span id="portfolioSubtitleText">Cinematic Wedding &amp; Pre-Wedding Films</span>
             </div>
         </header>
 
-        <!-- FULL GALLERY PHOTO & VIDEO GRID (2 COLUMNS ON MOBILE, 4 ON DESKTOP) -->
-        <main class="portfolio-full-grid gallery-grid">
-            <!-- 1. FEATURED WEDDING LOVE STORY VIDEO -->
-            <article class="portfolio-item portfolio-video-item g-item" data-cat="wedding">
-                <video src="photos/wedding/Vivek Pooja Love Story.mp4" poster="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-09.jpg" muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
-            </article>
+        <!-- PORTFOLIO CONTENT AREA -->
+        <main class="portfolio-content-area" id="portfolioContentArea">
 
-            <!-- 2. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-050.jpg" alt="Pre-Wedding Romance - Bhushan & Siddhi" loading="eager" decoding="async">
-            </article>
+            <!-- SECTION A: FILMS (YOUTUBE WEDDING FILMS) -->
+            <section id="filmsSection" class="portfolio-view films-view" aria-label="Wedding Films Portfolio">
+                <div class="films-grid" id="filmsGrid">
 
-            <!-- 3. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-09.jpg.jpeg" alt="Engagement Ceremony - Timeless Moments" loading="eager" decoding="async">
-            </article>
+                    <!-- FILM 1 -->
+                    <article class="film-card" data-video-id="27GvMIU-ggw" data-title="Link 1 — The Feelings | Wedding Film">
+                        <div class="film-player-container">
+                            <div class="film-poster-wrapper">
+                                <img src="https://img.youtube.com/vi/27GvMIU-ggw/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/27GvMIU-ggw/hqdefault.jpg';" alt="Link 1 — The Feelings | Wedding Film" class="film-poster" loading="eager" decoding="async">
+                                <div class="film-poster-overlay"></div>
+                                <div class="film-badge">Wedding Film</div>
+                                <button class="film-play-trigger" type="button" aria-label="Play Link 1 — The Feelings | Wedding Film">
+                                    <span class="play-pulse"></span>
+                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="film-iframe-slot" id="yt-slot-27GvMIU-ggw"></div>
+                        </div>
+                        <div class="film-info">
+                            <div class="film-meta">
+                                <span class="film-tag">Wedding Cinema</span>
+                                <span class="film-quality-badge">Full HD 1080p</span>
+                            </div>
+                            <h3 class="film-title">Link 1 — The Feelings | Wedding Film</h3>
+                        </div>
+                        <div class="film-custom-controls" style="display:none;" aria-label="Playback controls">
+                            <div class="film-progress-row">
+                                <input type="range" class="film-seek-bar" min="0" max="100" value="0" step="0.1" aria-label="Video seek position">
+                            </div>
+                            <div class="film-buttons-row">
+                                <div class="film-btn-group-left">
+                                    <button class="film-ctrl-btn film-play-btn" type="button" aria-label="Pause video">
+                                        <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                        <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-rewind-btn" type="button" aria-label="Rewind 10 seconds">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+                                        <span class="seek-label">10s</span>
+                                    </button>
+                                    <button class="film-ctrl-btn film-forward-btn" type="button" aria-label="Forward 10 seconds">
+                                        <span class="seek-label">10s</span>
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+                                    </button>
+                                    <span class="film-time-text">0:00 / 0:00</span>
+                                </div>
+                                <div class="film-btn-group-right">
+                                    <button class="film-ctrl-btn film-mute-btn" type="button" aria-label="Mute video">
+                                        <svg class="icon-vol-high" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                        <svg class="icon-vol-muted" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-fullscreen-btn" type="button" aria-label="Toggle Fullscreen">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-close-btn" type="button" aria-label="Close video player">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-            <!-- 4. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-006.jpg" alt="Pre-Wedding Portraits - Gemray Studio" loading="eager" decoding="async">
-            </article>
+                    <!-- FILM 2 -->
+                    <article class="film-card" data-video-id="tW82JeeTcbQ" data-title="Pooja &amp; Vivek">
+                        <div class="film-player-container">
+                            <div class="film-poster-wrapper">
+                                <img src="https://img.youtube.com/vi/tW82JeeTcbQ/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/tW82JeeTcbQ/hqdefault.jpg';" alt="Pooja &amp; Vivek" class="film-poster" loading="eager" decoding="async">
+                                <div class="film-poster-overlay"></div>
+                                <div class="film-badge">Wedding Story</div>
+                                <button class="film-play-trigger" type="button" aria-label="Play Pooja &amp; Vivek">
+                                    <span class="play-pulse"></span>
+                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="film-iframe-slot" id="yt-slot-tW82JeeTcbQ"></div>
+                        </div>
+                        <div class="film-info">
+                            <div class="film-meta">
+                                <span class="film-tag">Wedding Story</span>
+                                <span class="film-quality-badge">Full HD 1080p</span>
+                            </div>
+                            <h3 class="film-title">Pooja &amp; Vivek</h3>
+                        </div>
+                        <div class="film-custom-controls" style="display:none;" aria-label="Playback controls">
+                            <div class="film-progress-row">
+                                <input type="range" class="film-seek-bar" min="0" max="100" value="0" step="0.1" aria-label="Video seek position">
+                            </div>
+                            <div class="film-buttons-row">
+                                <div class="film-btn-group-left">
+                                    <button class="film-ctrl-btn film-play-btn" type="button" aria-label="Pause video">
+                                        <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                        <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-rewind-btn" type="button" aria-label="Rewind 10 seconds">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+                                        <span class="seek-label">10s</span>
+                                    </button>
+                                    <button class="film-ctrl-btn film-forward-btn" type="button" aria-label="Forward 10 seconds">
+                                        <span class="seek-label">10s</span>
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+                                    </button>
+                                    <span class="film-time-text">0:00 / 0:00</span>
+                                </div>
+                                <div class="film-btn-group-right">
+                                    <button class="film-ctrl-btn film-mute-btn" type="button" aria-label="Mute video">
+                                        <svg class="icon-vol-high" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                        <svg class="icon-vol-muted" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-fullscreen-btn" type="button" aria-label="Toggle Fullscreen">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-close-btn" type="button" aria-label="Close video player">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-            <!-- 5. PRE-WEDDING CINEMATIC MOMENTS VIDEO -->
-            <article class="portfolio-item portfolio-video-item g-item" data-cat="prewedding">
-                <video src="photos/pre wedding/prewedding1/Bhushan Siddhi Pre wedding moments.mp4" poster="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-006.jpg" muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
-            </article>
+                    <!-- FILM 3 -->
+                    <article class="film-card" data-video-id="YMGI_TckZRE" data-title="Siddhi &amp; Bhushan">
+                        <div class="film-player-container">
+                            <div class="film-poster-wrapper">
+                                <img src="https://img.youtube.com/vi/YMGI_TckZRE/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/YMGI_TckZRE/hqdefault.jpg';" alt="Siddhi &amp; Bhushan" class="film-poster" loading="lazy" decoding="async">
+                                <div class="film-poster-overlay"></div>
+                                <div class="film-badge">Cinematic Film</div>
+                                <button class="film-play-trigger" type="button" aria-label="Play Siddhi &amp; Bhushan">
+                                    <span class="play-pulse"></span>
+                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="film-iframe-slot" id="yt-slot-YMGI_TckZRE"></div>
+                        </div>
+                        <div class="film-info">
+                            <div class="film-meta">
+                                <span class="film-tag">Cinematic Film</span>
+                                <span class="film-quality-badge">Full HD 1080p</span>
+                            </div>
+                            <h3 class="film-title">Siddhi &amp; Bhushan</h3>
+                        </div>
+                        <div class="film-custom-controls" style="display:none;" aria-label="Playback controls">
+                            <div class="film-progress-row">
+                                <input type="range" class="film-seek-bar" min="0" max="100" value="0" step="0.1" aria-label="Video seek position">
+                            </div>
+                            <div class="film-buttons-row">
+                                <div class="film-btn-group-left">
+                                    <button class="film-ctrl-btn film-play-btn" type="button" aria-label="Pause video">
+                                        <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                        <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-rewind-btn" type="button" aria-label="Rewind 10 seconds">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+                                        <span class="seek-label">10s</span>
+                                    </button>
+                                    <button class="film-ctrl-btn film-forward-btn" type="button" aria-label="Forward 10 seconds">
+                                        <span class="seek-label">10s</span>
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+                                    </button>
+                                    <span class="film-time-text">0:00 / 0:00</span>
+                                </div>
+                                <div class="film-btn-group-right">
+                                    <button class="film-ctrl-btn film-mute-btn" type="button" aria-label="Mute video">
+                                        <svg class="icon-vol-high" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                        <svg class="icon-vol-muted" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-fullscreen-btn" type="button" aria-label="Toggle Fullscreen">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-close-btn" type="button" aria-label="Close video player">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-            <!-- 6. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-11.jpg.jpeg" alt="Engagement Celebration - Romantic Glow" loading="eager" decoding="async">
-            </article>
+                    <!-- FILM 4 -->
+                    <article class="film-card" data-video-id="itVlkgsShzA" data-title="Pre-Wedding Film — Siddhi &amp; Bhushan">
+                        <div class="film-player-container">
+                            <div class="film-poster-wrapper">
+                                <img src="https://img.youtube.com/vi/itVlkgsShzA/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/itVlkgsShzA/hqdefault.jpg';" alt="Pre-Wedding Film — Siddhi &amp; Bhushan" class="film-poster" loading="lazy" decoding="async">
+                                <div class="film-poster-overlay"></div>
+                                <div class="film-badge">Pre-Wedding Film</div>
+                                <button class="film-play-trigger" type="button" aria-label="Play Pre-Wedding Film — Siddhi &amp; Bhushan">
+                                    <span class="play-pulse"></span>
+                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="film-iframe-slot" id="yt-slot-itVlkgsShzA"></div>
+                        </div>
+                        <div class="film-info">
+                            <div class="film-meta">
+                                <span class="film-tag">Pre-Wedding Story</span>
+                                <span class="film-quality-badge">Full HD 1080p</span>
+                            </div>
+                            <h3 class="film-title">Pre-Wedding Film — Siddhi &amp; Bhushan</h3>
+                        </div>
+                        <div class="film-custom-controls" style="display:none;" aria-label="Playback controls">
+                            <div class="film-progress-row">
+                                <input type="range" class="film-seek-bar" min="0" max="100" value="0" step="0.1" aria-label="Video seek position">
+                            </div>
+                            <div class="film-buttons-row">
+                                <div class="film-btn-group-left">
+                                    <button class="film-ctrl-btn film-play-btn" type="button" aria-label="Pause video">
+                                        <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                                        <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-rewind-btn" type="button" aria-label="Rewind 10 seconds">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+                                        <span class="seek-label">10s</span>
+                                    </button>
+                                    <button class="film-ctrl-btn film-forward-btn" type="button" aria-label="Forward 10 seconds">
+                                        <span class="seek-label">10s</span>
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+                                    </button>
+                                    <span class="film-time-text">0:00 / 0:00</span>
+                                </div>
+                                <div class="film-btn-group-right">
+                                    <button class="film-ctrl-btn film-mute-btn" type="button" aria-label="Mute video">
+                                        <svg class="icon-vol-high" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                        <svg class="icon-vol-muted" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-fullscreen-btn" type="button" aria-label="Toggle Fullscreen">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                    </button>
+                                    <button class="film-ctrl-btn film-close-btn" type="button" aria-label="Close video player">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-            <!-- 7. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-09.jpg" alt="Pre-Wedding Moments - Candid Smiles" loading="lazy" decoding="async">
-            </article>
+                </div>
+            </section>
 
-            <!-- 8. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-016.jpg" alt="Pre-Wedding Romance - Golden Hour" loading="lazy" decoding="async">
+            <!-- SECTION B: FRAMES (PINTEREST MASONRY PHOTO GALLERY) -->
+            <section id="framesSection" class="portfolio-view frames-view" style="display: none;" aria-label="Photography Frames Portfolio">
+                <div class="frames-masonry-grid" id="framesMasonryGrid">
+            <article class="frame-card" data-index="0" tabindex="0" role="button" aria-label="View photograph 1: 07SL0260">
+                <img src="media/New Website Content/Photo gallary/07SL0260.jpg" alt="07SL0260 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
             </article>
+            <article class="frame-card" data-index="1" tabindex="0" role="button" aria-label="View photograph 2: 07SL0363">
+                <img src="media/New Website Content/Photo gallary/07SL0363.jpg" alt="07SL0363 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="2" tabindex="0" role="button" aria-label="View photograph 3: 07SL0433">
+                <img src="media/New Website Content/Photo gallary/07SL0433.jpg" alt="07SL0433 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="3" tabindex="0" role="button" aria-label="View photograph 4: 07SL0451">
+                <img src="media/New Website Content/Photo gallary/07SL0451.jpg" alt="07SL0451 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="4" tabindex="0" role="button" aria-label="View photograph 5: 07SL0960">
+                <img src="media/New Website Content/Photo gallary/07SL0960.jpg" alt="07SL0960 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="5" tabindex="0" role="button" aria-label="View photograph 6: Bhushan Pre wedding photo 006">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-006.JPG" alt="Bhushan Pre wedding photo 006 - Gemray Studio Photography" loading="eager" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="6" tabindex="0" role="button" aria-label="View photograph 7: Bhushan Pre wedding photo 016">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-016.JPG" alt="Bhushan Pre wedding photo 016 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="7" tabindex="0" role="button" aria-label="View photograph 8: Bhushan Pre wedding photo 019">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-019.JPG" alt="Bhushan Pre wedding photo 019 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="8" tabindex="0" role="button" aria-label="View photograph 9: Bhushan Pre wedding photo 024">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-024.JPG" alt="Bhushan Pre wedding photo 024 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="9" tabindex="0" role="button" aria-label="View photograph 10: Bhushan Pre wedding photo 055">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-055.JPG" alt="Bhushan Pre wedding photo 055 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="10" tabindex="0" role="button" aria-label="View photograph 11: Bhushan Pre wedding photo 078">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-078.JPG" alt="Bhushan Pre wedding photo 078 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="11" tabindex="0" role="button" aria-label="View photograph 12: Bhushan Pre wedding photo 09">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-09.JPG" alt="Bhushan Pre wedding photo 09 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="12" tabindex="0" role="button" aria-label="View photograph 13: Bhushan Pre wedding photo 10">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-10.JPG" alt="Bhushan Pre wedding photo 10 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="13" tabindex="0" role="button" aria-label="View photograph 14: Bhushan Pre wedding photo 107">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-107.JPG" alt="Bhushan Pre wedding photo 107 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="14" tabindex="0" role="button" aria-label="View photograph 15: Bhushan Pre wedding photo 12.jpg">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-12.jpg.jpeg" alt="Bhushan Pre wedding photo 12.jpg - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="15" tabindex="0" role="button" aria-label="View photograph 16: Bhushan Pre wedding photo 15">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-15.JPG" alt="Bhushan Pre wedding photo 15 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="16" tabindex="0" role="button" aria-label="View photograph 17: Bhushan Pre wedding photo 23.jpg">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-23.jpg.jpeg" alt="Bhushan Pre wedding photo 23.jpg - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="17" tabindex="0" role="button" aria-label="View photograph 18: Bhushan Pre wedding photo 27.jpg">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-27.jpg.jpeg" alt="Bhushan Pre wedding photo 27.jpg - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="18" tabindex="0" role="button" aria-label="View photograph 19: Bhushan Pre wedding photo 38">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-38.JPG" alt="Bhushan Pre wedding photo 38 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="19" tabindex="0" role="button" aria-label="View photograph 20: Bhushan Pre wedding photo 39">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-39.JPG" alt="Bhushan Pre wedding photo 39 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="20" tabindex="0" role="button" aria-label="View photograph 21: Bhushan Pre wedding photo 42">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-42.JPG" alt="Bhushan Pre wedding photo 42 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="21" tabindex="0" role="button" aria-label="View photograph 22: Bhushan Pre wedding photo 51">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-51.JPG" alt="Bhushan Pre wedding photo 51 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="22" tabindex="0" role="button" aria-label="View photograph 23: Bhushan Pre wedding photo 54">
+                <img src="media/New Website Content/Photo gallary/Bhushan Pre-wedding photo-54.JPG" alt="Bhushan Pre wedding photo 54 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="23" tabindex="0" role="button" aria-label="View photograph 24: RK102880">
+                <img src="media/New Website Content/Photo gallary/RK102880.JPG" alt="RK102880 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="24" tabindex="0" role="button" aria-label="View photograph 25: RK102893">
+                <img src="media/New Website Content/Photo gallary/RK102893.JPG" alt="RK102893 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="25" tabindex="0" role="button" aria-label="View photograph 26: RK102914">
+                <img src="media/New Website Content/Photo gallary/RK102914.JPG" alt="RK102914 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="26" tabindex="0" role="button" aria-label="View photograph 27: RK102917">
+                <img src="media/New Website Content/Photo gallary/RK102917.JPG" alt="RK102917 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="27" tabindex="0" role="button" aria-label="View photograph 28: RK102925">
+                <img src="media/New Website Content/Photo gallary/RK102925.JPG" alt="RK102925 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="28" tabindex="0" role="button" aria-label="View photograph 29: RK102927">
+                <img src="media/New Website Content/Photo gallary/RK102927.JPG" alt="RK102927 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="29" tabindex="0" role="button" aria-label="View photograph 30: RK102935">
+                <img src="media/New Website Content/Photo gallary/RK102935.JPG" alt="RK102935 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="30" tabindex="0" role="button" aria-label="View photograph 31: RK102956">
+                <img src="media/New Website Content/Photo gallary/RK102956.JPG" alt="RK102956 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="31" tabindex="0" role="button" aria-label="View photograph 32: RK102962">
+                <img src="media/New Website Content/Photo gallary/RK102962.JPG" alt="RK102962 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="32" tabindex="0" role="button" aria-label="View photograph 33: RK102969">
+                <img src="media/New Website Content/Photo gallary/RK102969.JPG" alt="RK102969 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="33" tabindex="0" role="button" aria-label="View photograph 34: RK103106">
+                <img src="media/New Website Content/Photo gallary/RK103106.JPG" alt="RK103106 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="34" tabindex="0" role="button" aria-label="View photograph 35: RK103116">
+                <img src="media/New Website Content/Photo gallary/RK103116.JPG" alt="RK103116 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="35" tabindex="0" role="button" aria-label="View photograph 36: RK103121">
+                <img src="media/New Website Content/Photo gallary/RK103121.JPG" alt="RK103121 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="36" tabindex="0" role="button" aria-label="View photograph 37: RK103147">
+                <img src="media/New Website Content/Photo gallary/RK103147.JPG" alt="RK103147 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="37" tabindex="0" role="button" aria-label="View photograph 38: RK103185">
+                <img src="media/New Website Content/Photo gallary/RK103185.JPG" alt="RK103185 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="38" tabindex="0" role="button" aria-label="View photograph 39: RK103187">
+                <img src="media/New Website Content/Photo gallary/RK103187.JPG" alt="RK103187 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="39" tabindex="0" role="button" aria-label="View photograph 40: RK103220">
+                <img src="media/New Website Content/Photo gallary/RK103220.JPG" alt="RK103220 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="40" tabindex="0" role="button" aria-label="View photograph 41: RK103226">
+                <img src="media/New Website Content/Photo gallary/RK103226.JPG" alt="RK103226 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="41" tabindex="0" role="button" aria-label="View photograph 42: EM 8329">
+                <img src="media/New Website Content/Photo gallary/_EM_8329.JPG" alt="EM 8329 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="42" tabindex="0" role="button" aria-label="View photograph 43: EM 8341">
+                <img src="media/New Website Content/Photo gallary/_EM_8341.JPG" alt="EM 8341 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="43" tabindex="0" role="button" aria-label="View photograph 44: EM 8356">
+                <img src="media/New Website Content/Photo gallary/_EM_8356.JPG" alt="EM 8356 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="44" tabindex="0" role="button" aria-label="View photograph 45: EM 8429">
+                <img src="media/New Website Content/Photo gallary/_EM_8429.JPG" alt="EM 8429 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="45" tabindex="0" role="button" aria-label="View photograph 46: EM 8488">
+                <img src="media/New Website Content/Photo gallary/_EM_8488.JPG" alt="EM 8488 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="46" tabindex="0" role="button" aria-label="View photograph 47: EM 8508">
+                <img src="media/New Website Content/Photo gallary/_EM_8508.JPG" alt="EM 8508 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="47" tabindex="0" role="button" aria-label="View photograph 48: EM 8569">
+                <img src="media/New Website Content/Photo gallary/_EM_8569.JPG" alt="EM 8569 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="48" tabindex="0" role="button" aria-label="View photograph 49: EM 8577">
+                <img src="media/New Website Content/Photo gallary/_EM_8577.JPG" alt="EM 8577 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="49" tabindex="0" role="button" aria-label="View photograph 50: EM 8592">
+                <img src="media/New Website Content/Photo gallary/_EM_8592.JPG" alt="EM 8592 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+            <article class="frame-card" data-index="50" tabindex="0" role="button" aria-label="View photograph 51: EM 8692">
+                <img src="media/New Website Content/Photo gallary/_EM_8692.JPG" alt="EM 8692 - Gemray Studio Photography" loading="lazy" decoding="async" class="frame-img">
+                <div class="frame-sheen"></div>
+                <div class="frame-view-badge"><span>VIEW</span></div>
+            </article>
+                </div>
+            </section>
 
-            <!-- 9. ENGAGEMENT CINEMATIC VIDEO -->
-            <article class="portfolio-item portfolio-video-item g-item" data-cat="engagement">
-                <video src="photos/engagement/Engagement Bhushan Siddhi C.mp4" poster="photos/engagement/Bhushan Pre-wedding photo-09.jpg.jpeg" muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
-            </article>
-
-            <!-- 10. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-10.jpg" alt="Pre-Wedding Chemistry - Emotional Connection" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 11. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-12.jpg.jpeg" alt="Engagement Sparkle - Joy & Happiness" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 12. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-019.jpg" alt="Pre-Wedding - Cinematic Embrace" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 13. PRE-WEDDING ETHNIC VIDEO -->
-            <article class="portfolio-item portfolio-video-item g-item" data-cat="prewedding">
-                <video src="photos/pre wedding/prewedding2/Bhushan Siddhi Ethnic Moments.mp4" poster="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-019.jpg" muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
-            </article>
-
-            <!-- 14. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-19.jpg.jpeg" alt="Engagement Portrait - Regal Grace" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 15. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-13.jpg" alt="Pre-Wedding Magic - Sunset Glow" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 16. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-024.jpg" alt="Pre-Wedding - Timeless Love" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 17. WEDDING CINEMATIC LOVE STORY VIDEO -->
-            <article class="portfolio-item portfolio-video-item g-item" data-cat="wedding">
-                <video src="photos/wedding/Sagar Pallavi Love Story.mp4" poster="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-13.jpg" muted loop playsinline webkit-playsinline preload="metadata" class="portfolio-grid-video"></video>
-            </article>
-
-            <!-- 18. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-20.jpg.jpeg" alt="Engagement - Candid Happiness" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 19. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-15.jpg" alt="Pre-Wedding - Classic Portrait" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 20. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-035.jpg" alt="Pre-Wedding - Pure Harmony" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 21. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-23.jpg.jpeg" alt="Engagement - Eternal Bond" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 22. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-29.jpg" alt="Pre-Wedding - Serene Walk" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 23. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-036.jpg" alt="Pre-Wedding - Soft Light Romance" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 24. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-26.jpg.jpeg" alt="Engagement - Laughter and Joy" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 25. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-31.jpg" alt="Pre-Wedding - Intimate Connection" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 26. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-054.jpg" alt="Pre-Wedding - Majestic Frame" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 27. ENGAGEMENT -->
-            <article class="portfolio-item g-item" data-cat="engagement">
-                <img src="photos/engagement/Bhushan Pre-wedding photo-27.jpg.jpeg" alt="Engagement - Sacred Promise" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 28. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-38.jpg" alt="Pre-Wedding - Blissful Journey" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 29. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-055.jpg" alt="Pre-Wedding - Enchanting Smile" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 30. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-39.jpg" alt="Pre-Wedding - Cinematic Horizon" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 31. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-076.jpg" alt="Pre-Wedding - Dreamy Aesthetic" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 32. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-42.jpg" alt="Pre-Wedding - Golden Radiance" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 33. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-078.jpg" alt="Pre-Wedding - Authentic Moments" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 34. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-51.jpg" alt="Pre-Wedding - Soulful Gazes" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 35. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-085.jpg" alt="Pre-Wedding - Pure Emotion" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 36. PRE-WEDDING 1 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding1/Bhushan Pre-wedding photo-54.jpg" alt="Pre-Wedding - Endless Love" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 37. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-100.jpg" alt="Pre-Wedding - Grandeur & Grace" loading="lazy" decoding="async">
-            </article>
-
-            <!-- 38. PRE-WEDDING 2 -->
-            <article class="portfolio-item g-item" data-cat="prewedding">
-                <img src="photos/pre wedding/prewedding2/Bhushan Pre-wedding photo-107.jpg" alt="Pre-Wedding - Together Forever" loading="lazy" decoding="async">
-            </article>
         </main>
-
-        <!-- EXPLORE MORE GALLERY ACTION -->
-        <div class="gallery-explore-container" id="galleryExploreContainer">
-            <button class="gallery-explore-btn" id="galleryExploreBtn" type="button" aria-label="Explore more photographs">
-                <span class="explore-btn-sparkle" aria-hidden="true">✦</span>
-                <span class="explore-btn-text">Explore More Moments</span>
-                <span class="explore-btn-count" id="exploreRemainingCount">+18</span>
-                <span class="explore-btn-arrow" aria-hidden="true">↓</span>
-            </button>
-        </div>
 
         <!-- FOOTER -->
         <footer class="site-footer">
@@ -1301,7 +1415,7 @@
     <!-- Lightbox Component (Desktop) -->
     <div id="lightbox" class="lightbox" aria-hidden="true">
         <button id="lbClose" class="lightbox-close" type="button" aria-label="Close image">×</button>
-        <div id="lbCounter" class="lightbox-counter">1 / 20</div>
+        <div id="lbCounter" class="lightbox-counter">1 / 51</div>
         <button id="lbPrev" class="lightbox-prev" type="button" aria-label="Previous image">←</button>
         <div class="lightbox-image-wrapper">
             <img id="lbImg" src="" alt="Full view wedding photograph">
