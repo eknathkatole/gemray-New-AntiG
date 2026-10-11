@@ -1276,7 +1276,7 @@ if (portfolioNavToggle && portfolioNavLinks) {
 const YOUTUBE_FILMS = [
     {
         id: "27GvMIU-ggw",
-        title: "Link 1 — The Feelings | Wedding Film",
+        title: "The Feelings | Wedding Film",
         tag: "Wedding Cinema",
         url: "https://youtu.be/27GvMIU-ggw?si=ThxrqpHOfekSzUr6"
     },
