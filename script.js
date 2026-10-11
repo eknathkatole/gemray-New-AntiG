@@ -38,6 +38,32 @@ function safePlayVideo(video) {
     }
 }
 
+function markVideoReady(video) {
+    if (!video) return;
+    video.classList.add("video-ready");
+}
+
+function watchVideoFrames(video) {
+    if (!video) return;
+    const dismissPoster = () => {
+        video.classList.add("video-ready");
+        if (video.currentTime > 0.05 || !video.paused) {
+            video.removeAttribute("poster");
+        }
+    };
+    ["playing", "timeupdate", "loadeddata", "canplay"].forEach((eventName) => {
+        video.addEventListener(eventName, dismissPoster);
+    });
+}
+
+// Auto-bind to all video elements across the entire page
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("video").forEach(watchVideoFrames);
+});
+if (document.readyState !== "loading") {
+    document.querySelectorAll("video").forEach(watchVideoFrames);
+}
+
 let currentIsMobile = null;
 
 function updateHeroVideoSource() {
@@ -46,6 +72,9 @@ function updateHeroVideoSource() {
     const targetSrc = isMobile
         ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4"
         : "media/New Website Content/Hero videos/Horizontal Hero video 02.mp4";
+    const targetPoster = isMobile
+        ? "photos/hero-mobile-thumb.jpg"
+        : "photos/hero-desktop-thumb.jpg";
 
     // Always set on first call (currentIsMobile is null) or when device type changes
     if (isMobile === currentIsMobile) return;
@@ -53,6 +82,7 @@ function updateHeroVideoSource() {
 
     const wasMuted = bgVideo.muted;
     bgVideo.src = targetSrc;
+    bgVideo.poster = targetPoster;
     bgVideo.muted = wasMuted;
     bgVideo.load();
 
@@ -67,6 +97,7 @@ function updateHeroVideoSource() {
 
 // Initial video setup
 if (bgVideo) {
+    watchVideoFrames(bgVideo);
     updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
@@ -577,6 +608,8 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     let currentIndex = 0;
     let isStorySoundMuted = true;
     let isTransitioning = false;
+
+    cards.forEach((card) => watchVideoFrames(card.querySelector(".story-video")));
 
     // Synchronize card classes and ensure ONLY 1 active video decodes/plays at a time for optimal 60/120fps
     function updateStoryDeck(shouldPlay = (currentActiveSectionId === "stories")) {
@@ -1789,7 +1822,7 @@ if (reelsCloseBtn) {
    17. GALLERY ITEM CLICK EVENTS (MOBILE REELS VS DESKTOP LIGHTBOX)
    ========================================================= */
 
-galleryItems.forEach(function (item) {
+document.querySelectorAll(".frame-card, .g-item").forEach(function (item) {
     item.addEventListener("click", function (e) {
         if (e.target.closest("a")) return;
 
