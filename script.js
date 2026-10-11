@@ -38,21 +38,26 @@ function safePlayVideo(video) {
     }
 }
 
-let currentIsMobile = window.innerWidth <= 768;
+let currentIsMobile = null;
 
 function updateHeroVideoSource() {
     if (!bgVideo) return;
     const isMobile = window.innerWidth <= 768;
-    if (isMobile === currentIsMobile && bgVideo.currentSrc) return;
+    const expectedFile = isMobile ? "Virtical Hero video 02.mp4" : "Horizontal Hero video 02.mp4";
+    const targetSrc = isMobile 
+        ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4" 
+        : "media/New Website Content/Hero videos/Horizontal Hero video 02.mp4";
+
+    const currentPath = decodeURIComponent(bgVideo.currentSrc || bgVideo.getAttribute("src") || bgVideo.src || "");
+
+    if (isMobile === currentIsMobile && currentPath.includes(expectedFile)) return;
     currentIsMobile = isMobile;
 
-    const targetSrc = isMobile ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4" : "media/New Website Content/Hero videos/Horizontal Hero video 02.mp4";
-    const currentSrc = bgVideo.currentSrc || bgVideo.getAttribute("src") || "";
-
-    if (!currentSrc.includes(encodeURI(targetSrc)) && !currentSrc.includes(targetSrc) && !currentSrc.endsWith(targetSrc)) {
+    if (!currentPath.includes(expectedFile)) {
         const wasMuted = bgVideo.muted;
         bgVideo.src = targetSrc;
         bgVideo.muted = wasMuted;
+        bgVideo.load();
         if (currentActiveSectionId === "hero") {
             safePlayVideo(bgVideo);
         }
@@ -61,6 +66,7 @@ function updateHeroVideoSource() {
 
 // Initial video setup
 if (bgVideo) {
+    updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
     safePlayVideo(bgVideo);
