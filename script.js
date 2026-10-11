@@ -997,7 +997,7 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     // Map section IDs to corresponding navbar selector
     const navLinkSelectors = {
         "hero": 'a[href="index.html"], a[href="#hero"]',
-        "stories": 'a[href="#stories"]',
+        "stories": 'a[href="#stories"], a[href="#testimonial"]',
         "photographer": 'a[href="#photographer"]',
         "portfolio-preview": 'a[href="portfolio.html"], a[href="#portfolio-preview"]',
         "contact": 'a[href="#contact"]'
