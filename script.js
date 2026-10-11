@@ -43,25 +43,26 @@ let currentIsMobile = null;
 function updateHeroVideoSource() {
     if (!bgVideo) return;
     const isMobile = window.innerWidth <= 768;
-    const expectedFile = isMobile ? "Virtical Hero video 02.mp4" : "Horizontal Hero video 02.mp4";
-    const targetSrc = isMobile 
-        ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4" 
+    const targetSrc = isMobile
+        ? "media/New Website Content/Hero videos/Virtical Hero video 02.mp4"
         : "media/New Website Content/Hero videos/Horizontal Hero video 02.mp4";
 
-    const currentPath = decodeURIComponent(bgVideo.currentSrc || bgVideo.getAttribute("src") || bgVideo.src || "");
-
-    if (isMobile === currentIsMobile && currentPath.includes(expectedFile)) return;
+    // Always set on first call (currentIsMobile is null) or when device type changes
+    if (isMobile === currentIsMobile) return;
     currentIsMobile = isMobile;
 
-    if (!currentPath.includes(expectedFile)) {
-        const wasMuted = bgVideo.muted;
-        bgVideo.src = targetSrc;
-        bgVideo.muted = wasMuted;
-        bgVideo.load();
+    const wasMuted = bgVideo.muted;
+    bgVideo.src = targetSrc;
+    bgVideo.muted = wasMuted;
+    bgVideo.load();
+
+    // Play after data is available so the video frame is actually visible
+    bgVideo.addEventListener("loadeddata", function onLoaded() {
+        bgVideo.removeEventListener("loadeddata", onLoaded);
         if (currentActiveSectionId === "hero") {
             safePlayVideo(bgVideo);
         }
-    }
+    }, { once: true });
 }
 
 // Initial video setup
@@ -69,7 +70,6 @@ if (bgVideo) {
     updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
-    safePlayVideo(bgVideo);
     updateHeroSoundIcon();
 
     bgVideo.addEventListener("pause", () => {
