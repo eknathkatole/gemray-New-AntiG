@@ -723,10 +723,18 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         card.addEventListener("click", function (e) {
             if (e.target.closest(".story-sound-btn") || e.target.closest(".stories-nav-btn")) return;
 
-            if (idx !== currentIndex) {
-                goToStory(idx);
+            if (cards.length > 1) {
+                if (idx !== currentIndex) {
+                    goToStory(idx);
+                } else {
+                    nextStory();
+                }
             } else {
-                nextStory();
+                const v = card.querySelector(".story-video");
+                if (v) {
+                    if (v.paused) safePlayVideo(v);
+                    else v.pause();
+                }
             }
         });
     });
@@ -1232,9 +1240,9 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
     if ("IntersectionObserver" in window) {
         const sections = [
             { id: "hero", el: heroElem },
-            { id: "stories", el: storiesElem },
             { id: "photographer", el: photographerElem },
             { id: "portfolio-preview", el: portfolioElem },
+            { id: "stories", el: storiesElem },
             { id: "contact", el: contactElem }
         ].filter(item => item.el !== null);
 
