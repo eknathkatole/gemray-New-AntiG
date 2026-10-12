@@ -333,7 +333,7 @@ section {
         1;
 
     pointer-events:
-        none;
+        auto;
 
     user-select:
         none;
