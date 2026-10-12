@@ -1478,7 +1478,7 @@ section {
         0;
 
     padding:
-        clamp(28px, 5vh, 60px) clamp(25px, 8vw, 130px);
+        clamp(28px, 5vh, 60px) clamp(25px, 8vw, 130px) 0;
 
     background:
         linear-gradient(
@@ -6094,26 +6094,58 @@ section {
 
 
     /* =====================================================
-       STORIES — MOBILE ADJUSTMENTS (70svh, text below centre)
+       STORIES — MOBILE ADJUSTMENTS (full video, text below)
        ===================================================== */
 
     .stories-section {
 
         height:
-            70svh;
+            auto;
 
         min-height:
-            420px;
+            0;
+
+    }
+
+    .stories-bg-video {
+
+        position:
+            relative;
+
+        width:
+            100%;
+
+        height:
+            auto;
+
+        display:
+            block;
+
+        object-fit:
+            contain;
+
+    }
+
+    .stories-bg-overlay {
+
+        display:
+            none;
 
     }
 
     .stories-content-layer {
 
+        position:
+            relative;
+
+        bottom:
+            auto;
+
         left:
             0;
 
         padding:
-            0 20px 32px;
+            24px 20px;
 
         max-width:
             100%;

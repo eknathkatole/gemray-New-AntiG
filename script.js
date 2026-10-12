@@ -1178,25 +1178,25 @@ if (portfolioNavToggle && portfolioNavLinks) {
 const YOUTUBE_FILMS = [
     {
         id: "27GvMIU-ggw",
-        title: "The Feelings | Wedding Film",
+        title: "Pallavi & Sagar",
         tag: "Wedding Cinema",
         url: "https://youtu.be/27GvMIU-ggw?si=ThxrqpHOfekSzUr6"
     },
     {
         id: "tW82JeeTcbQ",
-        title: "Pooja & Vivek",
+        title: "Sidhhi & Bhushan",
         tag: "Wedding Story",
         url: "https://youtu.be/tW82JeeTcbQ?si=Zv1U0zRvf38EK5Mc"
     },
     {
         id: "YMGI_TckZRE",
-        title: "Siddhi & Bhushan",
+        title: "Pallavi & Sagar",
         tag: "Cinematic Film",
         url: "https://youtu.be/YMGI_TckZRE?si=reKSyJ-kFNU01GhD"
     },
     {
         id: "itVlkgsShzA",
-        title: "Pre-Wedding Film — Siddhi & Bhushan",
+        title: "Pallavi & Sagar",
         tag: "Pre-Wedding Film",
         url: "https://youtu.be/itVlkgsShzA?si=C3ac54GEghyEXsXt"
     }
