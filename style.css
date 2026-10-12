@@ -1394,7 +1394,7 @@ section {
         hidden;
 
     background:
-        #000;
+        var(--green-dark);
 
 }
 
@@ -1483,8 +1483,8 @@ section {
     background:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.82) 0%,
-            rgba(0, 0, 0, 0.50) 55%,
+            rgba(6, 42, 35, 0.96) 0%,
+            rgba(6, 42, 35, 0.72) 55%,
             transparent 100%
         );
 

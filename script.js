@@ -602,6 +602,32 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         return Promise.resolve();
     }
 
+    function playVideoWithSoundFromGesture(video) {
+        if (!video) return;
+
+        hasUserInteracted = true;
+        hasUserInteractedForSound = true;
+        isUserManuallyMuted = false;
+        isGlobalMuted = false;
+        primeWebAudio();
+
+        video.muted = false;
+        video.volume = 1;
+
+        const promise = video.play();
+        if (promise !== undefined) {
+            promise.then(() => {
+                updateAllSoundButtonsUI(false);
+            }).catch(() => {
+                video.muted = true;
+                isGlobalMuted = true;
+                updateAllSoundButtonsUI(true);
+            });
+        } else {
+            updateAllSoundButtonsUI(false);
+        }
+    }
+
     // 5. Synchronize all sound buttons across the website
     function updateAllSoundButtonsUI(mutedState) {
         // Hero button
@@ -822,6 +848,18 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
             btn.addEventListener("click", onSoundButtonClick);
             btn.addEventListener("touchstart", (e) => e.stopPropagation(), { passive: true });
         }
+    });
+
+    // A direct tap on a video is a valid media gesture in in-app browsers.
+    // This is especially important after returning from WhatsApp or Instagram.
+    getAllVideos().forEach(video => {
+        const handleDirectVideoGesture = (event) => {
+            if (event.target === video && video === getActiveVideoForSection(currentActiveId)) {
+                playVideoWithSoundFromGesture(video);
+            }
+        };
+        video.addEventListener("pointerup", handleDirectVideoGesture);
+        video.addEventListener("touchend", handleDirectVideoGesture, { passive: true });
     });
 
     // 10. First User Gesture Audio Activation
