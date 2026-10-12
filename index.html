@@ -809,79 +809,56 @@
         >
             <div id="testimonial" class="nav-target-anchor" aria-hidden="true"></div>
 
+            <!-- FULL-BACKGROUND VIDEO -->
+            <video
+                id="testimonialBgVideo"
+                class="stories-bg-video"
+                src="media/New Website Content/Testimonial/Bhushan patil T.mp4"
+                poster="photos/testimonial-bhushan-patil-thumb.jpg"
+                muted
+                playsinline
+                webkit-playsinline
+                loop
+                preload="metadata"
+            ></video>
 
-            <!-- SECTION INTRO -->
+            <!-- DARK GRADIENT OVERLAY -->
+            <div class="stories-bg-overlay" aria-hidden="true"></div>
 
-            <div
-                class="section-heading stories-heading"
-            >
+            <!-- TEXT CONTENT LAYER -->
+            <div class="stories-content-layer">
 
-                <span
-                    class="section-eyebrow"
-                >
-                    Real Words, Real Feelings
-                </span>
+                <span class="stories-eyebrow">Real Words, Real Feelings</span>
 
-            </div>
+                <h2 class="stories-title">What Our Couples Say</h2>
 
+                <p class="stories-quote">
+                    "Every photo, every frame — a memory we will carry forever."
+                </p>
 
-            <!-- 3D LAYERED VIDEO STACK CAROUSEL -->
-            <div
-                class="stories-stack-container"
-                id="storiesStackContainer"
-            >
-
-                <div
-                    class="stories-deck"
-                    id="storiesDeck"
-                >
-
-                    <!-- STORY CARD: BHUSHAN PATIL -->
-                    <article
-                        class="story-deck-card is-active"
-                        data-index="0"
-                    >
-                        <div class="story-video-wrapper">
-                            <video
-                                class="story-video"
-                                src="media/New Website Content/Testimonial/Bhushan patil T.mp4"
-                                poster="photos/testimonial-bhushan-patil-thumb.jpg"
-                                muted
-                                playsinline
-                                webkit-playsinline
-                                loop
-                                preload="metadata"
-                            ></video>
-                            <div class="story-video-vignette"></div>
-                        </div>
-
-                        <div class="story-video-content">
-                            <span>Wedding Story</span>
-                            <h3>Bhushan Patil</h3>
-                        </div>
-                    </article>
-
-                </div>
-
-
-                <!-- GLOBAL SOUND CONTROL FOR ACTIVE STORY VIDEO -->
-                <button
-                    class="story-sound-btn"
-                    id="storySoundBtn"
-                    aria-label="Toggle story video sound"
-                >
-                    <svg class="sound-icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-                        <line x1="23" y1="9" x2="17" y2="15"/>
-                        <line x1="17" y1="9" x2="23" y2="15"/>
-                    </svg>
-                    <svg class="sound-icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
-                        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                    </svg>
-                </button>
+                <p class="stories-couple-name">— Bhushan Patil &amp; Family</p>
 
             </div>
+
+            <!-- SOUND TOGGLE BUTTON -->
+            <button
+                class="story-sound-btn"
+                id="storySoundBtn"
+                aria-label="Toggle testimonial video sound"
+            >
+                <svg class="sound-icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <line x1="23" y1="9" x2="17" y2="15"/>
+                    <line x1="17" y1="9" x2="23" y2="15"/>
+                </svg>
+                <svg class="sound-icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+            </button>
+
+            <!-- Hidden deck for JS compatibility (no cards shown) -->
+            <div id="storiesDeck" style="display:none;"></div>
 
         </section>
 

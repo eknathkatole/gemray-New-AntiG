@@ -1373,42 +1373,211 @@ section {
 
 
 /* =========================================================
-   14. CUSTOMER STORIES
+   14. CUSTOMER STORIES — FULL-BACKGROUND VIDEO SECTION
    ========================================================= */
 
 .stories-section {
 
-    min-height:
-        100vh;
-
-    min-height:
-        100svh;
-
-    padding:
-        clamp(50px, 6vh, 90px) 24px clamp(60px, 8vh, 110px);
-
-    background:
-        var(--green);
-
     position:
         relative;
+
+    width:
+        100%;
+
+    height:
+        100svh;
+
+    min-height:
+        600px;
 
     overflow:
         hidden;
 
+    background:
+        #000;
+
     display:
         flex;
-
-    flex-direction:
-        column;
-
-    justify-content:
-        center;
 
     align-items:
         center;
 
+    justify-content:
+        flex-start;
+
 }
+
+
+/* ---- FULLSCREEN COVER VIDEO ---- */
+
+.stories-bg-video {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    object-position:
+        center;
+
+    z-index:
+        1;
+
+    background:
+        #000;
+
+}
+
+
+/* ---- DARK OVERLAY (matches photographer overlay) ---- */
+
+.stories-bg-overlay {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        2;
+
+    pointer-events:
+        none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.70) 0%,
+            rgba(0, 0, 0, 0.38) 45%,
+            rgba(0, 0, 0, 0.10) 70%,
+            rgba(0, 0, 0, 0.32) 100%
+        );
+
+}
+
+
+/* ---- TEXT CONTENT LAYER ---- */
+
+.stories-content-layer {
+
+    position:
+        relative;
+
+    z-index:
+        4;
+
+    left:
+        clamp(25px, 8vw, 130px);
+
+    max-width:
+        min(90%, 580px);
+
+}
+
+
+.stories-eyebrow {
+
+    display:
+        block;
+
+    font-family:
+        "Cinzel Decorative", serif;
+
+    font-size:
+        clamp(0.62rem, 1.1vw, 0.9rem);
+
+    letter-spacing:
+        0.28em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        var(--gold);
+
+    margin-bottom:
+        14px;
+
+    opacity:
+        0.9;
+
+}
+
+
+.stories-title {
+
+    font-size:
+        clamp(2rem, 5vw, 4.2rem);
+
+    font-weight:
+        300;
+
+    color:
+        #ffffff;
+
+    line-height:
+        1.12;
+
+    margin:
+        0 0 20px;
+
+    letter-spacing:
+        0.01em;
+
+}
+
+
+.stories-quote {
+
+    font-size:
+        clamp(1rem, 1.6vw, 1.3rem);
+
+    font-style:
+        italic;
+
+    color:
+        rgba(255, 255, 255, 0.85);
+
+    line-height:
+        1.6;
+
+    margin:
+        0 0 16px;
+
+}
+
+
+.stories-couple-name {
+
+    font-size:
+        clamp(0.85rem, 1.2vw, 1.05rem);
+
+    color:
+        var(--gold);
+
+    letter-spacing:
+        0.12em;
+
+    margin:
+        0;
+
+}
+
+
+/* ---- SOUND BUTTON (already styled globally via .story-sound-btn) ---- */
+
+
 
 
 .stories-heading {
@@ -5917,167 +6086,74 @@ section {
 
 
     /* =====================================================
-       STORIES (3D STACKED HORIZONTAL FOR MOBILE)
+       STORIES — MOBILE ADJUSTMENTS (70svh, text below centre)
        ===================================================== */
 
     .stories-section {
 
-        min-height:
-            100vh;
+        height:
+            70svh;
 
         min-height:
-            100svh;
-
-        padding:
-            40px 14px 60px;
-
-        display:
-            flex;
-
-        flex-direction:
-            column;
-
-        justify-content:
-            center;
+            420px;
 
         align-items:
-            center;
+            flex-end;
+
+        justify-content:
+            flex-start;
 
     }
 
-    .stories-stack-container {
+    .stories-content-layer {
 
-        width:
+        left:
+            0;
+
+        padding:
+            0 20px 32px;
+
+        max-width:
             100%;
 
-        padding:
-            10px 0 35px;
-
-        perspective:
-            900px;
-
-        touch-action:
-            pan-x pan-y;
-
     }
 
-    .stories-deck {
-
-        width:
-            min(88vw, 360px);
-
-        aspect-ratio:
-            16 / 9.5;
-
-        min-height:
-            210px;
-
-        margin:
-            110px auto 120px;
-
-    }
-
-    .story-deck-card {
-
-        border-radius:
-            12px;
-
-    }
-
-    /* PREVIOUS CARD (PROMINENTLY REVEALED ABOVE MAIN VIDEO) */
-    .story-deck-card.is-prev {
-
-        transform:
-            translate3d(0, -135px, -70px) scale(0.85);
-
-        opacity:
-            0.82;
-
-        z-index:
-            4;
-
-        cursor:
-            pointer;
-
-    }
-
-    .story-deck-card.is-prev .story-video-wrapper {
-
-        filter:
-            blur(2px) brightness(0.7);
-
-    }
-
-    /* ACTIVE FRONT CARD (HERO CENTER) */
-    .story-deck-card.is-active {
-
-        transform:
-            translate3d(0, 0, 0) scale(1);
-
-        z-index:
-            10;
-
-        opacity:
-            1;
-
-    }
-
-    .story-deck-card.is-active .story-video-wrapper {
-
-        filter:
-            none;
-
-    }
-
-    /* NEXT CARD (PROMINENTLY REVEALED BELOW MAIN VIDEO) */
-    .story-deck-card.is-next {
-
-        transform:
-            translate3d(0, 135px, -70px) scale(0.85);
-
-        opacity:
-            0.82;
-
-        z-index:
-            4;
-
-        cursor:
-            pointer;
-
-    }
-
-    .story-deck-card.is-next .story-video-wrapper {
-
-        filter:
-            blur(2px) brightness(0.7);
-
-    }
-
-    .story-deck-card .story-video-content {
-
-        padding:
-            10px 14px 12px;
-
-    }
-
-    .story-deck-card .story-video-content span {
+    .stories-eyebrow {
 
         font-size:
-            0.68rem;
+            0.6rem;
 
         margin-bottom:
-            2px;
+            8px;
 
     }
 
-    .story-deck-card .story-video-content h3 {
+    .stories-title {
 
         font-size:
-            1.05rem;
+            clamp(1.5rem, 6vw, 2.2rem);
+
+        margin-bottom:
+            10px;
 
     }
 
+    .stories-quote {
 
+        font-size:
+            0.92rem;
+
+        margin-bottom:
+            8px;
+
+    }
+
+    .stories-couple-name {
+
+        font-size:
+            0.8rem;
+
+    }
 
     .story-sound-btn {
 
@@ -6103,27 +6179,6 @@ section {
         height:
             15px;
 
-    }
-
-    .stories-nav-btn {
-        width: 44px;
-        height: 44px;
-        background: rgba(6, 42, 35, 0.92);
-        border: 1.5px solid rgba(212, 175, 90, 0.75);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 16px rgba(212, 175, 90, 0.35);
-    }
-
-    .stories-nav-btn.stories-nav-top {
-        margin: 0 auto 14px;
-    }
-
-    .stories-nav-btn.stories-nav-bottom {
-        margin: 14px auto 0;
-    }
-
-    .stories-nav-btn svg {
-        width: 20px;
-        height: 20px;
     }
 
 

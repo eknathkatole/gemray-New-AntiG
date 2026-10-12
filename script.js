@@ -589,237 +589,74 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
-   12A. 3D LAYERED REAL STORIES CAROUSEL & SWIPER
+   12A. TESTIMONIAL FULL-BACKGROUND VIDEO CONTROLLER
    ========================================================= */
 
-(function initStories3DCarousel() {
-    const container = document.getElementById("storiesStackContainer");
-    const deck = document.getElementById("storiesDeck");
-    const prevBtn = document.getElementById("storiesPrevBtn");
-    const nextBtn = document.getElementById("storiesNextBtn");
+(function initTestimonialBgVideo() {
+    const bgVideo  = document.getElementById("testimonialBgVideo");
     const soundBtn = document.getElementById("storySoundBtn");
-    const dots = document.querySelectorAll(".story-dot");
 
-    if (!deck) return;
+    if (!bgVideo) return;
 
-    const cards = Array.from(deck.querySelectorAll(".story-deck-card"));
-    if (cards.length === 0) return;
+    watchVideoFrames(bgVideo);
 
-    let currentIndex = 0;
     let isStorySoundMuted = true;
-    let isTransitioning = false;
 
-    cards.forEach((card) => watchVideoFrames(card.querySelector(".story-video")));
-
-    // Synchronize card classes and ensure ONLY 1 active video decodes/plays at a time for optimal 60/120fps
-    function updateStoryDeck(shouldPlay = (currentActiveSectionId === "stories")) {
-        const total = cards.length;
-
-        cards.forEach((card, i) => {
-            const video = card.querySelector(".story-video");
-            card.classList.remove("is-active", "is-next", "is-prev", "is-hidden");
-
-            // Calculate relative offset from currentIndex in cyclic buffer
-            let offset = (i - currentIndex) % total;
-            if (offset < 0) offset += total;
-
-            if (offset === 0) {
-                // Front active card - THE ONLY PLAYING VIDEO
-                card.classList.add("is-active");
-                if (video) {
-                    video.muted = isStorySoundMuted;
-                    video.volume = 1;
-                    if (shouldPlay) {
-                        safePlayVideo(video);
-                    } else {
-                        video.pause();
-                    }
-                }
-            } else if (offset === 1) {
-                // Next card (middle layer stacked right behind) - PAUSED to eliminate GPU decode lag
-                card.classList.add("is-next");
-                if (video) {
-                    video.muted = true;
-                    video.pause();
-                }
-            } else if (offset === total - 1) {
-                // Prev card (back layer stacked left behind) - PAUSED
-                card.classList.add("is-prev");
-                if (video) {
-                    video.muted = true;
-                    video.pause();
-                }
-            } else {
-                // Additional cards hidden
-                card.classList.add("is-hidden");
-                if (video) {
-                    video.pause();
-                }
-            }
-        });
-
-        // Update dot pagination
-        dots.forEach((dot, idx) => {
-            if (idx === currentIndex) {
-                dot.classList.add("active");
-            } else {
-                dot.classList.remove("active");
-            }
-        });
-
-        updateStorySoundIcon();
-    }
-
-    function goToStory(index, direction = "next") {
-        if (isTransitioning) return;
-        isTransitioning = true;
-
-        const total = cards.length;
-        currentIndex = (index + total) % total;
-        updateStoryDeck(true);
-
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 550);
-    }
-
-    function nextStory() {
-        goToStory(currentIndex + 1, "next");
-    }
-
-    function prevStory() {
-        goToStory(currentIndex - 1, "prev");
-    }
-
-    // Navigation button event listeners (Up/Down arrows)
-    if (nextBtn) {
-        nextBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            nextStory();
-        });
-        nextBtn.addEventListener("touchend", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            nextStory();
-        }, { passive: false });
-    }
-
-    if (prevBtn) {
-        prevBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            prevStory();
-        });
-        prevBtn.addEventListener("touchend", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            prevStory();
-        }, { passive: false });
-    }
-
-    // Direct card tap interaction
-    cards.forEach((card, idx) => {
-        card.addEventListener("click", function (e) {
-            if (e.target.closest(".story-sound-btn") || e.target.closest(".stories-nav-btn")) return;
-
-            if (cards.length > 1) {
-                if (idx !== currentIndex) {
-                    goToStory(idx);
-                } else {
-                    nextStory();
-                }
-            } else {
-                const v = card.querySelector(".story-video");
-                if (v) {
-                    if (v.paused) safePlayVideo(v);
-                    else v.pause();
-                }
-            }
-        });
-    });
-
-    // Pagination dots click
-    dots.forEach((dot) => {
-        dot.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const targetIdx = parseInt(this.getAttribute("data-index"), 10);
-            if (!isNaN(targetIdx) && targetIdx !== currentIndex) {
-                goToStory(targetIdx);
-            }
-        });
-    });
-
-    // Sound toggle function
+    // ---- Sound icon helper ----
     function updateStorySoundIcon() {
         if (!soundBtn) return;
-        const mutedIcon = soundBtn.querySelector(".sound-icon-muted");
+        const mutedIcon   = soundBtn.querySelector(".sound-icon-muted");
         const unmutedIcon = soundBtn.querySelector(".sound-icon-unmuted");
-
         if (isStorySoundMuted) {
-            if (mutedIcon) mutedIcon.style.display = "block";
+            if (mutedIcon)   mutedIcon.style.display   = "block";
             if (unmutedIcon) unmutedIcon.style.display = "none";
-            soundBtn.setAttribute("aria-label", "Unmute stories audio");
+            soundBtn.setAttribute("aria-label", "Unmute testimonial audio");
         } else {
-            if (mutedIcon) mutedIcon.style.display = "none";
+            if (mutedIcon)   mutedIcon.style.display   = "none";
             if (unmutedIcon) unmutedIcon.style.display = "block";
-            soundBtn.setAttribute("aria-label", "Mute stories audio");
+            soundBtn.setAttribute("aria-label", "Mute testimonial audio");
         }
     }
 
+    // ---- Sound button toggle ----
     if (soundBtn) {
         soundBtn.addEventListener("click", function (e) {
             e.stopPropagation();
             e.preventDefault();
-
             isStorySoundMuted = !isStorySoundMuted;
-            const activeCard = cards[currentIndex];
-            if (activeCard) {
-                const activeVideo = activeCard.querySelector(".story-video");
-                if (activeVideo) {
-                    activeVideo.muted = isStorySoundMuted;
-                    activeVideo.volume = 1;
-                    if (!isStorySoundMuted) {
-                        const p = activeVideo.play();
-                        if (p !== undefined) {
-                            p.catch(() => {
-                                activeVideo.muted = true;
-                                isStorySoundMuted = true;
-                                updateStorySoundIcon();
-                            });
-                        }
-                    }
+            bgVideo.muted  = isStorySoundMuted;
+            bgVideo.volume = 1;
+            if (!isStorySoundMuted) {
+                const p = bgVideo.play();
+                if (p !== undefined) {
+                    p.catch(() => {
+                        bgVideo.muted     = true;
+                        isStorySoundMuted = true;
+                        updateStorySoundIcon();
+                    });
                 }
             }
             updateStorySoundIcon();
         });
     }
 
-    // Expose story audio helpers to global audio orchestrator
-    window.setStorySoundState = function(unmute) {
+    // ---- Expose to global audio orchestrator ----
+    window.setStorySoundState = function (unmute) {
         isStorySoundMuted = !unmute;
+        bgVideo.muted  = isStorySoundMuted;
+        bgVideo.volume = 1;
+        if (!isStorySoundMuted) safePlayVideo(bgVideo);
         updateStorySoundIcon();
-        const activeCard = cards[currentIndex];
-        if (activeCard) {
-            const activeVideo = activeCard.querySelector(".story-video");
-            if (activeVideo) {
-                activeVideo.muted = isStorySoundMuted;
-                activeVideo.volume = 1;
-                if (!isStorySoundMuted) {
-                    safePlayVideo(activeVideo);
-                }
-            }
-        }
     };
 
-    window.getActiveStoryVideo = function() {
-        const activeCard = cards[currentIndex];
-        return activeCard ? activeCard.querySelector(".story-video") : null;
+    window.getActiveStoryVideo = function () {
+        return bgVideo;
     };
 
-    // Initialize initial state
-    updateStoryDeck();
+    updateStorySoundIcon();
 })();
+
+
 
 
 /* =========================================================
