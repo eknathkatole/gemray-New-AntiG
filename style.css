@@ -1396,15 +1396,6 @@ section {
     background:
         #000;
 
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        flex-start;
-
 }
 
 
@@ -1472,10 +1463,13 @@ section {
 .stories-content-layer {
 
     position:
-        relative;
+        absolute;
 
     z-index:
         4;
+
+    bottom:
+        clamp(30px, 6vh, 70px);
 
     left:
         clamp(25px, 8vw, 130px);
@@ -6096,12 +6090,6 @@ section {
 
         min-height:
             420px;
-
-        align-items:
-            flex-end;
-
-        justify-content:
-            flex-start;
 
     }
 
