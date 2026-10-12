@@ -95,115 +95,17 @@ function updateHeroVideoSource() {
     }, { once: true });
 }
 
-// Initial video setup
+/// Initial hero video resolution setup
 if (bgVideo) {
     watchVideoFrames(bgVideo);
     updateHeroVideoSource();
     bgVideo.muted = true;
     bgVideo.volume = 1;
-    updateHeroSoundIcon();
-
-    bgVideo.addEventListener("pause", () => {
-        if (!document.hidden && bgVideo && currentActiveSectionId === "hero") {
-            safePlayVideo(bgVideo);
-        }
-    });
 
     let resizeTimer = null;
     window.addEventListener("resize", () => {
         if (resizeTimer) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(updateHeroVideoSource, 200);
-    }, { passive: true });
-}
-
-// Resume playback when returning to the tab/app
-document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) {
-        if (typeof window.syncActiveSectionSound === "function") {
-            window.syncActiveSectionSound();
-        }
-    }
-});
-
-// Try unmuting hero video safely
-function tryUnmuteHero() {
-    if (!bgVideo) return;
-    bgVideo.muted = false;
-    bgVideo.volume = 1;
-
-    const playPromise = bgVideo.play();
-    if (playPromise !== undefined) {
-        playPromise.then(() => {
-            updateHeroSoundIcon();
-        }).catch(() => {
-            bgVideo.muted = true;
-            bgVideo.play().catch(() => {});
-            updateHeroSoundIcon();
-        });
-    } else {
-        updateHeroSoundIcon();
-    }
-}
-
-// Global helper to prime all videos and Web Audio across Safari iOS / Android / Chrome
-function primeAllMediaElements() {
-    // 1. Resume Web Audio Context
-    try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) {
-            if (!globalAudioCtx) {
-                globalAudioCtx = new AudioCtx();
-            }
-            if (globalAudioCtx.state === "suspended") {
-                globalAudioCtx.resume();
-            }
-        }
-    } catch (e) {}
-
-    // 2. Prime media volumes
-    const allVideos = document.querySelectorAll("video");
-    allVideos.forEach(v => {
-        v.volume = 1;
-    });
-}
-
-// Universal interaction listener: un-mutes active section on ANY initial tap, scroll, swipe, touch
-function onAnyUserInteraction() {
-    if (!hasUserInteractedForSound) {
-        hasUserInteractedForSound = true;
-        primeAllMediaElements();
-
-        if (typeof window.syncActiveSectionSound === "function") {
-            window.syncActiveSectionSound();
-        } else {
-            tryUnmuteHero();
-        }
-    }
-}
-
-// Attach to all user gesture and navigation events for instant sound activation
-["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel"].forEach(evt => {
-    window.addEventListener(evt, onAnyUserInteraction, { passive: true });
-});
-
-// Sound button toggle functionality
-if (soundBtn && bgVideo) {
-    soundBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-        hasUserInteractedForSound = true;
-
-        if (bgVideo.muted) {
-            tryUnmuteHero();
-        } else {
-            bgVideo.muted = true;
-            safePlayVideo(bgVideo);
-            updateHeroSoundIcon();
-        }
-    });
-
-    soundBtn.addEventListener("touchstart", function (e) {
-        e.stopPropagation();
     }, { passive: true });
 }
 
@@ -421,240 +323,12 @@ const photographerMobileSoundBtn =
     );
 
 
-/* =========================================================
-   08. PHOTOGRAPHER SOUND ICON UPDATE
-   ========================================================= */
+const testimonialBgVideo = document.getElementById("testimonialBgVideo");
+const storySoundBtn = document.getElementById("storySoundBtn");
 
-function updatePhotographerSoundIcon(
-    video,
-    button
-) {
-
-    if (!video || !button) return;
-
-
-    const mutedIcon =
-        button.querySelector(
-            ".photographer-muted-icon"
-        );
-
-
-    const unmutedIcon =
-        button.querySelector(
-            ".photographer-unmuted-icon"
-        );
-
-
-    if (video.muted) {
-
-        if (mutedIcon) {
-
-            mutedIcon.style.display =
-                "block";
-
-        }
-
-        if (unmutedIcon) {
-
-            unmutedIcon.style.display =
-                "none";
-
-        }
-
-        button.setAttribute(
-            "aria-label",
-            "Unmute photographer video"
-        );
-
-    } else {
-
-        if (mutedIcon) {
-
-            mutedIcon.style.display =
-                "none";
-
-        }
-
-        if (unmutedIcon) {
-
-            unmutedIcon.style.display =
-                "block";
-
-        }
-
-        button.setAttribute(
-            "aria-label",
-            "Mute photographer video"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   09. DESKTOP PHOTOGRAPHER VIDEO
-   ========================================================= */
-
-if (photographerDesktopVideo) {
-    photographerDesktopVideo.muted = true;
-    photographerDesktopVideo.volume = 1;
-
-    updatePhotographerSoundIcon(
-        photographerDesktopVideo,
-        photographerSoundBtn
-    );
-}
-
-
-/* =========================================================
-   10. DESKTOP PHOTOGRAPHER SOUND
-   ========================================================= */
-
-if (photographerDesktopVideo && photographerSoundBtn) {
-    photographerSoundBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (photographerDesktopVideo.muted) {
-            photographerDesktopVideo.muted = false;
-            photographerDesktopVideo.volume = 1;
-            const p = photographerDesktopVideo.play();
-            if (p !== undefined) {
-                p.then(() => {
-                    updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
-                }).catch(() => {
-                    photographerDesktopVideo.muted = true;
-                    photographerDesktopVideo.play().catch(() => {});
-                    updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
-                });
-            }
-        } else {
-            photographerDesktopVideo.muted = true;
-            safePlayVideo(photographerDesktopVideo);
-            updatePhotographerSoundIcon(photographerDesktopVideo, photographerSoundBtn);
-        }
-    });
-}
-
-
-/* =========================================================
-   11. MOBILE PHOTOGRAPHER VIDEO
-   ========================================================= */
-
-if (photographerMobileVideo) {
-    photographerMobileVideo.muted = true;
-    photographerMobileVideo.volume = 1;
-
-    updatePhotographerSoundIcon(
-        photographerMobileVideo,
-        photographerMobileSoundBtn
-    );
-}
-
-
-/* =========================================================
-   12. MOBILE PHOTOGRAPHER SOUND
-   ========================================================= */
-
-if (photographerMobileVideo && photographerMobileSoundBtn) {
-    photographerMobileSoundBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        if (photographerMobileVideo.muted) {
-            photographerMobileVideo.muted = false;
-            photographerMobileVideo.volume = 1;
-            const p = photographerMobileVideo.play();
-            if (p !== undefined) {
-                p.then(() => {
-                    updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
-                }).catch(() => {
-                    photographerMobileVideo.muted = true;
-                    photographerMobileVideo.play().catch(() => {});
-                    updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
-                });
-            }
-        } else {
-            photographerMobileVideo.muted = true;
-            safePlayVideo(photographerMobileVideo);
-            updatePhotographerSoundIcon(photographerMobileVideo, photographerMobileSoundBtn);
-        }
-    });
-
-    photographerMobileSoundBtn.addEventListener("touchstart", function (e) {
-        e.stopPropagation();
-    }, { passive: true });
-}
-
-
-/* =========================================================
-   12A. TESTIMONIAL FULL-BACKGROUND VIDEO CONTROLLER
-   ========================================================= */
-
-(function initTestimonialBgVideo() {
-    const bgVideo  = document.getElementById("testimonialBgVideo");
-    const soundBtn = document.getElementById("storySoundBtn");
-
-    if (!bgVideo) return;
-
-    watchVideoFrames(bgVideo);
-
-    let isStorySoundMuted = true;
-
-    // ---- Sound icon helper ----
-    function updateStorySoundIcon() {
-        if (!soundBtn) return;
-        const mutedIcon   = soundBtn.querySelector(".sound-icon-muted");
-        const unmutedIcon = soundBtn.querySelector(".sound-icon-unmuted");
-        if (isStorySoundMuted) {
-            if (mutedIcon)   mutedIcon.style.display   = "block";
-            if (unmutedIcon) unmutedIcon.style.display = "none";
-            soundBtn.setAttribute("aria-label", "Unmute testimonial audio");
-        } else {
-            if (mutedIcon)   mutedIcon.style.display   = "none";
-            if (unmutedIcon) unmutedIcon.style.display = "block";
-            soundBtn.setAttribute("aria-label", "Mute testimonial audio");
-        }
-    }
-
-    // ---- Sound button toggle ----
-    if (soundBtn) {
-        soundBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            isStorySoundMuted = !isStorySoundMuted;
-            bgVideo.muted  = isStorySoundMuted;
-            bgVideo.volume = 1;
-            if (!isStorySoundMuted) {
-                const p = bgVideo.play();
-                if (p !== undefined) {
-                    p.catch(() => {
-                        bgVideo.muted     = true;
-                        isStorySoundMuted = true;
-                        updateStorySoundIcon();
-                    });
-                }
-            }
-            updateStorySoundIcon();
-        });
-    }
-
-    // ---- Expose to global audio orchestrator ----
-    window.setStorySoundState = function (unmute) {
-        isStorySoundMuted = !unmute;
-        bgVideo.muted  = isStorySoundMuted;
-        bgVideo.volume = 1;
-        if (!isStorySoundMuted) safePlayVideo(bgVideo);
-        updateStorySoundIcon();
-    };
-
-    window.getActiveStoryVideo = function () {
-        return bgVideo;
-    };
-
-    updateStorySoundIcon();
-})();
+if (photographerDesktopVideo) watchVideoFrames(photographerDesktopVideo);
+if (photographerMobileVideo) watchVideoFrames(photographerMobileVideo);
+if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 
 
 
@@ -798,121 +472,206 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
 
 
 /* =========================================================
-   12C. SEAMLESS SCROLL SECTION AUDIO & NAV HIGHLIGHT ORCHESTRATOR
-   - ONLY ONE VIDEO ACTIVELY PLAYS AT ANY TIME (Zero lag/jitter)
-   - Intelligent predictive preloading (600px rootMargin)
-   - Zero getBoundingClientRect layout thrashing during scroll
-   - Off-screen videos pause without buffer drop; resume immediately
+   12C. CINEMATIC SMART AUDIO & VIDEO PLAYBACK ENGINE
+   - ONLY ONE VIDEO ACTIVELY PLAYS AT ANY TIME (Zero lag / jitter / sound conflict)
+   - Initial instant hero entry (<500ms target); off-screen videos preload="none"
+   - First user gesture (tap, click, scroll, wheel, touch, keydown) starts audio cleanly
+   - Strict replay rule: entering/re-entering any video section restarts it from 00:00
+   - Multi-threshold IntersectionObserver with hysteresis prevents micro-scroll jitter
+   - Sequence token cancellation aborts stale playback on rapid scrolling
+   - Unified sound icon synchronization across all sound buttons
+   - Tab visibility (document.hidden) and pagehide/unload safe pause
    ========================================================= */
 
-(function initSeamlessSectionAudioAndNav() {
-    const heroElem = document.getElementById("hero");
-    const storiesElem = document.getElementById("stories");
-    const portfolioElem = document.getElementById("portfolio-preview");
-    const photographerElem = document.getElementById("photographer");
-    const contactElem = document.getElementById("contact");
+(function initCinematicSmartPlaybackEngine() {
+    // 1. Define all managed sections and their respective video/sound controls
+    const sectionConfigs = [
+        {
+            id: "hero",
+            el: document.getElementById("hero"),
+            getVideo: () => document.getElementById("bgVideo"),
+            getSoundBtn: () => document.getElementById("soundBtn")
+        },
+        {
+            id: "photographer",
+            el: document.getElementById("photographer"),
+            getVideo: () => {
+                const isMobile = window.innerWidth <= 768;
+                return isMobile 
+                    ? document.getElementById("photographerVideoMobile") 
+                    : document.getElementById("photographerVideoDesktop");
+            },
+            getSoundBtn: () => {
+                const isMobile = window.innerWidth <= 768;
+                return isMobile 
+                    ? document.getElementById("photographerMobileSoundBtn") 
+                    : document.getElementById("photographerSoundBtn");
+            }
+        },
+        {
+            id: "portfolio-preview",
+            el: document.getElementById("portfolio-preview"),
+            getVideo: () => document.getElementById("portfolioShowcaseVideo"),
+            getSoundBtn: () => document.getElementById("portfolioSoundBtn")
+        },
+        {
+            id: "stories",
+            el: document.getElementById("stories"),
+            getVideo: () => document.getElementById("testimonialBgVideo"),
+            getSoundBtn: () => document.getElementById("storySoundBtn")
+        },
+        {
+            id: "collection",
+            el: document.getElementById("collection"),
+            getVideo: () => null,
+            getSoundBtn: () => null
+        },
+        {
+            id: "contact",
+            el: document.getElementById("contact"),
+            getVideo: () => null,
+            getSoundBtn: () => null
+        }
+    ].filter(item => item.el !== null);
 
-    const portfolioShowcaseVideo = document.getElementById("portfolioShowcaseVideo");
-    const portfolioSoundBtn = document.getElementById("portfolioSoundBtn");
+    // All unique managed video elements across the page
+    function getAllVideos() {
+        const list = [
+            document.getElementById("bgVideo"),
+            document.getElementById("photographerVideoDesktop"),
+            document.getElementById("photographerVideoMobile"),
+            document.getElementById("portfolioShowcaseVideo"),
+            document.getElementById("testimonialBgVideo")
+        ];
+        return list.filter(Boolean);
+    }
+
+    // If on a page with no managed videos (e.g. product.html, portfolio.html), exit gracefully
+    if (sectionConfigs.length === 0 || getAllVideos().length === 0) return;
+
     const navLinksContainer = document.getElementById("portfolioNavLinks");
 
-    // PREDICTIVE VIDEO PRELOADER: Wakes up and buffers videos 600px before user arrives
-    if ("IntersectionObserver" in window) {
-        const videoPreloadObserver = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const vid = entry.target;
-                    if (vid && vid.dataset.preloaded !== "true") {
-                        vid.dataset.preloaded = "true";
-                        vid.preload = "metadata";
-                        // Touch the media element if not yet loaded to let Safari pre-buffer metadata
-                        if (vid.networkState === HTMLMediaElement.NETWORK_EMPTY) {
-                            try { vid.load(); } catch (e) {}
-                        }
-                    }
-                    obs.unobserve(vid);
-                }
-            });
-        }, {
-            rootMargin: "600px 0px 600px 0px",
-            threshold: 0.01
-        });
+    // 2. Engine State
+    let currentActiveId = "hero";
+    let hasUserInteracted = false;
+    let isGlobalMuted = true;             // Starts muted per browser autoplay policy
+    let isUserManuallyMuted = false;      // True if user explicitly tapped mute
+    let activationSequence = 0;           // Cancels outdated playback requests during fast scrolls
+    let globalAudioCtx = null;
 
-        document.querySelectorAll("video").forEach(v => {
-            if (v !== bgVideo) {
-                videoPreloadObserver.observe(v);
+    // 3. Web Audio unlock helper
+    function primeWebAudio() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) {
+                if (!globalAudioCtx) {
+                    globalAudioCtx = new AudioCtx();
+                }
+                if (globalAudioCtx.state === "suspended") {
+                    globalAudioCtx.resume();
+                }
             }
+        } catch (e) {}
+
+        getAllVideos().forEach(v => {
+            try { v.volume = 1; } catch (e) {}
         });
     }
 
-    function updatePortfolioSoundIcon() {
-        if (!portfolioSoundBtn || !portfolioShowcaseVideo) return;
-        const mutedIcon = portfolioSoundBtn.querySelector(".portfolio-muted-icon");
-        const unmutedIcon = portfolioSoundBtn.querySelector(".portfolio-unmuted-icon");
-        if (portfolioShowcaseVideo.muted) {
-            if (mutedIcon) mutedIcon.style.display = "inline-flex";
-            if (unmutedIcon) unmutedIcon.style.display = "none";
-            portfolioSoundBtn.setAttribute("aria-label", "Unmute portfolio video");
-        } else {
-            if (mutedIcon) mutedIcon.style.display = "none";
-            if (unmutedIcon) unmutedIcon.style.display = "inline-flex";
-            portfolioSoundBtn.setAttribute("aria-label", "Mute portfolio video");
+    // 4. Safe video control primitives
+    function safePause(video) {
+        if (!video) return;
+        try {
+            video.muted = true;
+            video.pause();
+        } catch (e) {}
+    }
+
+    function safePlay(video) {
+        if (!video) return Promise.resolve();
+        const promise = video.play();
+        if (promise !== undefined) {
+            return promise.catch((err) => {
+                if (err && err.name === "NotAllowedError") {
+                    video.muted = true;
+                    return video.play().catch(() => {});
+                }
+                return Promise.resolve();
+            });
+        }
+        return Promise.resolve();
+    }
+
+    // 5. Synchronize all sound buttons across the website
+    function updateAllSoundButtonsUI(mutedState) {
+        // Hero button
+        const heroBtn = document.getElementById("soundBtn");
+        if (heroBtn) {
+            const m = document.getElementById("iconMuted");
+            const u = document.getElementById("iconUnmuted");
+            if (m) m.style.display = mutedState ? "inline-flex" : "none";
+            if (u) u.style.display = mutedState ? "none" : "inline-flex";
+            heroBtn.setAttribute("aria-label", mutedState ? "Unmute video" : "Mute video");
+        }
+
+        // Photographer Desktop button
+        const pDeskBtn = document.getElementById("photographerSoundBtn");
+        if (pDeskBtn) {
+            const m = pDeskBtn.querySelector(".photographer-muted-icon");
+            const u = pDeskBtn.querySelector(".photographer-unmuted-icon");
+            if (m) m.style.display = mutedState ? "block" : "none";
+            if (u) u.style.display = mutedState ? "none" : "block";
+            pDeskBtn.setAttribute("aria-label", mutedState ? "Unmute photographer video" : "Mute photographer video");
+        }
+
+        // Photographer Mobile button
+        const pMobBtn = document.getElementById("photographerMobileSoundBtn");
+        if (pMobBtn) {
+            const m = pMobBtn.querySelector(".photographer-muted-icon");
+            const u = pMobBtn.querySelector(".photographer-unmuted-icon");
+            if (m) m.style.display = mutedState ? "block" : "none";
+            if (u) u.style.display = mutedState ? "none" : "block";
+            pMobBtn.setAttribute("aria-label", mutedState ? "Unmute photographer video" : "Mute photographer video");
+        }
+
+        // Portfolio Preview button
+        const portBtn = document.getElementById("portfolioSoundBtn");
+        if (portBtn) {
+            const m = portBtn.querySelector(".portfolio-muted-icon");
+            const u = portBtn.querySelector(".portfolio-unmuted-icon");
+            if (m) m.style.display = mutedState ? "inline-flex" : "none";
+            if (u) u.style.display = mutedState ? "none" : "inline-flex";
+            portBtn.setAttribute("aria-label", mutedState ? "Unmute portfolio video" : "Mute portfolio video");
+        }
+
+        // Testimonial button
+        const storyBtn = document.getElementById("storySoundBtn");
+        if (storyBtn) {
+            const m = storyBtn.querySelector(".sound-icon-muted");
+            const u = storyBtn.querySelector(".sound-icon-unmuted");
+            if (m) m.style.display = mutedState ? "block" : "none";
+            if (u) u.style.display = mutedState ? "none" : "block";
+            storyBtn.setAttribute("aria-label", mutedState ? "Unmute testimonial audio" : "Mute testimonial audio");
         }
     }
 
-    if (portfolioSoundBtn && portfolioShowcaseVideo) {
-        portfolioSoundBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-            hasUserInteractedForSound = true;
-            if (portfolioShowcaseVideo.muted) {
-                portfolioShowcaseVideo.muted = false;
-                portfolioShowcaseVideo.volume = 1;
-                const p = portfolioShowcaseVideo.play();
-                if (p !== undefined) {
-                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
-                        portfolioShowcaseVideo.muted = true;
-                        safePlayVideo(portfolioShowcaseVideo);
-                        updatePortfolioSoundIcon();
-                    });
-                }
-            } else {
-                portfolioShowcaseVideo.muted = true;
-                safePlayVideo(portfolioShowcaseVideo);
-                updatePortfolioSoundIcon();
-            }
-        });
-    }
-
-    let currentActiveId = "hero";
-
-    // Helper: Pause all off-screen videos without clearing sources (preserves cache/buffer)
-    function pauseAllOtherVideos(exceptVideo) {
-        const allVideos = document.querySelectorAll("video:not(.reel-main-video):not(.reel-ambient-video)");
-        allVideos.forEach(v => {
-            if (v !== exceptVideo && !v.paused) {
-                v.pause();
-            }
-        });
-    }
-
-    // Map section IDs to corresponding navbar selector
+    // 6. Navigation Link Highlighting
     const navLinkSelectors = {
         "hero": 'a[href="index.html"], a[href="#hero"]',
-        "stories": 'a[href="#stories"], a[href="#testimonial"]',
         "photographer": 'a[href="#photographer"]',
         "portfolio-preview": 'a[href="portfolio.html"], a[href="#portfolio-preview"]',
+        "stories": 'a[href="#stories"], a[href="#testimonial"]',
+        "collection": 'a[href="product.html"], a[href="#collection"]',
         "contact": 'a[href="#contact"]'
     };
 
     let navRafId = null;
-
-    function updateActiveNavLink(activeSectionId) {
+    function updateActiveNavLink(sectionId) {
         if (!navLinksContainer) return;
         const allLinks = navLinksContainer.querySelectorAll("a:not(.portfolio-nav-wa-pill)");
         allLinks.forEach(link => link.classList.remove("active"));
 
-        const selector = navLinkSelectors[activeSectionId];
+        const selector = navLinkSelectors[sectionId];
         if (selector) {
             const targetLink = navLinksContainer.querySelector(selector);
             if (targetLink) {
@@ -936,193 +695,319 @@ if (photographerMobileVideo && photographerMobileSoundBtn) {
         }
     }
 
-    function orchestrateSectionAudioAndMedia(activeSectionId) {
-        currentActiveId = activeSectionId;
-        currentActiveSectionId = activeSectionId;
-
-        updateActiveNavLink(activeSectionId);
-        const isMobile = window.innerWidth <= 768;
-
-        // 1. HERO ACTIVE
-        if (activeSectionId === "hero") {
-            if (bgVideo) {
-                pauseAllOtherVideos(bgVideo);
-                bgVideo.muted = !hasUserInteractedForSound;
-                bgVideo.volume = 1;
-                if (bgVideo.paused) {
-                    safePlayVideo(bgVideo);
-                }
-                updateHeroSoundIcon();
-            }
-            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
-            return;
-        }
-
-        // 2. STORIES ACTIVE
-        if (activeSectionId === "stories") {
-            const storiesDeck = document.getElementById("storiesDeck");
-            let activeVid = null;
-            if (storiesDeck) {
-                const activeCard = storiesDeck.querySelector(".story-deck-card.is-active") || storiesDeck.querySelector(".story-deck-card");
-                if (activeCard) {
-                    activeVid = activeCard.querySelector(".story-video");
-                }
-            }
-
-            pauseAllOtherVideos(activeVid);
-
-            if (bgVideo) {
-                bgVideo.muted = true;
-                bgVideo.pause();
-                updateHeroSoundIcon();
-            }
-
-            if (typeof window.setStorySoundState === "function") {
-                window.setStorySoundState(hasUserInteractedForSound);
-            }
-
-            if (activeVid) {
-                activeVid.muted = !hasUserInteractedForSound;
-                activeVid.volume = 1;
-                const p = activeVid.play();
-                if (p !== undefined) {
-                    p.then(() => {
-                        const storySoundBtn = document.getElementById("storySoundBtn");
-                        if (storySoundBtn && hasUserInteractedForSound) {
-                            const m = storySoundBtn.querySelector(".sound-icon-muted");
-                            const u = storySoundBtn.querySelector(".sound-icon-unmuted");
-                            if (m) m.style.display = "none";
-                            if (u) u.style.display = "block";
-                        }
-                    }).catch(() => {
-                        activeVid.muted = true;
-                        safePlayVideo(activeVid);
-                    });
-                }
-            }
-            return;
-        }
-
-        // 3. PHOTOGRAPHER ACTIVE
-        if (activeSectionId === "photographer") {
-            const targetPhotographerVid = isMobile ? photographerMobileVideo : photographerDesktopVideo;
-            const targetSoundBtn = isMobile ? photographerMobileSoundBtn : photographerSoundBtn;
-
-            pauseAllOtherVideos(targetPhotographerVid);
-
-            if (bgVideo) {
-                bgVideo.muted = true;
-                bgVideo.pause();
-                updateHeroSoundIcon();
-            }
-            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
-
-            if (targetPhotographerVid) {
-                targetPhotographerVid.muted = !hasUserInteractedForSound;
-                targetPhotographerVid.volume = 1;
-                const p = targetPhotographerVid.play();
-                if (p !== undefined) {
-                    p.then(() => updatePhotographerSoundIcon(targetPhotographerVid, targetSoundBtn)).catch(() => {
-                        targetPhotographerVid.muted = true;
-                        safePlayVideo(targetPhotographerVid);
-                        updatePhotographerSoundIcon(targetPhotographerVid, targetSoundBtn);
-                    });
-                }
-            }
-            return;
-        }
-
-        // 4. PORTFOLIO PREVIEW ACTIVE
-        if (activeSectionId === "portfolio-preview") {
-            pauseAllOtherVideos(portfolioShowcaseVideo);
-
-            if (bgVideo) {
-                bgVideo.muted = true;
-                bgVideo.pause();
-                updateHeroSoundIcon();
-            }
-            if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
-
-            if (portfolioShowcaseVideo) {
-                portfolioShowcaseVideo.muted = !hasUserInteractedForSound;
-                portfolioShowcaseVideo.volume = 1;
-                const p = portfolioShowcaseVideo.play();
-                if (p !== undefined) {
-                    p.then(() => updatePortfolioSoundIcon()).catch(() => {
-                        portfolioShowcaseVideo.muted = true;
-                        safePlayVideo(portfolioShowcaseVideo);
-                        updatePortfolioSoundIcon();
-                    });
-                }
-            }
-            return;
-        }
-
-        // 5. CONTACT / OTHER SECTION (ALL VIDEOS PAUSED)
-        pauseAllOtherVideos(null);
-        if (bgVideo) {
-            bgVideo.muted = true;
-            bgVideo.pause();
-            updateHeroSoundIcon();
-        }
-        if (typeof window.setStorySoundState === "function") window.setStorySoundState(false);
+    // 7. Find active video for given section ID
+    function getActiveVideoForSection(sectionId) {
+        const cfg = sectionConfigs.find(c => c.id === sectionId);
+        return cfg ? cfg.getVideo() : null;
     }
 
-    // Expose sync helper for instant sound activation on user interaction
-    window.syncActiveSectionSound = function () {
-        if (!currentActiveId) currentActiveId = "hero";
-        orchestrateSectionAudioAndMedia(currentActiveId);
-    };
+    // 8. Core Section Activation Engine
+    function activateSection(targetSectionId, forceReplay = false) {
+        if (!targetSectionId) return;
 
-    if ("IntersectionObserver" in window) {
-        const sections = [
-            { id: "hero", el: heroElem },
-            { id: "photographer", el: photographerElem },
-            { id: "portfolio-preview", el: portfolioElem },
-            { id: "stories", el: storiesElem },
-            { id: "contact", el: contactElem }
-        ].filter(item => item.el !== null);
+        const isSame = (targetSectionId === currentActiveId);
+        if (isSame && !forceReplay) {
+            return; // Prevent restarting video on slight scrolling within same section
+        }
 
-        const sectionVisibilityMap = new Map();
+        currentActiveId = targetSectionId;
+        currentActiveSectionId = targetSectionId;
+        updateActiveNavLink(targetSectionId);
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                sectionVisibilityMap.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
-            });
+        const currentSeq = ++activationSequence;
+        const targetVideo = getActiveVideoForSection(targetSectionId);
 
-            let topCandidate = currentActiveId;
-            let maxRatio = 0;
-
-            sectionVisibilityMap.forEach((ratio, id) => {
-                if (ratio > maxRatio) {
-                    maxRatio = ratio;
-                    topCandidate = id;
-                }
-            });
-
-            if (topCandidate && maxRatio >= 0.20 && topCandidate !== currentActiveId) {
-                orchestrateSectionAudioAndMedia(topCandidate);
+        // A. Immediately pause & mute ALL other videos (strict rule: zero background play)
+        getAllVideos().forEach(v => {
+            if (v !== targetVideo) {
+                safePause(v);
             }
-        }, {
-            threshold: [0, 0.15, 0.35, 0.55, 0.75]
         });
 
-        window.triggerActiveSectionAudio = function () {
-            let topCandidate = "hero";
+        if (!targetVideo) {
+            // Section has no video (e.g. collection, contact)
+            updateAllSoundButtonsUI(true);
+            return;
+        }
+
+        // B. Replay Rule: Reset to 00:00 when entering/returning to this section
+        try {
+            targetVideo.currentTime = 0;
+        } catch (e) {}
+
+        // C. Audio determination:
+        // Audible ONLY if user has interacted, hasn't explicitly muted, and global mute is off
+        const shouldBeUnmuted = hasUserInteracted && !isUserManuallyMuted && !isGlobalMuted;
+        targetVideo.muted = !shouldBeUnmuted;
+        targetVideo.volume = 1;
+
+        // D. Start playback safely with sequence cancellation check
+        const playPromise = targetVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // If a rapid scroll moved past this section before play resolved, stop it immediately!
+                if (currentSeq !== activationSequence) {
+                    safePause(targetVideo);
+                    return;
+                }
+                updateAllSoundButtonsUI(targetVideo.muted);
+            }).catch(() => {
+                if (currentSeq !== activationSequence) return;
+                // Autoplay with sound denied -> fallback to muted
+                targetVideo.muted = true;
+                targetVideo.play().catch(() => {});
+                updateAllSoundButtonsUI(true);
+            });
+        } else {
+            updateAllSoundButtonsUI(targetVideo.muted);
+        }
+    }
+
+    // 9. Centralized Sound Toggle (attached to ALL sound buttons)
+    function onSoundButtonClick(e) {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        hasUserInteracted = true;
+        primeWebAudio();
+
+        const activeVideo = getActiveVideoForSection(currentActiveId);
+
+        if (isGlobalMuted) {
+            // Visitor wants UNMUTE
+            isUserManuallyMuted = false;
+            isGlobalMuted = false;
+
+            if (activeVideo) {
+                activeVideo.muted = false;
+                activeVideo.volume = 1;
+                const p = activeVideo.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        updateAllSoundButtonsUI(false);
+                    }).catch(() => {
+                        activeVideo.muted = true;
+                        isGlobalMuted = true;
+                        updateAllSoundButtonsUI(true);
+                    });
+                } else {
+                    updateAllSoundButtonsUI(false);
+                }
+            } else {
+                updateAllSoundButtonsUI(false);
+            }
+        } else {
+            // Visitor wants MUTE
+            isUserManuallyMuted = true;
+            isGlobalMuted = true;
+
+            if (activeVideo) {
+                activeVideo.muted = true;
+            }
+            updateAllSoundButtonsUI(true);
+        }
+    }
+
+    // Wire up all sound buttons across the entire website
+    [
+        document.getElementById("soundBtn"),
+        document.getElementById("photographerSoundBtn"),
+        document.getElementById("photographerMobileSoundBtn"),
+        document.getElementById("portfolioSoundBtn"),
+        document.getElementById("storySoundBtn")
+    ].forEach(btn => {
+        if (btn) {
+            btn.addEventListener("click", onSoundButtonClick);
+            btn.addEventListener("touchstart", (e) => e.stopPropagation(), { passive: true });
+        }
+    });
+
+    // 10. First User Gesture Audio Activation
+    function onFirstUserInteraction() {
+        if (hasUserInteracted) return;
+        hasUserInteracted = true;
+        hasUserInteractedForSound = true;
+        primeWebAudio();
+
+        // If user hasn't manually chosen to mute, unmute the currently visible section!
+        if (!isUserManuallyMuted) {
+            isGlobalMuted = false;
+            const activeVideo = getActiveVideoForSection(currentActiveId);
+            if (activeVideo) {
+                activeVideo.muted = false;
+                activeVideo.volume = 1;
+                const p = activeVideo.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        updateAllSoundButtonsUI(false);
+                    }).catch(() => {
+                        activeVideo.muted = true;
+                        isGlobalMuted = true;
+                        updateAllSoundButtonsUI(true);
+                    });
+                } else {
+                    updateAllSoundButtonsUI(false);
+                }
+            } else {
+                updateAllSoundButtonsUI(false);
+            }
+        }
+
+        // Clean up one-time interaction listeners
+        ["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel", "scroll"].forEach(evt => {
+            window.removeEventListener(evt, onFirstUserInteraction, { capture: true, passive: true });
+        });
+    }
+
+    ["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel", "scroll"].forEach(evt => {
+        window.addEventListener(evt, onFirstUserInteraction, { capture: true, passive: true });
+    });
+
+    // 11. Viewport-Based Section Intersection Observer
+    if ("IntersectionObserver" in window) {
+        const visibilityMap = new Map();
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                visibilityMap.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+            });
+
+            // Find section occupying largest portion of viewport
+            let topCandidateId = currentActiveId;
             let maxRatio = 0;
 
-            sectionVisibilityMap.forEach((ratio, id) => {
+            visibilityMap.forEach((ratio, id) => {
                 if (ratio > maxRatio) {
                     maxRatio = ratio;
-                    topCandidate = id;
+                    topCandidateId = id;
                 }
             });
 
-            orchestrateSectionAudioAndMedia(topCandidate);
-        };
+            const currentRatio = visibilityMap.get(currentActiveId) || 0;
 
-        sections.forEach(s => observer.observe(s.el));
+            // Hysteresis activation rule:
+            // Only switch if:
+            // 1) Current active section has largely left view (< 0.25) AND top candidate has >= 0.20
+            // 2) OR top candidate has dominant presence (>= 0.45) and meaningfully exceeds current (diff >= 0.12)
+            if (topCandidateId !== currentActiveId) {
+                const shouldSwitch = (currentRatio < 0.25 && maxRatio >= 0.20) ||
+                                     (maxRatio >= 0.45 && maxRatio > currentRatio + 0.12);
+                if (shouldSwitch) {
+                    activateSection(topCandidateId);
+                }
+            }
+        }, {
+            threshold: [0, 0.15, 0.30, 0.45, 0.60, 0.75, 0.90]
+        });
+
+        sectionConfigs.forEach(item => sectionObserver.observe(item.el));
+
+        // Predictive Preloader: buffers metadata for off-screen videos 500px before arrival
+        const predictivePreloader = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const vid = entry.target;
+                    if (vid && vid.dataset.buffered !== "true") {
+                        vid.dataset.buffered = "true";
+                        vid.preload = "metadata";
+                        if (vid.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+                            try { vid.load(); } catch (e) {}
+                        }
+                    }
+                    obs.unobserve(vid);
+                }
+            });
+        }, {
+            rootMargin: "500px 0px 500px 0px",
+            threshold: 0.01
+        });
+
+        getAllVideos().forEach(v => {
+            if (v !== document.getElementById("bgVideo")) {
+                predictivePreloader.observe(v);
+            }
+        });
     }
+
+    // 12. Viewport Resize & Breakpoint Switching (photographer desktop <-> mobile)
+    let lastIsMobile = (window.innerWidth <= 768);
+    window.addEventListener("resize", () => {
+        const isMobileNow = (window.innerWidth <= 768);
+        if (isMobileNow !== lastIsMobile) {
+            lastIsMobile = isMobileNow;
+            if (currentActiveId === "photographer") {
+                activateSection("photographer", true);
+            }
+        }
+    }, { passive: true });
+
+    // 13. Tab Visibility & App Lifecycle
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            getAllVideos().forEach(safePause);
+        } else {
+            // Restore playback of active section only
+            const activeVideo = getActiveVideoForSection(currentActiveId);
+            if (activeVideo) {
+                activeVideo.muted = isGlobalMuted;
+                activeVideo.volume = 1;
+                safePlay(activeVideo);
+                updateAllSoundButtonsUI(activeVideo.muted);
+            }
+        }
+    });
+
+    window.addEventListener("pagehide", () => {
+        getAllVideos().forEach(safePause);
+    });
+    window.addEventListener("beforeunload", () => {
+        getAllVideos().forEach(safePause);
+    });
+
+    // 14. Initial Section Determination (check URL hash on entry)
+    let initialSectionId = "hero";
+    if (window.location.hash) {
+        const hashId = window.location.hash.replace("#", "");
+        if (sectionConfigs.some(c => c.id === hashId)) {
+            initialSectionId = hashId;
+        } else if (hashId === "testimonial") {
+            initialSectionId = "stories";
+        }
+    }
+    activateSection(initialSectionId, true);
+
+    // 15. Global Backward-Compatibility Bridges
+    window.syncActiveSectionSound = function () {
+        activateSection(currentActiveId, false);
+    };
+    window.triggerActiveSectionAudio = function () {
+        onFirstUserInteraction();
+    };
+    window.setStorySoundState = function (unmute) {
+        if (unmute) {
+            isUserManuallyMuted = false;
+            isGlobalMuted = false;
+        } else {
+            isGlobalMuted = true;
+        }
+        updateAllSoundButtonsUI(!unmute);
+        const storyVid = document.getElementById("testimonialBgVideo");
+        if (storyVid) {
+            storyVid.muted = !unmute;
+            if (unmute) safePlay(storyVid);
+        }
+    };
+    window.getActiveStoryVideo = function () {
+        return document.getElementById("testimonialBgVideo");
+    };
+    window.smartPlaybackEngine = {
+        activateSection,
+        toggleSound: onSoundButtonClick,
+        getActiveSection: () => currentActiveId,
+        isMuted: () => isGlobalMuted
+    };
 })();
 
 
