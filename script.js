@@ -25,15 +25,14 @@ function updateHeroSoundIcon() {
     }
 }
 
-// Safely play video, with fallback to muted play if unmuted playback is restricted by browser policy
 function safePlayVideo(video) {
     if (!video) return;
+    video.muted = true;
     const playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.catch(() => {
             video.muted = true;
             video.play().catch(() => {});
-            if (video === bgVideo) updateHeroSoundIcon();
         });
     }
 }
@@ -85,23 +84,21 @@ function updateHeroVideoSource() {
         ? "photos/hero-mobile-thumb.jpg"
         : "photos/hero-desktop-thumb.jpg";
 
-    // Always set on first call (currentIsMobile is null) or when device type changes
     if (isMobile === currentIsMobile) return;
     currentIsMobile = isMobile;
 
-    const wasMuted = bgVideo.muted;
-    bgVideo.src = targetSrc;
-    bgVideo.poster = targetPoster;
-    bgVideo.muted = wasMuted;
-    bgVideo.load();
+    const currentSrc = bgVideo.getAttribute("src") || "";
+    if (!currentSrc.includes(targetSrc)) {
+        const wasMuted = bgVideo.muted;
+        bgVideo.src = targetSrc;
+        bgVideo.poster = targetPoster;
+        bgVideo.muted = wasMuted;
+        bgVideo.load();
+    }
 
-    // Play after data is available so the video frame is actually visible
-    bgVideo.addEventListener("loadeddata", function onLoaded() {
-        bgVideo.removeEventListener("loadeddata", onLoaded);
-        if (currentActiveSectionId === "hero") {
-            safePlayVideo(bgVideo);
-        }
-    }, { once: true });
+    if (currentActiveSectionId === "hero") {
+        safePlayVideo(bgVideo);
+    }
 }
 
 /// Initial hero video resolution setup
@@ -610,12 +607,12 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         }
     ].filter(item => item.el !== null);
 
-    // All unique managed video elements for current viewport
+    // All unique managed video elements across the page
     function getAllVideos() {
-        const isMobile = window.innerWidth <= 768;
         const list = [
             document.getElementById("bgVideo"),
-            isMobile ? document.getElementById("photographerVideoMobile") : document.getElementById("photographerVideoDesktop"),
+            document.getElementById("photographerVideoDesktop"),
+            document.getElementById("photographerVideoMobile"),
             document.getElementById("portfolioShowcaseVideo"),
             document.getElementById("testimonialBgVideo")
         ];
@@ -665,14 +662,17 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 
     function safePlay(video) {
         if (!video) return Promise.resolve();
+        video.playsInline = true;
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        if (video.preload !== "auto") {
+            video.preload = "auto";
+        }
         const promise = video.play();
         if (promise !== undefined) {
-            return promise.catch((err) => {
-                if (err && err.name === "NotAllowedError") {
-                    video.muted = true;
-                    return video.play().catch(() => {});
-                }
-                return Promise.resolve();
+            return promise.catch(() => {
+                video.muted = true;
+                return video.play().catch(() => {});
             });
         }
         return Promise.resolve();
@@ -833,9 +833,11 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         }
 
         // B. Replay Rule: Reset to 00:00 when entering/returning to this section
-        try {
-            targetVideo.currentTime = 0;
-        } catch (e) {}
+        if (targetVideo.readyState >= 1 && targetVideo.currentTime > 0.1) {
+            try {
+                targetVideo.currentTime = 0;
+            } catch (e) {}
+        }
 
         // C. Audio determination:
         // Audible ONLY if user has interacted, hasn't explicitly muted, and global mute is off
@@ -844,25 +846,13 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         targetVideo.volume = 1;
 
         // D. Start playback safely with sequence cancellation check
-        const playPromise = targetVideo.play();
-        if (playPromise !== undefined) {
-            playPromise.then(() => {
-                // If a rapid scroll moved past this section before play resolved, stop it immediately!
-                if (currentSeq !== activationSequence) {
-                    safePause(targetVideo);
-                    return;
-                }
-                updateAllSoundButtonsUI(targetVideo.muted);
-            }).catch(() => {
-                if (currentSeq !== activationSequence) return;
-                // Autoplay with sound denied -> fallback to muted
-                targetVideo.muted = true;
-                targetVideo.play().catch(() => {});
-                updateAllSoundButtonsUI(true);
-            });
-        } else {
+        safePlay(targetVideo).then(() => {
+            if (currentSeq !== activationSequence) {
+                safePause(targetVideo);
+                return;
+            }
             updateAllSoundButtonsUI(targetVideo.muted);
-        }
+        });
     }
 
     // 9. Centralized Sound Toggle (attached to ALL sound buttons)
@@ -981,43 +971,39 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 
     // 11. Viewport-Based Section Intersection Observer
     if ("IntersectionObserver" in window) {
-        const visibilityMap = new Map();
-
         const sectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                visibilityMap.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
-            });
-
-            // Find section occupying largest portion of viewport
-            let topCandidateId = currentActiveId;
-            let maxRatio = 0;
-
-            visibilityMap.forEach((ratio, id) => {
-                if (ratio > maxRatio) {
-                    maxRatio = ratio;
-                    topCandidateId = id;
+                if (entry.isIntersecting) {
+                    activateSection(entry.target.id);
                 }
             });
-
-            const currentRatio = visibilityMap.get(currentActiveId) || 0;
-
-            // Hysteresis activation rule:
-            // Only switch if:
-            // 1) Current active section has largely left view (< 0.25) AND top candidate has >= 0.20
-            // 2) OR top candidate has dominant presence (>= 0.45) and meaningfully exceeds current (diff >= 0.12)
-            if (topCandidateId !== currentActiveId) {
-                const shouldSwitch = (currentRatio < 0.25 && maxRatio >= 0.20) ||
-                                     (maxRatio >= 0.45 && maxRatio > currentRatio + 0.12);
-                if (shouldSwitch) {
-                    activateSection(topCandidateId);
-                }
-            }
         }, {
-            threshold: [0.2, 0.5]
+            // Trigger when section crosses the middle focal window of the screen
+            rootMargin: "-25% 0px -25% 0px",
+            threshold: 0
         });
 
         sectionConfigs.forEach(item => sectionObserver.observe(item.el));
     }
+
+    // High-performance passive scroll monitor to guarantee active section video starts immediately
+    let scrollCheckTimer = null;
+    window.addEventListener("scroll", () => {
+        if (scrollCheckTimer) return;
+        scrollCheckTimer = setTimeout(() => {
+            scrollCheckTimer = null;
+            const focusY = window.innerHeight * 0.45;
+            for (let i = 0; i < sectionConfigs.length; i++) {
+                const rect = sectionConfigs[i].el.getBoundingClientRect();
+                if (rect.top <= focusY && rect.bottom >= focusY) {
+                    if (sectionConfigs[i].id !== currentActiveId) {
+                        activateSection(sectionConfigs[i].id);
+                    }
+                    break;
+                }
+            }
+        }, 80);
+    }, { passive: true });
 
     // 12. Viewport Resize & Breakpoint Switching (photographer desktop <-> mobile)
     let lastIsMobile = (window.innerWidth <= 768);
