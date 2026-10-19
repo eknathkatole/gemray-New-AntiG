@@ -45,6 +45,10 @@ function markVideoReady(video) {
 
 function watchVideoFrames(video) {
     if (!video) return;
+    // Guard: only bind once per video element to prevent duplicate listeners accumulating
+    if (video.dataset.frameWatchBound === "1") return;
+    video.dataset.frameWatchBound = "1";
+
     const dismissPoster = () => {
         video.classList.add("video-ready");
         if (video.currentTime > 0.05 || !video.paused) {
@@ -169,6 +173,14 @@ setTimeout(function () {
     startGoldReflection();
 }, 1500);
 
+// Stop the recursive timeout chain when user navigates away or minimises tab on mobile
+window.addEventListener("pagehide", function () {
+    if (goldTimer) clearTimeout(goldTimer);
+    if (sparkTimeout) clearTimeout(sparkTimeout);
+    if (cleanupTimeout) clearTimeout(cleanupTimeout);
+    goldAnimationRunning = false;
+});
+
 // Interactive Glint on Hover or Tap
 if (brandNameWrapper) {
     brandNameWrapper.addEventListener("mouseenter", function () {
@@ -231,7 +243,8 @@ function initHeroParticles() {
     }
 
     function draw() {
-        if (!isVisible) {
+        // Stop the loop entirely if the tab is hidden OR the section is invisible
+        if (!isVisible || document.hidden) {
             animationFrameId = null;
             return;
         }
@@ -277,7 +290,7 @@ function initHeroParticles() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     isVisible = entry.isIntersecting;
-                    if (isVisible && !animationFrameId) {
+                    if (isVisible && !document.hidden && !animationFrameId) {
                         draw();
                     }
                 });
@@ -285,6 +298,27 @@ function initHeroParticles() {
             observer.observe(heroSection);
         }
     }
+
+    // Restart loop when tab becomes visible again (important for mobile app-switch behaviour)
+    document.addEventListener("visibilitychange", function onParticleVisibility() {
+        if (!document.hidden && isVisible && !animationFrameId) {
+            draw();
+        }
+    });
+
+    // Full cleanup on page unload — prevents RAF callbacks from accumulating in zombie tabs
+    function cancelParticles() {
+        isVisible = false;
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    }
+    window.addEventListener("pagehide", cancelParticles);
+    window.addEventListener("beforeunload", cancelParticles);
+
+    // Expose for external cleanup
+    window._heroParticlesCancel = cancelParticles;
 }
 
 // Initialize particles after DOM is ready
@@ -343,18 +377,49 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     const previewSection = document.getElementById("portfolio-preview");
     if (!collage) return;
 
-    let isSectionVisible = false;
+    let swapTimer = null;
+
+    function startSwap() {
+        if (!swapTimer && isSectionVisible && !document.hidden) {
+            swapTimer = setInterval(swapCollagePhoto, 3500);
+        }
+    }
+
+    function stopSwap() {
+        if (swapTimer) {
+            clearInterval(swapTimer);
+            swapTimer = null;
+        }
+    }
 
     if ("IntersectionObserver" in window && previewSection) {
         const obs = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 isSectionVisible = entry.isIntersecting;
+                if (isSectionVisible) {
+                    startSwap();
+                } else {
+                    stopSwap();
+                }
             });
         }, { threshold: 0.05 });
         obs.observe(previewSection);
     } else {
         isSectionVisible = true;
+        startSwap();
     }
+
+    // Stop collage swapping when browser tab is inactive to preserve memory & CPU
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            stopSwap();
+        } else if (isSectionVisible) {
+            startSwap();
+        }
+    });
+
+    window.addEventListener("pagehide", stopSwap);
+    window.addEventListener("beforeunload", stopSwap);
 
     // Full pool of active verified gallery photos
     const photoPool = [
@@ -449,8 +514,8 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         };
     }
 
-    // Interval swapping every 3.5 seconds
-    const swapTimer = setInterval(swapCollagePhoto, 3500);
+    // Start swap if initially visible
+    startSwap();
 
     // Smooth page exit transition when clicking "Explore More"
     if (exploreBtn) {
@@ -2074,12 +2139,15 @@ window.addEventListener(
     "beforeunload",
     function () {
 
-        if (goldTimer) {
+        // Cancel all gold reflection & spark timers to prevent recursive timeout leak
+        if (goldTimer) clearTimeout(goldTimer);
+        if (sparkTimeout) clearTimeout(sparkTimeout);
+        if (cleanupTimeout) clearTimeout(cleanupTimeout);
+        goldAnimationRunning = false;
 
-            clearTimeout(
-                goldTimer
-            );
-
+        // Cancel particle animation RAF
+        if (typeof window._heroParticlesCancel === "function") {
+            window._heroParticlesCancel();
         }
 
     }
