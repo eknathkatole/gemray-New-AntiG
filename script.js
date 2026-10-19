@@ -49,14 +49,19 @@ function watchVideoFrames(video) {
     if (video.dataset.frameWatchBound === "1") return;
     video.dataset.frameWatchBound = "1";
 
+    const events = ["playing", "timeupdate", "loadeddata", "canplay"];
     const dismissPoster = () => {
         video.classList.add("video-ready");
         if (video.currentTime > 0.05 || !video.paused) {
             video.removeAttribute("poster");
+            // Immediately clean up listeners to avoid timeupdate firing 60x/sec during playback
+            events.forEach((eventName) => {
+                video.removeEventListener(eventName, dismissPoster);
+            });
         }
     };
-    ["playing", "timeupdate", "loadeddata", "canplay"].forEach((eventName) => {
-        video.addEventListener(eventName, dismissPoster);
+    events.forEach((eventName) => {
+        video.addEventListener(eventName, dismissPoster, { passive: true });
     });
 }
 
@@ -292,6 +297,9 @@ function initHeroParticles() {
                     isVisible = entry.isIntersecting;
                     if (isVisible && !document.hidden && !animationFrameId) {
                         draw();
+                    } else if (!isVisible && animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
                     }
                 });
             }, { threshold: 0.02 });
@@ -299,10 +307,13 @@ function initHeroParticles() {
         }
     }
 
-    // Restart loop when tab becomes visible again (important for mobile app-switch behaviour)
+    // Restart loop when tab becomes visible again, or cancel when hidden
     document.addEventListener("visibilitychange", function onParticleVisibility() {
         if (!document.hidden && isVisible && !animationFrameId) {
             draw();
+        } else if (document.hidden && animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
         }
     });
 
@@ -599,12 +610,12 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         }
     ].filter(item => item.el !== null);
 
-    // All unique managed video elements across the page
+    // All unique managed video elements for current viewport
     function getAllVideos() {
+        const isMobile = window.innerWidth <= 768;
         const list = [
             document.getElementById("bgVideo"),
-            document.getElementById("photographerVideoDesktop"),
-            document.getElementById("photographerVideoMobile"),
+            isMobile ? document.getElementById("photographerVideoMobile") : document.getElementById("photographerVideoDesktop"),
             document.getElementById("portfolioShowcaseVideo"),
             document.getElementById("testimonialBgVideo")
         ];
@@ -1002,36 +1013,10 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
                 }
             }
         }, {
-            threshold: [0, 0.15, 0.30, 0.45, 0.60, 0.75, 0.90]
+            threshold: [0.2, 0.5]
         });
 
         sectionConfigs.forEach(item => sectionObserver.observe(item.el));
-
-        // Predictive Preloader: buffers metadata for off-screen videos 500px before arrival
-        const predictivePreloader = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const vid = entry.target;
-                    if (vid && vid.dataset.buffered !== "true") {
-                        vid.dataset.buffered = "true";
-                        vid.preload = "metadata";
-                        if (vid.networkState === HTMLMediaElement.NETWORK_EMPTY) {
-                            try { vid.load(); } catch (e) {}
-                        }
-                    }
-                    obs.unobserve(vid);
-                }
-            });
-        }, {
-            rootMargin: "500px 0px 500px 0px",
-            threshold: 0.01
-        });
-
-        getAllVideos().forEach(v => {
-            if (v !== document.getElementById("bgVideo")) {
-                predictivePreloader.observe(v);
-            }
-        });
     }
 
     // 12. Viewport Resize & Breakpoint Switching (photographer desktop <-> mobile)
