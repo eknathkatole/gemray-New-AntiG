@@ -27,10 +27,12 @@ function updateHeroSoundIcon() {
 
 function safePlayVideo(video) {
     if (!video) return;
-    video.muted = true;
+    video.muted = false;
+    video.volume = 1;
     const playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.catch(() => {
+            // Browsers may block audible autoplay until the visitor interacts.
             video.muted = true;
             video.play().catch(() => {});
         });
@@ -105,7 +107,6 @@ function updateHeroVideoSource() {
 if (bgVideo) {
     watchVideoFrames(bgVideo);
     updateHeroVideoSource();
-    bgVideo.muted = true;
     bgVideo.volume = 1;
 
     let resizeTimer = null;
@@ -386,6 +387,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     if (!collage) return;
 
     let swapTimer = null;
+    let isSectionVisible = false;
 
     function startSwap() {
         if (!swapTimer && isSectionVisible && !document.hidden) {
@@ -547,7 +549,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 /* =========================================================
    12C. CINEMATIC SMART AUDIO & VIDEO PLAYBACK ENGINE
    - ONLY ONE VIDEO ACTIVELY PLAYS AT ANY TIME (Zero lag / jitter / sound conflict)
-   - Initial instant hero entry (<500ms target); off-screen videos preload="none"
+   - Initial instant hero entry; off-screen videos load metadata until activated
    - First user gesture (tap, click, scroll, wheel, touch, keydown) starts audio cleanly
    - Strict replay rule: entering/re-entering any video section restarts it from 00:00
    - Multi-threshold IntersectionObserver with hysteresis prevents micro-scroll jitter
@@ -627,7 +629,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     // 2. Engine State
     let currentActiveId = "hero";
     let hasUserInteracted = false;
-    let isGlobalMuted = true;             // Starts muted per browser autoplay policy
+    let isGlobalMuted = false;            // Request sound by default; autoplay policy may require fallback
     let isUserManuallyMuted = false;      // True if user explicitly tapped mute
     let activationSequence = 0;           // Cancels outdated playback requests during fast scrolls
     let globalAudioCtx = null;
@@ -655,7 +657,6 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     function safePause(video) {
         if (!video) return;
         try {
-            video.muted = true;
             video.pause();
         } catch (e) {}
     }
@@ -671,7 +672,9 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         const promise = video.play();
         if (promise !== undefined) {
             return promise.catch(() => {
+                // Audible autoplay is blocked until a user gesture in some browsers.
                 video.muted = true;
+                isGlobalMuted = true;
                 return video.play().catch(() => {});
             });
         }
@@ -839,9 +842,8 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
             } catch (e) {}
         }
 
-        // C. Audio determination:
-        // Audible ONLY if user has interacted, hasn't explicitly muted, and global mute is off
-        const shouldBeUnmuted = hasUserInteracted && !isUserManuallyMuted && !isGlobalMuted;
+        // C. Request audible playback by default. Browsers can still require a gesture.
+        const shouldBeUnmuted = !isUserManuallyMuted && !isGlobalMuted;
         targetVideo.muted = !shouldBeUnmuted;
         targetVideo.volume = 1;
 
@@ -935,7 +937,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         hasUserInteractedForSound = true;
         primeWebAudio();
 
-        // If user hasn't manually chosen to mute, unmute the currently visible section!
+        // If user hasn't manually chosen to mute, enable sound after the first gesture.
         if (!isUserManuallyMuted) {
             isGlobalMuted = false;
             const activeVideo = getActiveVideoForSection(currentActiveId);
