@@ -554,20 +554,13 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     // Start swap if initially visible
     startSwap();
 
-    // Smooth page exit transition when clicking "Explore More"
+    // Responsive tap feedback for "Explore More" button (preserves clean Safari bfcache navigation)
     if (exploreBtn) {
-        exploreBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            const targetHref = this.getAttribute("href") || "portfolio.html";
-
-            exploreBtn.style.transform = "scale(0.95)";
-            document.body.style.transition = "opacity 0.45s ease, filter 0.45s ease";
-            document.body.style.opacity = "0";
-            document.body.style.filter = "blur(8px)";
-
+        exploreBtn.addEventListener("click", function () {
+            exploreBtn.style.transform = "scale(0.96)";
             setTimeout(() => {
-                window.location.href = targetHref;
-            }, 450);
+                exploreBtn.style.transform = "";
+            }, 180);
         });
     }
 })();
@@ -1074,6 +1067,30 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     });
     window.addEventListener("beforeunload", () => {
         getAllVideos().forEach(safePause);
+    });
+
+    // Safari & iPhone bfcache (Back-Forward Cache) Restoration:
+    // Prevents solid green screen by guaranteeing document.body visibility and resuming active media
+    window.addEventListener("pageshow", (event) => {
+        document.body.style.opacity = "1";
+        document.body.style.filter = "none";
+        document.body.style.transition = "";
+
+        if (event.persisted) {
+            const activeVideo = getActiveVideoForSection(currentActiveId);
+            if (activeVideo) {
+                activeVideo.muted = isGlobalMuted;
+                activeVideo.volume = isGlobalMuted ? 0 : 1;
+                safePlay(activeVideo);
+                updateAllSoundButtonsUI(activeVideo.muted);
+            }
+        }
+    });
+
+    window.addEventListener("popstate", () => {
+        document.body.style.opacity = "1";
+        document.body.style.filter = "none";
+        document.body.style.transition = "";
     });
 
     // 14. Initial Section Determination (check URL hash on entry)
