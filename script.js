@@ -1,4 +1,28 @@
 /* =========================================================
+   00. BROWSER CACHE & SERVICE WORKER REFRESH CONTROLLER
+   - Automatically purges obsolete legacy Service Workers and stale CacheStorage
+   - Protects mobile & desktop devices from accumulating disk/RAM bloat over 7-14 days
+   ========================================================= */
+(function purgeStaleBrowserCaches() {
+    try {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                registrations.forEach(function (reg) {
+                    reg.unregister().catch(function () {});
+                });
+            }).catch(function () {});
+        }
+        if ("caches" in window) {
+            caches.keys().then(function (cacheNames) {
+                cacheNames.forEach(function (cacheName) {
+                    caches.delete(cacheName).catch(function () {});
+                });
+            }).catch(function () {});
+        }
+    } catch (e) {}
+})();
+
+/* =========================================================
    01. HERO VIDEO & UNIVERSAL BROWSER AUDIO ENGINE
    ========================================================= */
 
@@ -27,12 +51,15 @@ function updateHeroSoundIcon() {
 
 function safePlayVideo(video) {
     if (!video) return;
-    video.muted = false;
-    video.volume = 1;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    if (!hasUserInteractedForSound) {
+        video.muted = true;
+    }
     const playPromise = video.play();
     if (playPromise !== undefined) {
         playPromise.catch(() => {
-            // Browsers may block audible autoplay until the visitor interacts.
             video.muted = true;
             video.play().catch(() => {});
         });
@@ -629,12 +656,23 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     // 2. Engine State
     let currentActiveId = "hero";
     let hasUserInteracted = false;
-    let isGlobalMuted = false;            // Request sound by default; autoplay policy may require fallback
-    let isUserManuallyMuted = false;      // True if user explicitly tapped mute
+    let isGlobalMuted = true;             // Starts muted per browser autoplay standards
+    let isUserManuallyMuted = false;      // True ONLY if visitor explicitly tapped mute
     let activationSequence = 0;           // Cancels outdated playback requests during fast scrolls
     let globalAudioCtx = null;
 
-    // 3. Web Audio unlock helper
+    // Helper: get candidate videos for the current device width
+    function getCandidateVideos() {
+        const isMobile = window.innerWidth <= 768;
+        return [
+            document.getElementById("bgVideo"),
+            isMobile ? document.getElementById("photographerVideoMobile") : document.getElementById("photographerVideoDesktop"),
+            document.getElementById("portfolioShowcaseVideo"),
+            document.getElementById("testimonialBgVideo")
+        ].filter(Boolean);
+    }
+
+    // 3. Web Audio unlock helper (includes silent buffer unlock trick for iOS Safari)
     function primeWebAudio() {
         try {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -645,6 +683,14 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
                 if (globalAudioCtx.state === "suspended") {
                     globalAudioCtx.resume();
                 }
+                // Play silent 1-sample buffer to permanently unlock Safari WebKit audio
+                try {
+                    const buf = globalAudioCtx.createBuffer(1, 1, 22050);
+                    const src = globalAudioCtx.createBufferSource();
+                    src.buffer = buf;
+                    src.connect(globalAudioCtx.destination);
+                    src.start(0);
+                } catch (e) {}
             }
         } catch (e) {}
 
@@ -672,39 +718,18 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         const promise = video.play();
         if (promise !== undefined) {
             return promise.catch(() => {
-                // Audible autoplay is blocked until a user gesture in some browsers.
+                // If browser blocks unmuted playback on scroll, fallback to muted for this video
                 video.muted = true;
-                isGlobalMuted = true;
                 return video.play().catch(() => {});
             });
         }
         return Promise.resolve();
     }
 
+    // Direct gesture unmuting (e.g. tap on video itself)
     function playVideoWithSoundFromGesture(video) {
         if (!video) return;
-
-        hasUserInteracted = true;
-        hasUserInteractedForSound = true;
-        isUserManuallyMuted = false;
-        isGlobalMuted = false;
-        primeWebAudio();
-
-        video.muted = false;
-        video.volume = 1;
-
-        const promise = video.play();
-        if (promise !== undefined) {
-            promise.then(() => {
-                updateAllSoundButtonsUI(false);
-            }).catch(() => {
-                video.muted = true;
-                isGlobalMuted = true;
-                updateAllSoundButtonsUI(true);
-            });
-        } else {
-            updateAllSoundButtonsUI(false);
-        }
+        unlockAudioOnUserGesture();
     }
 
     // 5. Synchronize all sound buttons across the website
@@ -842,8 +867,9 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
             } catch (e) {}
         }
 
-        // C. Request audible playback by default. Browsers can still require a gesture.
-        const shouldBeUnmuted = !isUserManuallyMuted && !isGlobalMuted;
+        // C. Audio determination:
+        // Audible if user has interacted, global sound is unmuted, and user hasn't explicitly muted
+        const shouldBeUnmuted = hasUserInteracted && !isUserManuallyMuted && !isGlobalMuted;
         targetVideo.muted = !shouldBeUnmuted;
         targetVideo.volume = 1;
 
@@ -865,6 +891,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         }
 
         hasUserInteracted = true;
+        hasUserInteractedForSound = true;
         primeWebAudio();
 
         const activeVideo = getActiveVideoForSection(currentActiveId);
@@ -892,6 +919,21 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
             } else {
                 updateAllSoundButtonsUI(false);
             }
+
+            // iOS Safari & WebKit multi-video unlock trick:
+            // Touch all candidate videos synchronously inside this click gesture so Safari unlocks them for future scroll
+            getCandidateVideos().forEach(v => {
+                if (v && v !== activeVideo) {
+                    v.muted = false;
+                    const p = v.play();
+                    if (p !== undefined) {
+                        p.then(() => {
+                            v.pause();
+                            v.currentTime = 0;
+                        }).catch(() => {});
+                    }
+                }
+            });
         } else {
             // Visitor wants MUTE
             isUserManuallyMuted = true;
@@ -919,56 +961,66 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     });
 
     // A direct tap on a video is a valid media gesture in in-app browsers.
-    // This is especially important after returning from WhatsApp or Instagram.
     getAllVideos().forEach(video => {
         const handleDirectVideoGesture = (event) => {
             if (event.target === video && video === getActiveVideoForSection(currentActiveId)) {
-                playVideoWithSoundFromGesture(video);
+                unlockAudioOnUserGesture();
             }
         };
         video.addEventListener("pointerup", handleDirectVideoGesture);
         video.addEventListener("touchend", handleDirectVideoGesture, { passive: true });
     });
 
-    // 10. First User Gesture Audio Activation
-    function onFirstUserInteraction() {
-        if (hasUserInteracted) return;
+    // 10. Universal User Gesture Audio Unlocking (Safari, Android, Chrome, iOS & Laptop)
+    // When the user clicks or taps anywhere on the page, unmute active video and unlock all video elements
+    function unlockAudioOnUserGesture(e) {
+        if (isUserManuallyMuted) return; // Visitor deliberately selected mute
+
         hasUserInteracted = true;
         hasUserInteractedForSound = true;
+        isGlobalMuted = false;
         primeWebAudio();
 
-        // If user hasn't manually chosen to mute, enable sound after the first gesture.
-        if (!isUserManuallyMuted) {
-            isGlobalMuted = false;
-            const activeVideo = getActiveVideoForSection(currentActiveId);
-            if (activeVideo) {
-                activeVideo.muted = false;
-                activeVideo.volume = 1;
-                const p = activeVideo.play();
-                if (p !== undefined) {
-                    p.then(() => {
-                        updateAllSoundButtonsUI(false);
-                    }).catch(() => {
-                        activeVideo.muted = true;
-                        isGlobalMuted = true;
-                        updateAllSoundButtonsUI(true);
-                    });
-                } else {
+        const activeVideo = getActiveVideoForSection(currentActiveId);
+        if (activeVideo) {
+            activeVideo.muted = false;
+            activeVideo.volume = 1;
+            const p = activeVideo.play();
+            if (p !== undefined) {
+                p.then(() => {
                     updateAllSoundButtonsUI(false);
-                }
+                }).catch(() => {
+                    activeVideo.muted = true;
+                    updateAllSoundButtonsUI(true);
+                });
             } else {
                 updateAllSoundButtonsUI(false);
             }
         }
 
-        // Clean up one-time interaction listeners
-        ["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel", "scroll"].forEach(evt => {
-            window.removeEventListener(evt, onFirstUserInteraction, { capture: true, passive: true });
+        // Synchronously bless all candidate videos in WebKit's security stack so future scroll unmuting succeeds
+        getCandidateVideos().forEach(v => {
+            if (v && v !== activeVideo) {
+                v.muted = false;
+                const p = v.play();
+                if (p !== undefined) {
+                    p.then(() => {
+                        v.pause();
+                        v.currentTime = 0;
+                    }).catch(() => {});
+                }
+            }
+        });
+
+        // Clean up one-time interaction listeners once audio is unlocked
+        ["click", "touchend", "pointerup", "keydown"].forEach(evt => {
+            window.removeEventListener(evt, unlockAudioOnUserGesture, { capture: true, passive: true });
         });
     }
 
-    ["touchstart", "pointerdown", "mousedown", "click", "keydown", "wheel", "scroll"].forEach(evt => {
-        window.addEventListener(evt, onFirstUserInteraction, { capture: true, passive: true });
+    // Attach to real user activation events (never 'scroll' or 'wheel' which browsers reject)
+    ["click", "touchend", "pointerup", "keydown"].forEach(evt => {
+        window.addEventListener(evt, unlockAudioOnUserGesture, { capture: true, passive: true });
     });
 
     // 11. Viewport-Based Section Intersection Observer
@@ -1059,7 +1111,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         activateSection(currentActiveId, false);
     };
     window.triggerActiveSectionAudio = function () {
-        onFirstUserInteraction();
+        unlockAudioOnUserGesture();
     };
     window.setStorySoundState = function (unmute) {
         if (unmute) {
