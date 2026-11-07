@@ -661,16 +661,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     let activationSequence = 0;           // Cancels outdated playback requests during fast scrolls
     let globalAudioCtx = null;
 
-    // Helper: get candidate videos for the current device width
-    function getCandidateVideos() {
-        const isMobile = window.innerWidth <= 768;
-        return [
-            document.getElementById("bgVideo"),
-            isMobile ? document.getElementById("photographerVideoMobile") : document.getElementById("photographerVideoDesktop"),
-            document.getElementById("portfolioShowcaseVideo"),
-            document.getElementById("testimonialBgVideo")
-        ].filter(Boolean);
-    }
+
 
     // 3. Web Audio unlock helper (includes silent buffer unlock trick for iOS Safari)
     function primeWebAudio() {
@@ -699,10 +690,12 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         });
     }
 
-    // 4. Safe video control primitives
+    // 4. Safe video control primitives (strictly prevents audio overlap across sections/browsers)
     function safePause(video) {
         if (!video) return;
         try {
+            video.muted = true;
+            video.volume = 0;
             video.pause();
         } catch (e) {}
     }
@@ -896,6 +889,13 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 
         const activeVideo = getActiveVideoForSection(currentActiveId);
 
+        // Strict isolation: Mute and pause every other video immediately
+        getAllVideos().forEach(v => {
+            if (v !== activeVideo) {
+                safePause(v);
+            }
+        });
+
         if (isGlobalMuted) {
             // Visitor wants UNMUTE
             isUserManuallyMuted = false;
@@ -919,21 +919,6 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
             } else {
                 updateAllSoundButtonsUI(false);
             }
-
-            // iOS Safari & WebKit multi-video unlock trick:
-            // Touch all candidate videos synchronously inside this click gesture so Safari unlocks them for future scroll
-            getCandidateVideos().forEach(v => {
-                if (v && v !== activeVideo) {
-                    v.muted = false;
-                    const p = v.play();
-                    if (p !== undefined) {
-                        p.then(() => {
-                            v.pause();
-                            v.currentTime = 0;
-                        }).catch(() => {});
-                    }
-                }
-            });
         } else {
             // Visitor wants MUTE
             isUserManuallyMuted = true;
@@ -941,6 +926,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
 
             if (activeVideo) {
                 activeVideo.muted = true;
+                activeVideo.volume = 0;
             }
             updateAllSoundButtonsUI(true);
         }
@@ -972,7 +958,7 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     });
 
     // 10. Universal User Gesture Audio Unlocking (Safari, Android, Chrome, iOS & Laptop)
-    // When the user clicks or taps anywhere on the page, unmute active video and unlock all video elements
+    // When the user clicks or taps anywhere on the page, unmute ONLY the active video
     function unlockAudioOnUserGesture(e) {
         if (isUserManuallyMuted) return; // Visitor deliberately selected mute
 
@@ -982,6 +968,14 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
         primeWebAudio();
 
         const activeVideo = getActiveVideoForSection(currentActiveId);
+
+        // Strict isolation: Mute and pause every other video to prevent any audio mixing
+        getAllVideos().forEach(v => {
+            if (v !== activeVideo) {
+                safePause(v);
+            }
+        });
+
         if (activeVideo) {
             activeVideo.muted = false;
             activeVideo.volume = 1;
@@ -991,26 +985,13 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
                     updateAllSoundButtonsUI(false);
                 }).catch(() => {
                     activeVideo.muted = true;
+                    activeVideo.play().catch(() => {});
                     updateAllSoundButtonsUI(true);
                 });
             } else {
                 updateAllSoundButtonsUI(false);
             }
         }
-
-        // Synchronously bless all candidate videos in WebKit's security stack so future scroll unmuting succeeds
-        getCandidateVideos().forEach(v => {
-            if (v && v !== activeVideo) {
-                v.muted = false;
-                const p = v.play();
-                if (p !== undefined) {
-                    p.then(() => {
-                        v.pause();
-                        v.currentTime = 0;
-                    }).catch(() => {});
-                }
-            }
-        });
 
         // Clean up one-time interaction listeners once audio is unlocked
         ["click", "touchend", "pointerup", "keydown"].forEach(evt => {
@@ -1026,15 +1007,16 @@ if (testimonialBgVideo) watchVideoFrames(testimonialBgVideo);
     // 11. Viewport-Based Section Intersection Observer
     if ("IntersectionObserver" in window) {
         const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    activateSection(entry.target.id);
-                }
-            });
+            const intersecting = entries.filter(e => e.isIntersecting);
+            if (intersecting.length > 0) {
+                // When multiple sections intersect the margin window, pick the dominant one
+                intersecting.sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0));
+                activateSection(intersecting[0].target.id);
+            }
         }, {
             // Trigger when section crosses the middle focal window of the screen
-            rootMargin: "-25% 0px -25% 0px",
-            threshold: 0
+            rootMargin: "-20% 0px -20% 0px",
+            threshold: [0, 0.2, 0.5]
         });
 
         sectionConfigs.forEach(item => sectionObserver.observe(item.el));
